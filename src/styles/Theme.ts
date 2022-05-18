@@ -1,0 +1,11 @@
+export const theme = {
+  colors: {
+    BASE_COLOR_DARK: '#2B292A',
+    BASE_COLOR_LIGHT: '#FFFFFF',
+    POINT_COLOR: '#F35174',
+    BORDER_COLOR: '#555555',
+    TEXT_WHITE_COLOR: '#FFFFFF',
+    TEXT_DESCRIPTION_COLOR: '#A1A1A1',
+    TEXT_INPUT_COLOR: '#AAAAAA'
+  }
+}
