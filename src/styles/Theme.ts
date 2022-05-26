@@ -1,7 +1,8 @@
 export const theme = {
   colors: {
-    BASE_COLOR_DARK: '#2B292A',
+    BASE_COLOR_DARK: '#231F21',
     BASE_COLOR_LIGHT: '#FFFFFF',
+    LIST_WRAP_COLOR: '#2B292A',
     POINT_COLOR: '#F35174',
     BORDER_COLOR: '#555555',
     TEXT_WHITE_COLOR: '#FFFFFF',

@@ -15,6 +15,7 @@ function createWindow () {
     frame: true,
     resizable: false,
     webPreferences: {
+      // preload: path.join(__dirname, 'renderer.js'),
       nodeIntegration: true,
       enableRemoteModule: true,
       devTools: isDev

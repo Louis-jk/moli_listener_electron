@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import {
   CircleBtnNext,
   Container,
   FlexColumnCenterCenter,
-  FlexColumnSpaceBCenter,
   InfoDesc,
   InfoTitle,
   InputBox,
@@ -12,14 +12,41 @@ import {
   Margin,
   PointText,
 } from '../styles/Common.Styled';
+import QueryString from 'qs';
 
 const Code = () => {
   const navigate = useNavigate();
+  const [entryCode, setEntryCode] = useState('ksce');
+  const [isError, setError] = useState(false);
+  const [codeResultErrorMsg, setCodeResultErrorMsg] = useState('');
 
-  console.log('navigate', navigate);
+  useEffect(() => {
+    setError(false);
+  }, []);
 
   const nextHandler = () => {
-    navigate('/list');
+    const params = {
+      set_lang: 'ko',
+      code_in: entryCode,
+    };
+
+    axios({
+      method: 'post',
+      url: `${process.env.REACT_APP_BACKEND_URL}/api/listen_conference_info.php`,
+      data: QueryString.stringify(params),
+    })
+      .then((res) => {
+        console.log('res', res);
+        if (res.status === 200 && res.data.result === 'true') {
+          // navigate('/list', { state: { data: res.data.data } });
+          navigate('/list', { state: res.data.data });
+        } else {
+          // alert(res.data.msg);
+          setError(true);
+          setCodeResultErrorMsg(res.data.msg);
+        }
+      })
+      .catch((error) => console.error('error: ', error));
   };
 
   return (
@@ -32,13 +59,22 @@ const Code = () => {
         <Margin type='bottom' size={50} />
 
         <InputWrapper>
-          <InputBox type='text' placeholder='HO-DDD-45465' />
+          <InputBox
+            type='text'
+            placeholder='HO-DDD-45465'
+            value={entryCode}
+            onChange={(e) => setEntryCode(e.target.value)}
+          />
         </InputWrapper>
 
         <Margin type='bottom' size={10} />
 
         <p>
-          <PointText>코드입력 후 아래 버튼을 눌러주세요</PointText>
+          {isError ? (
+            <PointText>{codeResultErrorMsg}</PointText>
+          ) : (
+            <PointText>코드입력 후 아래 버튼을 눌러주세요</PointText>
+          )}
         </p>
 
         <Margin type='bottom' size={100} />

@@ -1,15 +1,15 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { SplashContainer } from '../styles/Splash.Styled';
+import React, { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { SplashContainer } from '../styles/Splash.Styled'
 
 const Splash = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   useEffect(() => {
     setTimeout(() => {
-      navigate('/code');
-    }, 2000);
-  }, []);
+      navigate('/code')
+    }, 2000)
+  }, [])
 
   return (
     <SplashContainer>
@@ -19,7 +19,7 @@ const Splash = () => {
         title='MOLI 로고'
       />
     </SplashContainer>
-  );
+  )
 };
 
-export default Splash;
+export default Splash
