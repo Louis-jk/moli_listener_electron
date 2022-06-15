@@ -3,7 +3,8 @@ import QueryString from 'qs';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-import AgoraRTC from 'agora-rtc-sdk';
+import AgoraRTC from 'agora-rtc-sdk-ng';
+// import AgoraRTC from 'agora-rtc-sdk';
 
 import {
   Container,
@@ -65,35 +66,44 @@ const SessionDetail = () => {
   const [agoraUId, setAgoraUId] = useState<any>(null);
   const [isConnect, setConnect] = useState<boolean>(false);
   const [users, setUsers] = useState<any>(null);
-  const [audioVol, setAudioVol] = useState<any>(null);
 
   const appId = process.env.REACT_APP_AGORA_APP_ID
     ? process.env.REACT_APP_AGORA_APP_ID
     : '';
 
-  const client: any = AgoraRTC.createClient({
-    mode: 'live',
-    codec: 'vp8',
-  });
-
-  let localTracks = {
-    //videoTrack: null,
-    audioTrack: null,
+  let rtc: any = {
+    client: null,
+    joined: false,
+    pulished: false,
+    localStream: null,
+    remoteStream: [],
+    params: {},
+    localAudioTrack: null,
   };
 
-  var remoteUsers = {};
+  let option: any = {
+    appId,
+    channel: channelName,
+    uid: null,
+    token: agoraToken,
+    key: null,
+    secret: null,
+  };
 
-  const joinChannel = async (channel: string, token: string) => {
-    client.setClientRole('audience', { level: 2 });
+  const joinChannel = async (aChName: string, aToken: string) => {
+    setChannelName(aChName);
+    setAgoraToken(aToken);
+
+    console.log('rtc ??????????', rtc);
+    rtc.client = AgoraRTC.createClient({ mode: 'live', codec: 'vp8' });
 
     // Listen for the "user-published" event, from which you can get an AgoraRTCRemoteUser object.
-    client.on('user-published', async (user: any, mediaType: any) => {
+    rtc.client.on('user-published', async (user: any, mediaType: any) => {
       // Subscribe to the remote user when the SDK triggers the "user-published" event
-      await client.subscribe(user, mediaType);
+      await rtc.client.subscribe(user, mediaType);
       console.log('subscribe success');
-      console.log('subscribe success user ?', user);
       console.log('subscribe success mediaType', mediaType);
-      // setConnect(true);
+      setConnect(true);
 
       // If the remote user publishes an audio track.
       if (mediaType === 'audio') {
@@ -104,45 +114,49 @@ const SessionDetail = () => {
       }
 
       // Listen for the "user-unpublished" event
-      client.on('user-unpublished', async (user: any) => {
+      rtc.client.on('user-unpublished', async (user: any) => {
         // Unsubscribe from the tracks of the remote user.
-        await client.unsubscribe(user);
+        await rtc.client.unsubscribe(user);
         setConnect(false);
       });
     });
 
-    client.enableAudioVolumeIndicator();
-
-    client.on('volume-indicator', (volumes: any) => {
-      console.log('volumes >>>>>>>>>>>', volumes);
-      volumes.forEach((volume: any, index: any) => {
-        console.log(`${index} UID ${volume.uid} Level ${volume.level}`);
-        setAudioVol(volume.level);
-      });
-    });
-
-    const uid = await client.join(appId, channel, token);
+    const uid = await rtc.client.join(appId, aChName, aToken);
+    setAgoraUId(uid);
   };
 
-  console.log('audioVol ??', audioVol);
+  function leaveEventHost(params: any) {
+    rtc.client.unpublish(rtc.localStream, function (err: any) {
+      console.log('publish failed');
+      console.error(err);
+    });
+    rtc.client.leave(function (ev: any) {
+      console.log(ev);
+    });
+  }
+
+  function leaveEventAudience(params: any) {
+    rtc.client.leave(
+      function () {
+        console.log('client leaves channel');
+        //……
+      },
+      function (err: any) {
+        console.log('client leave failed ', err);
+        //error handling
+      }
+    );
+  }
 
   const leaveChannel = async () => {
     console.log('나가기');
-    // localAudioTrack.close();
+    rtc.localAudioTrack.close();
     // rtc.client.close();
 
-    client.on('user-published', async (user: any, mediaType: any) => {
-      // Subscribe to the remote user when the SDK triggers the "user-published" event
-      await client.unsubscribe(user, mediaType);
-
-      console.log('unsubscribe success');
-      console.log('unsubscribe success user ?', user);
-      console.log('unsubscribe success mediaType', mediaType);
-
-      setConnect(false);
-    });
-    await client.leave();
+    await rtc.client.leave();
   };
+
+  console.log('isConnect', isConnect);
 
   const requestAPI = () => {
     const params = {
@@ -284,9 +298,9 @@ const SessionDetail = () => {
                   )}
                   {list.status === 'open' && isConnect && (
                     <PlayBtn
-                    // onClick={() => {
-                    //   leaveChannel();
-                    // }}
+                      onClick={() => {
+                        leaveChannel();
+                      }}
                     >
                       <img
                         src='/assets/images/ic_stop.png'
@@ -339,9 +353,13 @@ const SessionDetail = () => {
         {/* <p style={{ textAlign: 'right' }}>0:55</p> */}
         {/* // 현재 플레이 되고 있는 상태 영역 - 플레이 한 시간 및 볼륨 표시 부분 */}
         <Margin type='bottom' size={50} />
-        <div onClick={leaveChannel}>
+        <div onClick={leaveChannel} style={{ cursor: 'pointer' }}>
           <p>나가기</p>
         </div>
+        {/* <div id='videos'>
+          {users.length &&
+            users.map((user: any) => <Video key={user.uid} user={user} />)}
+        </div> */}
       </Wrapper>
     </Container>
   );

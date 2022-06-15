@@ -1,19 +1,9 @@
 import axios from 'axios';
 import QueryString from 'qs';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-import {
-  AgoraVideoPlayer,
-  createClient,
-  createMicrophoneAndCameraTracks,
-  ClientConfig,
-  IAgoraRTCRemoteUser,
-  ICameraVideoTrack,
-  IMicrophoneAudioTrack,
-} from 'agora-rtc-react';
-import AgoraRTC from 'agora-rtc-sdk-ng';
-// import AgoraRTC from 'agora-rtc-sdk';
+// import AgoraRtcEngine from 'agora-electron-sdk';
 
 import {
   Container,
@@ -80,90 +70,8 @@ const SessionDetail = () => {
     ? process.env.REACT_APP_AGORA_APP_ID
     : '';
 
-  let rtc: any = {
-    client: null,
-    joined: false,
-    pulished: false,
-    localStream: null,
-    remoteStream: [],
-    params: {},
-    localAudioTrack: null,
-  };
-
-  let option: any = {
-    appId,
-    channel: channelName,
-    uid: null,
-    token: agoraToken,
-    key: null,
-    secret: null,
-  };
-
-  const joinChannel = async (aChName: string, aToken: string) => {
-    setChannelName(aChName);
-    setAgoraToken(aToken);
-
-    console.log('rtc ??????????', rtc);
-    rtc.client = AgoraRTC.createClient({ mode: 'live', codec: 'vp8' });
-
-    // Listen for the "user-published" event, from which you can get an AgoraRTCRemoteUser object.
-    rtc.client.on('user-published', async (user: any, mediaType: any) => {
-      // Subscribe to the remote user when the SDK triggers the "user-published" event
-      await rtc.client.subscribe(user, mediaType);
-      console.log('subscribe success');
-      console.log('subscribe success mediaType', mediaType);
-      setConnect(true);
-
-      // If the remote user publishes an audio track.
-      if (mediaType === 'audio') {
-        // Get the RemoteAudioTrack object in the AgoraRTCRemoteUser object.
-        const remoteAudioTrack = user.audioTrack;
-        // Play the remote audio track.
-        remoteAudioTrack.play();
-      }
-
-      // Listen for the "user-unpublished" event
-      rtc.client.on('user-unpublished', async (user: any) => {
-        // Unsubscribe from the tracks of the remote user.
-        await rtc.client.unsubscribe(user);
-        setConnect(false);
-      });
-    });
-
-    const uid = await rtc.client.join(appId, aChName, aToken);
-    setAgoraUId(uid);
-  };
-
-  function leaveEventHost(params: any) {
-    rtc.client.unpublish(rtc.localStream, function (err: any) {
-      console.log('publish failed');
-      console.error(err);
-    });
-    rtc.client.leave(function (ev: any) {
-      console.log(ev);
-    });
-  }
-
-  function leaveEventAudience(params: any) {
-    rtc.client.leave(
-      function () {
-        console.log('client leaves channel');
-        //……
-      },
-      function (err: any) {
-        console.log('client leave failed ', err);
-        //error handling
-      }
-    );
-  }
-
-  const leaveChannel = async () => {
-    console.log('나가기');
-    rtc.localAudioTrack.close();
-    // rtc.client.close();
-
-    await rtc.client.leave();
-  };
+  // let rtcEngine = new AgoraRtcEngine();
+  // rtcEngine.initialize(appId);
 
   console.log('isConnect', isConnect);
 
@@ -293,9 +201,9 @@ const SessionDetail = () => {
                   )}
                   {list.status === 'open' && !isConnect && (
                     <PlayBtn
-                      onClick={() => {
-                        joinChannel(list.channel_name, list.listen_token);
-                      }}
+                    // onClick={() => {
+                    //   joinChannel(list.channel_name, list.listen_token);
+                    // }}
                     >
                       <img
                         src='/assets/images/ic_play.png'
@@ -307,9 +215,9 @@ const SessionDetail = () => {
                   )}
                   {list.status === 'open' && isConnect && (
                     <PlayBtn
-                      onClick={() => {
-                        leaveChannel();
-                      }}
+                    // onClick={() => {
+                    //   leaveChannel();
+                    // }}
                     >
                       <img
                         src='/assets/images/ic_stop.png'
@@ -362,9 +270,9 @@ const SessionDetail = () => {
         {/* <p style={{ textAlign: 'right' }}>0:55</p> */}
         {/* // 현재 플레이 되고 있는 상태 영역 - 플레이 한 시간 및 볼륨 표시 부분 */}
         <Margin type='bottom' size={50} />
-        <div onClick={leaveChannel} style={{ cursor: 'pointer' }}>
+        {/* <div onClick={leaveChannel} style={{ cursor: 'pointer' }}>
           <p>나가기</p>
-        </div>
+        </div> */}
         {/* <div id='videos'>
           {users.length &&
             users.map((user: any) => <Video key={user.uid} user={user} />)}

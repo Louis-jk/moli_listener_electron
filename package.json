@@ -1,10 +1,26 @@
 {
-  "name": "MOLI",
+  "name": "moli",
+  "productName": "MOLI청취자",
+  "description": "MOLI청취자 데스크탑 어플리케이션입니다.",
   "version": "0.1.0",
   "private": true,
   "author": "Joonho Kim",
   "main": "public/electron.js",
   "homepage": "./",
+  "scripts": {
+    "react-start": "react-scripts start",
+    "react-build": "react-scripts build",
+    "react-test": "react-scripts test",
+    "react-eject": "react-scripts eject",
+    "start": "concurrently \"cross-env NODE_ENV=development BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\"",
+    "build": "yarn react-build && electron-builder",
+    "release": "yarn react-build && electron-builder --publish=always"
+  },
+  "agora_electron": {
+    "electron_version": "12.0.0",
+    "platform": "darwin",
+    "prebuilt": true
+  },
   "dependencies": {
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
@@ -16,10 +32,6 @@
     "@types/react-dom": "^18.0.0",
     "@types/react-router-dom": "^5.3.3",
     "@types/styled-components": "^5.1.25",
-    "agora-electron-sdk": "^3.7.0-build.519",
-    "agora-rtc-react": "^1.1.1",
-    "agora-rtc-sdk": "^3.6.10",
-    "agora-rtc-sdk-ng": "^4.11.1",
     "axios": "^0.27.2",
     "electron-is-dev": "^2.0.0",
     "qs": "^6.10.3",
@@ -31,19 +43,13 @@
     "typescript": "^4.4.2",
     "web-vitals": "^2.1.0"
   },
-  "scripts": {
-    "react-start": "react-scripts start",
-    "react-build": "react-scripts build",
-    "react-test": "react-scripts test",
-    "react-eject": "react-scripts eject",
-    "start": "concurrently \"cross-env NODE_ENV=development BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\"",
-    "build": "yarn react-build && electron-builder",
-    "release": "yarn react-build && electron-builder --publish=always"
-  },
-  "agora_electron": {
-    "electron_version": "10.2.0",
-    "platform": "darwin",
-    "prebuilt": true
+  "devDependencies": {
+    "agora-rtc-sdk-ng": "latest",
+    "concurrently": "^7.2.0",
+    "cross-env": "^7.0.3",
+    "electron": "12.0.0",
+    "electron-builder": "^23.0.3",
+    "wait-on": "^6.0.1"
   },
   "eslintConfig": {
     "extends": [
@@ -62,15 +68,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "agora-electron-sdk": "latest",
-    "agora-rtc-sdk-ng": "latest",
-    "concurrently": "^7.2.0",
-    "cross-env": "^7.0.3",
-    "electron": "10.2.0",
-    "electron-builder": "^23.0.3",
-    "wait-on": "^6.0.1"
   },
   "build": {
     "productName": "모리(MOLI)",
