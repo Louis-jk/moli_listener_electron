@@ -87,7 +87,7 @@ export const ConferenceSessionImgWrap = styled.div`
     right: -22px;
     padding: 2rem;
     content: '';
-    background-image: url('/assets/images/session_arrow.png');
+    background-image: url('images/session_arrow.png');
     background-repeat: no-repeat;
     background-position: center center;
     background-size: contain;

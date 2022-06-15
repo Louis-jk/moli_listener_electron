@@ -5,16 +5,16 @@
   "version": "0.1.0",
   "private": true,
   "author": "Joonho Kim",
-  "main": "public/electron.js",
   "homepage": "./",
   "scripts": {
-    "react-start": "react-scripts start",
-    "react-build": "react-scripts build",
-    "react-test": "react-scripts test",
-    "react-eject": "react-scripts eject",
-    "start": "concurrently \"cross-env NODE_ENV=development BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\"",
-    "build": "yarn react-build && electron-builder",
-    "release": "yarn react-build && electron-builder --publish=always"
+    "start:web": "react-scripts start",
+    "build:web": "react-scripts build",
+    "build:desktop": "tsc -p electron/tsconfig.json",
+    "start:desktop": "npm run build:desktop && electron ./build/electron.js",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "deploy": "electron-builder --windows nsis:ia32",
+    "build": "electron-builder build"
   },
   "agora_electron": {
     "electron_version": "12.0.0",
@@ -32,6 +32,7 @@
     "@types/react-dom": "^18.0.0",
     "@types/react-router-dom": "^5.3.3",
     "@types/styled-components": "^5.1.25",
+    "agora-electron-sdk": "^3.7.0-build.527",
     "axios": "^0.27.2",
     "electron-is-dev": "^2.0.0",
     "qs": "^6.10.3",

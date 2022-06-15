@@ -169,7 +169,7 @@ export const CircleBtnNext = styled.div`
 export const GoBackBtn = styled.div`
   width: 30px;
   height: 30px;
-  background-image: url('/assets/images/ic_back_w.png');
+  background-image: url('images/ic_back_w.png');
   background-repeat: no-repeat;
   background-position: center center;
   background-size: contain;
@@ -179,7 +179,7 @@ export const GoBackBtn = styled.div`
 export const SettingBtn = styled.div`
   width: 30px;
   height: 30px;
-  background-image: url('/assets/images/ic_setting_w.png');
+  background-image: url('images/ic_setting_w.png');
   background-repeat: no-repeat;
   background-position: center center;
   background-size: contain;

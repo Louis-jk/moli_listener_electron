@@ -272,7 +272,7 @@ const SessionDetail = () => {
                 <FlexRowCenterStart>
                   {list.status !== 'close' && (
                     <img
-                      src='/assets/images/ic_eq.png'
+                      src='images/ic_eq.png'
                       style={{
                         width: 20,
                         objectFit: 'contain',
@@ -289,7 +289,7 @@ const SessionDetail = () => {
                       }}
                     >
                       <img
-                        src='/assets/images/ic_play.png'
+                        src='images/ic_play.png'
                         style={{ width: 27, height: 27 }}
                         alt='플레이중 스톱 아이콘'
                         title='플레이중 스톱 아이콘'
@@ -303,7 +303,7 @@ const SessionDetail = () => {
                       }}
                     >
                       <img
-                        src='/assets/images/ic_stop.png'
+                        src='images/ic_stop.png'
                         style={{ width: 27, height: 27 }}
                         alt='플레이중 스톱 아이콘'
                         title='플레이중 스톱 아이콘'
@@ -312,7 +312,7 @@ const SessionDetail = () => {
                   )}
                   {list.status === 'close' && (
                     <img
-                      src='/assets/images/ic_play.png'
+                      src='images/ic_play.png'
                       style={{ width: 27, height: 27, opacity: 0.25 }}
                       alt='플레이중 스톱 아이콘'
                       title='플레이중 스톱 아이콘'
@@ -335,7 +335,7 @@ const SessionDetail = () => {
               <SessionTransListBox key={index} active={list.status !== 'close'}>
                 <p>{list.file_name}</p>
                 <img
-                  src='/assets/images/ic_download.png'
+                  src='images/ic_download.png'
                   style={{ width: 27, height: 27 }}
                   alt='플레이중 스톱 아이콘'
                   title='플레이중 스톱 아이콘'

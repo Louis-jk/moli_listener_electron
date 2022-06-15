@@ -13,11 +13,7 @@ const Splash = () => {
 
   return (
     <SplashContainer>
-      <img
-        src='/assets/images/login_img.png'
-        alt='MOLI 로고'
-        title='MOLI 로고'
-      />
+      <img src='images/login_img.png' alt='MOLI 로고' title='MOLI 로고' />
     </SplashContainer>
   )
 };

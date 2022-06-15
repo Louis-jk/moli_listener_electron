@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
 import {
   CircleBtnNext,
   Container,
@@ -10,43 +10,50 @@ import {
   InputBox,
   InputWrapper,
   Margin,
-  PointText,
-} from '../styles/Common.Styled';
-import QueryString from 'qs';
+  PointText
+} from '../styles/Common.Styled'
+import QueryString from 'qs'
+import appRuntime from '../appRuntime'
 
 const Code = () => {
-  const navigate = useNavigate();
-  const [entryCode, setEntryCode] = useState('ksce');
-  const [isError, setError] = useState(false);
-  const [codeResultErrorMsg, setCodeResultErrorMsg] = useState('');
+  const navigate = useNavigate()
+  const [entryCode, setEntryCode] = useState('ksce')
+  const [isError, setError] = useState(false)
+  const [codeResultErrorMsg, setCodeResultErrorMsg] = useState('')
 
   useEffect(() => {
-    setError(false);
-  }, []);
+    setError(false)
+  }, [])
+
+  const reSizeBrowser = () => {
+    console.log('resize')
+
+    appRuntime.send('re-size', 're-size')
+  };
 
   const nextHandler = () => {
     const params = {
       set_lang: 'ko',
-      code_in: entryCode,
-    };
+      code_in: entryCode
+    }
 
     axios({
       method: 'post',
       url: `${process.env.REACT_APP_BACKEND_URL}/api/listen_conference_info.php`,
-      data: QueryString.stringify(params),
+      data: QueryString.stringify(params)
     })
       .then((res) => {
-        console.log('res', res);
+        console.log('res', res)
         if (res.status === 200 && res.data.result === 'true') {
           // navigate('/list', { state: { data: res.data.data } });
-          navigate('/list', { state: res.data.data });
+          navigate('/list', { state: res.data.data })
         } else {
           // alert(res.data.msg);
-          setError(true);
-          setCodeResultErrorMsg(res.data.msg);
+          setError(true)
+          setCodeResultErrorMsg(res.data.msg)
         }
       })
-      .catch((error) => console.error('error: ', error));
+      .catch((error) => console.error('error: ', error))
   };
 
   return (
@@ -78,18 +85,14 @@ const Code = () => {
         </p>
 
         <Margin type='bottom' size={100} />
-
+        <button onClick={reSizeBrowser}>사이즈 조절</button>
         <CircleBtnNext onClick={nextHandler}>
-          <img
-            src='/assets/images/code_btn.png'
-            alt='다음 버튼'
-            title='다음 버튼'
-          />
+          <img src='images/code_btn.png' alt='다음 버튼' title='다음 버튼' />
           <p>다음</p>
         </CircleBtnNext>
       </FlexColumnCenterCenter>
     </Container>
-  );
+  )
 };
 
-export default Code;
+export default Code
