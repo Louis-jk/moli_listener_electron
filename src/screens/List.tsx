@@ -8,7 +8,7 @@ import {
   InfoTitle,
   Margin,
   MoreBtn,
-  PointText,
+  SpanPoint,
   Wrapper,
 } from '../styles/Common.Styled';
 import {
@@ -19,8 +19,8 @@ import {
   ConferenceSessionImgWrap,
   ConferenceTitle,
 } from '../styles/Lists.Styled';
-import Header from './Header';
-import Loading from './Loading';
+import Header from '../components/Header';
+import Loading from '../components/Loading';
 
 const List = () => {
   const navigate = useNavigate();
@@ -87,7 +87,7 @@ const List = () => {
         <FlexRowStartCenter style={{ width: '100%' }}>
           <InfoTitle style={{ marginRight: 10 }}>세션목록</InfoTitle>
           <p>
-            <PointText>4</PointText>
+            <SpanPoint>4</SpanPoint>
           </p>
         </FlexRowStartCenter>
 

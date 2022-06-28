@@ -7,6 +7,11 @@ interface MarginProps {
   size: number;
 }
 
+type ButtonType = 'full' | 'line';
+interface ButtonProps {
+  type: ButtonType;
+}
+
 export const Width100 = styled.div`
   width: 100%;
 `;
@@ -35,6 +40,12 @@ export const FlexStartCenter = styled.div`
   align-items: center;
 `;
 
+export const FlexEndCenter = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+`;
+
 export const FlexStartStart = styled.div`
   display: flex;
   justify-content: flex-start;
@@ -44,6 +55,12 @@ export const FlexStartStart = styled.div`
 export const FlexSpaceBCenter = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
+`;
+
+export const FlexSpaceECenter = styled.div`
+  display: flex;
+  justify-content: space-evenly;
   align-items: center;
 `;
 
@@ -69,6 +86,10 @@ export const FlexRowStartCenter = styled(FlexStartCenter)`
   flex-direction: row;
 `;
 
+export const FlexRowEndCenter = styled(FlexEndCenter)`
+  flex-direction: row;
+`;
+
 export const FlexRowSpaceBCenter = styled(FlexSpaceBCenter)`
   flex-direction: row;
 `;
@@ -81,7 +102,19 @@ export const FlexColumnCenterCenter = styled(FlexCenterCenter)`
   flex-direction: column;
 `;
 
+export const FlexColumnStartCenter = styled(FlexStartCenter)`
+  flex-direction: column;
+`;
+
+export const FlexColumnStartStart = styled(FlexStartStart)`
+  flex-direction: column;
+`;
+
 export const FlexColumnSpaceBCenter = styled(FlexSpaceBCenter)`
+  flex-direction: column;
+`;
+
+export const FlexColumnSpaceECenter = styled(FlexSpaceECenter)`
   flex-direction: column;
 `;
 
@@ -90,8 +123,75 @@ export const Container = styled.div`
   background-color: ${theme.colors.BASE_COLOR_DARK};
 `;
 
-export const Wrapper = styled.section`
-  padding: 0 1rem;
+interface WrapperProps {
+  isFrameMin?: boolean;
+}
+export const Wrapper = styled.section<WrapperProps>`
+  padding: 5.2rem 1rem 3rem;
+  transform: translateY(0);
+  transition: all 0.4s ease;
+
+  ${({ isFrameMin }) =>
+    isFrameMin &&
+    `
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 3.5rem 1.5rem 0;
+  // transform: translateY(-30px);
+  width: 100%;
+  `}
+`;
+
+export const WindowControl = styled(FlexRowEndCenter)`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  padding: 0.45rem 0.65rem;
+  -webkit-app-region: drag;
+  cursor: pointer;
+  background: #111;
+  z-index: 100;
+
+  & > div {
+    -webkit-app-region: no-drag;
+    display: block;
+    width: 20px;
+    height: 20px;
+    margin-left: 8px;
+    cursor: pointer;
+
+    & > img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+`;
+
+interface WrapperProps {
+  isFrameMin?: boolean;
+}
+export const HeaderArea = styled(FlexRowSpaceBCenter)<WrapperProps>`
+  position: fixed;
+  top: 1.85rem;
+  left: 0;
+  right: 0;
+  height: 50px;
+  background: #222;
+  padding: 0.75rem 1rem;
+  z-index: 99;
+  transform: translateY(0);
+  transition: all 0.4s ease;
+
+  ${({ isFrameMin }) =>
+    isFrameMin &&
+    `
+    transform: translateY(-100px);
+  `}
 `;
 
 export const InfoTitle = styled.h3`
@@ -100,6 +200,14 @@ export const InfoTitle = styled.h3`
 
 export const InfoDesc = styled.p`
   color: ${theme.colors.TEXT_DESCRIPTION_COLOR};
+`;
+
+export const TextWhite = styled.p`
+  color: ${theme.colors.TEXT_WHITE_COLOR}; ;
+`;
+
+export const TextPoint = styled.p`
+  color: ${theme.colors.POINT_COLOR}; ;
 `;
 
 export const InputWrapper = styled.div`
@@ -121,11 +229,11 @@ export const InputBox = styled.input`
   }
 `;
 
-export const WhiteText = styled.span`
+export const SpanWhite = styled.span`
   color: ${theme.colors.TEXT_WHITE_COLOR};
 `;
 
-export const PointText = styled.span`
+export const SpanPoint = styled.span`
   color: ${theme.colors.POINT_COLOR};
 `;
 
@@ -252,4 +360,27 @@ export const LoadingWrap = styled(FlexColumnCenterCenter)`
       }
     }
   }
+`;
+
+export const Button = styled.div<ButtonProps>`
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 100%;
+  font-weight: bold;
+  text-align: center;
+  color: ${({ type }) => (type === 'line' ? theme.colors.POINT_COLOR : '#fff')};
+  background: ${({ type }) =>
+    type === 'full' ? theme.colors.POINT_COLOR : 'transparent'};
+  border: none;
+  margin: 0;
+  padding: 0.85rem 1.2rem;
+  border-radius: 7px;
+  cursor: pointer;
+
+  ${({ type }) =>
+    type === 'line' &&
+    `
+    border: 1px solid ${theme.colors.POINT_COLOR};
+  `}
 `;

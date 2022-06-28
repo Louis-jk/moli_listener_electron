@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import QueryString from 'qs';
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -33,8 +33,8 @@ import {
   SessionTransListBox,
 } from '../styles/SessionDetail.Styled';
 import { theme } from '../styles/Theme';
-import Header from './Header';
-import Loading from './Loading';
+import Header from '../components/Header';
+import Loading from '../components/Loading';
 import appRuntime from '../appRuntime';
 import { RootState } from '../store';
 
@@ -58,6 +58,7 @@ const SessionDetail = () => {
   const { state }: any = useLocation();
 
   const { isMin } = useSelector((state: RootState) => state.frame);
+  const { mt_idx } = useSelector((state: RootState) => state.login);
 
   const [isLoading, setLoading] = useState<boolean>(true);
   const [codeList, setCodeList] = useState<any[]>([]); // 통역사 리스트
@@ -67,6 +68,7 @@ const SessionDetail = () => {
   const [sessionContent, setSessionContent] = useState<string>(''); // 세션 컨텐츠(내용)
   const [sessionImg, setSessionImg] = useState<string>(''); // 세션 이미지
   const [selectTabNum, setSelectTabNum] = useState<number>(0); // 선택 탭 번호
+  const [sessionCode, setSessionCode] = useState<string>(''); // 현재 세션 코드
 
   const [isFrameMin, setFrameMin] = useState<boolean>(false);
   const [isFrameWide, setFrameWide] = useState<boolean>(false);
@@ -81,7 +83,6 @@ const SessionDetail = () => {
   const [users, setUsers] = useState<any>(null);
   const [active, setActive] = useState(false);
   const [vol, setVol] = useState(0);
-  const [localTracks, setLocalTracks] = useState<any>(null);
 
   const appId = process.env.REACT_APP_AGORA_APP_ID
     ? process.env.REACT_APP_AGORA_APP_ID
@@ -96,87 +97,196 @@ const SessionDetail = () => {
   //   });
   // });
 
-  // let localTracks: any;
-  let localAudioTrack;
-  let remoteUsers: any[] = [];
-  let getVolumes = {};
-
-  const client: IAgoraRTCClient = AgoraRTC.createClient({
-    codec: 'vp8',
-    mode: 'live',
-  });
-
-  client.setClientRole('audience');
-
-  const joinChannel = async (channel: string, agoraToken: string) => {
-    await client.setClientRole('audience');
-
-    // client.on('user-published', handleUserPublished);
-    // client.on('user-unpublished', handleUserUnpublished);
-
-    const uid = await client.join(appId, channel, agoraToken, null);
-    const localTrack = await AgoraRTC.createMicrophoneAudioTrack();
-    setLocalTracks(localTrack);
-
-    console.log('join localTrack?', localTrack);
-    // await client.publish([localTrack]);
-    // await client.unpublish();
-    setConnect(true);
-
-    console.log('publish success!');
-  };
-
-  const leaveChannel = async () => {
-    console.log('leave localTracks?', localTracks);
-
-    localTracks.stop();
-    localTracks.close();
-
-    remoteUsers = [];
-
-    await client.leave();
-    // client.removeAllListeners();
-    setConnect(false);
-  };
-
-  // client.on('user-joined', (state) => {
-  //   console.log('user-joined ::::::::::::::', state);
+  // const client: IAgoraRTCClient = AgoraRTC.createClient({
+  //   codec: 'vp8',
+  //   mode: 'live',
   // });
 
-  client.on('user-published', async (user: any, mediaType: any) => {
+  const client = AgoraRTC.createClient({ mode: 'live', codec: 'vp8' });
+
+  let localTracks: any = {
+    //videoTrack: null,
+    audioTrack: null,
+  };
+
+  let remoteUsers: any = {};
+
+  let options: any = {
+    appid: null,
+    channel: null,
+    uid: null,
+    token: null,
+    role: 'audience', //"audience", // host or audience
+    audienceLatency: 2,
+  };
+
+  const joinChannel = async (
+    channel: string,
+    agoraToken: string,
+    sCode: string
+  ) => {
+    playSessionHandler(sCode);
+
+    options.appid = appId;
+    options.channel = channel;
+    options.token = agoraToken;
+
+    const uid = await client.join(
+      options.appid,
+      options.channel,
+      options.token,
+      null
+    );
+
+    if (options.role === 'audience') {
+      client.setClientRole(options.role, { level: options.audienceLatency });
+      // add event listener to play remote tracks when remote user publishs.
+      client.on('user-published', handleUserPublished);
+      client.on('user-unpublished', handleUserUnpublished);
+    } else {
+      client.setClientRole(options.role);
+    }
+
+    //받는쪽 볼륨 체크해서 이퀼라져에 표시
+    client.enableAudioVolumeIndicator();
+    client.on('volume-indicator', (volumes) => {
+      volumes.forEach((volume, index) => {
+        console.log(`${index} UID ${volume.uid} Level ${volume.level}`);
+        // colorPids(volume.level);
+      });
+    });
+
+    // join the channel
+    options.uid = await client.join(
+      appId,
+      channel,
+      agoraToken || null,
+      options.uid || null
+    );
+
+    if (options.role === 'host') {
+      // create local audio and video tracks
+      localTracks.audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+      //localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
+      // play local video track
+      //localTracks.videoTrack.play("local-player");
+      // $("#local-player-name").text(`localTrack(${options.uid})`);
+      // publish local tracks to channel
+      await client.publish(Object.values(localTracks));
+      console.log('publish success');
+    }
+  };
+
+  console.log('client?', client);
+  console.log('localTracks?', localTracks);
+
+  const leaveChannel = async () => {
+    stopSessionHandler();
+    console.log('Leave ??');
+    // console.log('localTracks ??', localTracks);
+    // options.channel = '';
+    // options.token = '';
+    // localTracks = {};
+    // localTracks.map((trackName: any) => {
+    //   var track = localTracks[trackName];
+    //   if (track) {
+    //     track.stop();
+    //     track.close();
+    //     localTracks[trackName] = undefined;
+    //   }
+    // });
+
+    // Remove remote users and player views.
+    // remoteUsers = {};
+    //$("#remote-playerlist").html("");
+
+    // leave the channel
+
+    //$("#local-player-name").text("");
+    //$("#join").attr("disabled", false);
+    //$("#leave").attr("disabled", true);
+
+    try {
+      await client.leave();
+      console.log('client leaves channel success');
+    } catch (err) {
+      console.error('leave error', err);
+    }
+  };
+
+  /*
+   * Stop all local and remote tracks then leave the channel.
+   */
+
+  /*
+   * Add the local use to a remote channel.
+   *
+   * @param  {IAgoraRTCRemoteUser} user - The {@link  https://docs.agora.io/en/Voice/API%20Reference/web_ng/interfaces/iagorartcremoteuser.html| remote user} to add.
+   * @param {trackMediaType - The {@link https://docs.agora.io/en/Voice/API%20Reference/web_ng/interfaces/itrack.html#trackmediatype | media type} to add.
+   */
+  async function subscribe(user: any, mediaType: any) {
+    const uid = user.uid;
+    // subscribe to a remote user
     await client.subscribe(user, mediaType);
-
-    console.log('mediaType ??', mediaType);
-
+    console.log('subscribe success');
+    /*
+  if (mediaType === 'video') {
+    const player = $(`
+      <div id="player-wrapper-${uid}">
+        <p class="player-name">remoteUser(${uid})</p>
+        <div id="player-${uid}" class="player"></div>
+      </div>
+    `);
+    $("#remote-playerlist").append(player);
+    user.videoTrack.play(`player-${uid}`);
+  }
+  */
     if (mediaType === 'audio') {
       user.audioTrack.play();
     }
-  });
+  }
 
-  client.on('user-unpublished', async (user: any) => {
-    console.log('unpublished success', user);
-  });
+  /*
+   * Add a user who has subscribed to the live channel to the local interface.
+   *
+   * @param  {IAgoraRTCRemoteUser} user - The {@link  https://docs.agora.io/en/Voice/API%20Reference/web_ng/interfaces/iagorartcremoteuser.html| remote user} to add.
+   * @param {trackMediaType - The {@link https://docs.agora.io/en/Voice/API%20Reference/web_ng/interfaces/itrack.html#trackmediatype | media type} to add.
+   */
+  function handleUserPublished(user: any, mediaType: any) {
+    const id = user.uid;
+    remoteUsers[id] = user;
+    subscribe(user, mediaType);
+  }
 
-  client.on('user-left', (user: IAgoraRTCRemoteUser, reason: string) => {
-    console.log('user Left success', user);
-    console.log('user Left reason ?????', reason);
+  /*
+   * Remove the user specified from the channel in the local interface.
+   *
+   * @param  {string} user - The {@link  https://docs.agora.io/en/Voice/API%20Reference/web_ng/interfaces/iagorartcremoteuser.html| remote user} to remove.
+   */
+  function handleUserUnpublished(user: any, mediaType: any) {
+    if (mediaType === 'video') {
+      const id = user.uid;
+      delete remoteUsers[id];
+      //$(`#player-wrapper-${id}`).remove();
+    }
+  }
 
-    client.unsubscribe(user);
-  });
+  // appRuntime.on('isFrameWide', (event: any, data: boolean) => {
+  //   setFrameWide(data);
+  // });
 
-  appRuntime.on('isFrameWide', (event: any, data: boolean) => {
-    setFrameWide(data);
-  });
+  // appRuntime.on('isFrameMin', (event: any, data: boolean) => {
+  //   setFrameMin(data);
+  // });
 
-  appRuntime.on('isFrameMin', (event: any, data: boolean) => {
-    setFrameMin(data);
-  });
-
+  // 세션 페이지 들어왔을 때
   const getSessinInfoAPI = () => {
+    console.log('state.code ??', state.code);
+
     const params = {
       set_lang: 'ko',
       code_in: state.code,
-      mt_idx: 20,
+      mt_idx,
     };
 
     axios({
@@ -251,19 +361,63 @@ const SessionDetail = () => {
   };
 
   useEffect(() => {
-    if (state && state.code && typeof state.code === 'string') {
-      getSessinInfoAPI();
+    getSessinInfoAPI();
+  }, []);
 
+  useEffect(() => {
+    if (state && state.code && typeof state.code === 'string') {
       requestAPI();
       // return requestAPI();
     }
   }, [state]);
 
-  useEffect(() => {
-    setInterval(() => {
-      getRefleshAPI();
-    }, 5000);
-  });
+  // useEffect(() => {
+  //   setInterval(() => {
+  //     getRefleshAPI();
+  //   }, 5000);
+  // });
+
+  // 세션 언어 플레이
+  const playSessionHandler = (payload: string) => {
+    console.log('play sessionCode ?', sessionCode);
+
+    const params = {
+      set_lang: 'ko',
+      code_in: payload,
+      mt_idx,
+    };
+
+    axios({
+      method: 'post',
+      url: `${process.env.REACT_APP_BACKEND_URL}/api/listen_session_play.php`,
+      data: QueryString.stringify(params),
+    })
+      .then((res: AxiosResponse) => console.log('play res::', res))
+      .catch((err: AxiosError) => {
+        console.error('play res Error', err);
+      });
+  };
+
+  // 세션 언어 중지(청취자가 통역듣는 세션 중지했을때)
+  const stopSessionHandler = () => {
+    console.log('stop sessionCode ?', sessionCode);
+
+    const params = {
+      set_lang: 'ko',
+      code_in: sessionCode,
+      mt_idx,
+    };
+
+    axios({
+      method: 'post',
+      url: `${process.env.REACT_APP_BACKEND_URL}/api/listen_session_end.php`,
+      data: QueryString.stringify(params),
+    })
+      .then((res: AxiosResponse) => console.log('stop res::', res))
+      .catch((err: AxiosError) => {
+        console.error('stop res Error', err);
+      });
+  };
 
   const Item: React.FC<ItemProps> = ({ text }) => {
     return (
@@ -282,42 +436,6 @@ const SessionDetail = () => {
   const selectTabHandler = (id: number) => {
     setSelectTabNum(id);
   };
-
-  function handleUserPublished(user: any, mediaType: any) {
-    const id = user.uid;
-    remoteUsers[id] = user;
-    subscribe(user, mediaType);
-  }
-
-  function handleUserUnpublished(user: any, mediaType: any) {
-    if (mediaType === 'video') {
-      const id = user.uid;
-      delete remoteUsers[id];
-      //$(`#player-wrapper-${id}`).remove();
-    }
-  }
-
-  async function subscribe(user: any, mediaType: any) {
-    const uid = user.uid;
-    // subscribe to a remote user
-    await client.subscribe(user, mediaType);
-    console.log('subscribe success');
-    /*
-    if (mediaType === 'video') {
-      const player = $(`
-        <div id="player-wrapper-${uid}">
-          <p class="player-name">remoteUser(${uid})</p>
-          <div id="player-${uid}" class="player"></div>
-        </div>
-      `);
-      $("#remote-playerlist").append(player);
-      user.videoTrack.play(`player-${uid}`);
-    }
-    */
-    if (mediaType === 'audio') {
-      user.audioTrack.play();
-    }
-  }
 
   console.log('codeList ??', codeList);
 
@@ -382,56 +500,25 @@ const SessionDetail = () => {
               >
                 <p>{list.lang_title}</p>
                 <FlexRowCenterStart>
-                  {list.status !== 'close' && (
-                    <img
-                      src='images/ic_eq.png'
-                      style={{
-                        width: 20,
-                        objectFit: 'contain',
-                        marginRight: 10,
-                      }}
-                      alt='플레이중 아이콘'
-                      title='플레이중 아이콘'
-                    />
-                  )}
-                  {list.status === 'open' && !isConnect && (
-                    <PlayBtn
-                      onClick={() => {
-                        joinChannel(list.channel_name, list.listen_token);
-                        setCurrTrans(index);
-                      }}
-                    >
-                      <img
-                        src='images/ic_play.png'
-                        style={{ width: 27, height: 27 }}
-                        alt='플레이중 스톱 아이콘'
-                        title='플레이중 스톱 아이콘'
-                      />
-                    </PlayBtn>
-                  )}
-                  {list.status === 'open' && isConnect && (
-                    <PlayBtn
-                      onClick={() => {
-                        leaveChannel();
-                      }}
-                    >
-                      <img
-                        src='images/ic_stop.png'
-                        style={{ width: 27, height: 27 }}
-                        alt='플레이중 스톱 아이콘'
-                        title='플레이중 스톱 아이콘'
-                      />
-                    </PlayBtn>
-                  )}
-                  {list.status === 'close' && (
+                  <PlayBtn
+                    onClick={() => {
+                      setSessionCode(list.session_code);
+                      joinChannel(
+                        list.channel_name,
+                        list.listen_token,
+                        list.session_code
+                      );
+                      setCurrTrans(index);
+                    }}
+                  >
                     <img
                       src='images/ic_play.png'
-                      style={{ width: 27, height: 27, opacity: 0.25 }}
+                      style={{ width: 27, height: 27 }}
                       alt='플레이중 스톱 아이콘'
                       title='플레이중 스톱 아이콘'
                     />
-                  )}
-                  {/* <PlayBtn
+                  </PlayBtn>
+                  <PlayBtn
                     onClick={() => {
                       leaveChannel();
                     }}
@@ -442,7 +529,7 @@ const SessionDetail = () => {
                       alt='플레이중 스톱 아이콘'
                       title='플레이중 스톱 아이콘'
                     />
-                  </PlayBtn> */}
+                  </PlayBtn>
                 </FlexRowCenterStart>
               </SessionTransListBox>
             ))
@@ -498,7 +585,8 @@ const SessionDetail = () => {
                 onClick={() => {
                   joinChannel(
                     codeList[currTrans].channel_name,
-                    codeList[currTrans].listen_token
+                    codeList[currTrans].listen_token,
+                    codeList[currTrans].session_code
                   );
                 }}
               >

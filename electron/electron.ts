@@ -1,4 +1,5 @@
 import { app, BrowserWindow, Menu, ipcMain } from 'electron';
+import * as isDev from 'electron-is-dev';
 import * as path from 'path';
 const fs = require('fs');
 const os = require('os');
@@ -10,10 +11,11 @@ let mainWindow: Electron.BrowserWindow | null;
 function createWindow() {
   mainWindow = new BrowserWindow({
     titleBarStyle: 'customButtonsOnHover',
+    frame: false,
+    transparent: true,
     width: 380,
     height: 850,
     title: 'MOLI',
-    frame: false,
     resizable: false,
     autoHideMenuBar: true,
     webPreferences: {
@@ -31,14 +33,19 @@ function createWindow() {
     pathname: path.join(app.getAppPath(), 'index.html'), // 빌드시 /build/index.html 로 변경 필요
     slashes: true,
   });
-  mainWindow.loadURL(indexPath);
+
+  if (isDev) {
+    mainWindow.loadURL('http://localhost:3000');
+    mainWindow.webContents.openDevTools();
+  } else {
+    mainWindow.loadURL(indexPath);
+  }
   // setupPushReceiver(mainWindow.webContents);
 
   // 기본 메뉴 숨기기
   mainWindow.setMenuBarVisibility(false);
 
   // 개발자 툴 오픈
-  mainWindow.webContents.openDevTools(); // 빌드시 해제 필요
 
   mainWindow.on('closed', () => {
     mainWindow = null;
@@ -49,11 +56,16 @@ function createWindow() {
 Menu.setApplicationMenu(null);
 
 // 리사이징 기능
-ipcMain.on('re-size', (event, data) => {
-  console.log('ipcMain re-size event', event);
-  console.log('ipcMain re-size data', data);
+ipcMain.on('frameMin', (event, data) => {
+  mainWindow.setSize(380, 250, true);
+  event.sender.send('isFrameMin', true);
+  event.sender.send('isFrameWide', false);
+});
 
-  mainWindow.setSize(380, 300, true);
+ipcMain.on('frameWide', (event, data) => {
+  mainWindow.setSize(380, 850, true);
+  event.sender.send('isFrameWide', true);
+  event.sender.send('isFrameMin', false);
 });
 
 // 창 닫기
