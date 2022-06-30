@@ -16,7 +16,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../store';
 import QueryString from 'qs';
 
-type HeaderType = 'main' | 'detail' | 'session' | 'not' | 'code';
+type HeaderType = 'main' | 'detail' | 'session' | 'not' | 'code' | 'general';
 interface Props {
   type: HeaderType;
   title: string | JSX.Element[] | JSX.Element;
@@ -52,17 +52,17 @@ const Header: React.FC<Props> = ({ type, title }) => {
   };
 
   // web 실행시 주석 필요
-  // appRuntime.on('isFrameWide', (event: any, data: boolean) => {
-  //   console.log('GET isFrameWide event ::', event);
-  //   console.log('GET isFrameWide data ::', data);
-  //   setFrameWide(data);
-  // });
+  appRuntime.on('isFrameWide', (event: any, data: boolean) => {
+    console.log('GET isFrameWide event ::', event);
+    console.log('GET isFrameWide data ::', data);
+    setFrameWide(data);
+  });
 
-  // appRuntime.on('isFrameMin', (event: any, data: boolean) => {
-  //   console.log('GET isFrameMin event ::', event);
-  //   console.log('GET isFrameMin data ::', data);
-  //   setFrameMin(data);
-  // });
+  appRuntime.on('isFrameMin', (event: any, data: boolean) => {
+    console.log('GET isFrameMin event ::', event);
+    console.log('GET isFrameMin data ::', data);
+    setFrameMin(data);
+  });
 
   const winMin = () => {
     console.log('윈도우 최소화');
@@ -93,10 +93,10 @@ const Header: React.FC<Props> = ({ type, title }) => {
     navigate('/settings');
   };
 
-  console.log('====================================');
-  console.log('isFrameMin', isFrameMin);
-  console.log('isFrameWide', isFrameWide);
-  console.log('====================================');
+  // console.log('====================================');
+  // console.log('isFrameMin', isFrameMin);
+  // console.log('isFrameWide', isFrameWide);
+  // console.log('====================================');
 
   return (
     <header>
@@ -127,7 +127,7 @@ const Header: React.FC<Props> = ({ type, title }) => {
             <div style={{ width: 30 }} />
           )}
           <h3>{title}</h3>
-          {type !== 'session' ? (
+          {type !== 'session' && type !== 'general' ? (
             <SettingBtn onClick={goSettings} />
           ) : (
             <div style={{ width: 30 }} />

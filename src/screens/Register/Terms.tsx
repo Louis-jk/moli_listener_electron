@@ -130,7 +130,7 @@ const Terms = () => {
     <Container>
       <Header
         title={intl.formatMessage({ id: 'seviceagree' })}
-        type='session'
+        type='general'
       />
       <Wrapper>
         {/* 이용약관 */}

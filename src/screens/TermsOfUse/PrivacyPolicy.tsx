@@ -41,7 +41,7 @@ const PrivacyPolicy = () => {
     <Container>
       <Header
         title={intl.formatMessage({ id: 'privacysettitle' })}
-        type='session'
+        type='general'
       />
       <Wrapper>
         <div style={{ padding: '1rem' }}>

@@ -99,7 +99,7 @@ const FindPwd = () => {
 
   return (
     <Container>
-      <Header title={intl.formatMessage({ id: 'findpw' })} type='session' />
+      <Header title={intl.formatMessage({ id: 'findpw' })} type='general' />
       <Wrapper>
         <Margin type='bottom' size={50} />
         <FlexColumnCenterCenter style={{ width: '100%' }}>

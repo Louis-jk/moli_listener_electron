@@ -132,7 +132,7 @@ interface VerticalLineProps {
 }
 
 export const Wrapper = styled.section<WrapperProps>`
-  padding: 5rem 1rem 3rem;
+  padding: 4.9rem 1rem 3rem;
   transform: translateY(0);
   transition: all 0.4s ease;
   background-color: ${theme.colors.BASE_COLOR_DARK};
@@ -183,7 +183,7 @@ interface WrapperProps {
 }
 export const HeaderArea = styled(FlexRowSpaceBCenter)<WrapperProps>`
   position: fixed;
-  top: 1.85rem;
+  top: 1.84rem;
   left: 0;
   right: 0;
   height: 50px;

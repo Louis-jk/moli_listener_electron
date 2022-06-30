@@ -128,7 +128,7 @@ const Settings = () => {
       />
       {/* // 회원탈퇴 모달 */}
 
-      <Header title={intl.formatMessage({ id: 'settings' })} type='session' />
+      <Header title={intl.formatMessage({ id: 'settings' })} type='general' />
       <Wrapper style={{ height: '100%' }}>
         <FlexColumnSpaceBCenter style={{ height: '100%' }}>
           <div style={{ width: '100%' }}>

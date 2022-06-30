@@ -135,7 +135,7 @@ export default function EmailLogin() {
 
   return (
     <Container>
-      <Header title={intl.formatMessage({ id: 'login' })} type='session' />
+      <Header title={intl.formatMessage({ id: 'login' })} type='general' />
       <Wrapper>
         <Margin type='bottom' size={50} />
         <FlexColumnCenterCenter>

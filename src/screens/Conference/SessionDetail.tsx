@@ -275,13 +275,13 @@ const SessionDetail = () => {
   }
 
   // web 실행시 주석 필요
-  // appRuntime.on('isFrameWide', (event: any, data: boolean) => {
-  //   setFrameWide(data);
-  // });
+  appRuntime.on('isFrameWide', (event: any, data: boolean) => {
+    setFrameWide(data);
+  });
 
-  // appRuntime.on('isFrameMin', (event: any, data: boolean) => {
-  //   setFrameMin(data);
-  // });
+  appRuntime.on('isFrameMin', (event: any, data: boolean) => {
+    setFrameMin(data);
+  });
 
   // 세션 페이지 들어왔을 때
   const getSessinInfoAPI = () => {

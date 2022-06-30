@@ -270,7 +270,7 @@ const RegisterCode = () => {
 
   return (
     <Container>
-      <Header title={intl.formatMessage({ id: 'emailcode' })} type='session' />
+      <Header title={intl.formatMessage({ id: 'emailcode' })} type='general' />
       <Wrapper>
         <Margin type='bottom' size={50} />
         <FlexColumnCenterCenter>

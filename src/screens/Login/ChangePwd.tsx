@@ -143,7 +143,7 @@ const ChangePwd = () => {
 
   return (
     <Container>
-      <Header title={intl.formatMessage({ id: 'password' })} type='session' />
+      <Header title={intl.formatMessage({ id: 'password' })} type='general' />
       <Wrapper>
         <Margin type='bottom' size={50} />
         <FlexColumnCenterCenter style={{ width: '100%' }}>

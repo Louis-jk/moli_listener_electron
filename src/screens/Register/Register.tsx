@@ -205,7 +205,7 @@ const Register = () => {
 
   return (
     <Container>
-      <Header title={intl.formatMessage({ id: 'signup' })} type='session' />
+      <Header title={intl.formatMessage({ id: 'signup' })} type='general' />
       <Wrapper>
         <Margin type='bottom' size={50} />
         <FlexColumnCenterCenter>
