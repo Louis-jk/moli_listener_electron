@@ -352,13 +352,17 @@ export const TabActiveBar = styled.div<TabProps>`
     active ? theme.colors.POINT_COLOR : 'transparent'};
 `;
 
-export const LoadingWrap = styled(FlexColumnCenterCenter)`
+interface LoadingWrapProp {
+  isTransparent: boolean;
+}
+export const LoadingWrap = styled(FlexColumnCenterCenter)<LoadingWrapProp>`
   position: fixed;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
-  background: ${theme.colors.BASE_COLOR_DARK};
+  background: ${({ isTransparent }) =>
+    isTransparent ? `transparent` : theme.colors.BASE_COLOR_DARK};
 
   & > img {
     width: 80px;
@@ -382,6 +386,15 @@ export const LoadingWrap = styled(FlexColumnCenterCenter)`
       }
     }
   }
+
+  ${({ isTransparent }) =>
+    isTransparent
+      ? `
+      background-color: rgba('0,0,0,0.1');    
+    `
+      : `
+    background-color: ${theme.colors.BASE_COLOR_DARK};
+    `}
 `;
 
 export const Button = styled.div<ButtonProps>`
