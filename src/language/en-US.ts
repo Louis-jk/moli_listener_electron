@@ -78,6 +78,11 @@ export default {
   more: 'conference detail',
   listenerstart: 'Start listening.',
   settings: 'Settings',
-  newPasswordRequire: '* input of new password.',
-  newPasswordReRequire: '* input of new confirm password.'
-}
+  newPasswordRequire: '* Please enter your new password.',
+  newPasswordReRequire: '* Please enter your new password again.',
+  passwordRequire: '* Please enter password.',
+  passwordReRequire: '* Please enter password again.',
+  emailRequire: '* Please enter your email.',
+  signupBtn: 'SignUp',
+  nameValidate: '* Please enter only in Hangul, Alphabets, and Numbers.',
+};

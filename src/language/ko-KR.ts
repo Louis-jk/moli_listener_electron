@@ -77,6 +77,11 @@ export default {
   codeinputerr: '코드를 입력해 주세요.',
   listenerstart: '청취를 시작합니다.',
   settings: '설정',
-  newPasswordRequire: '* 새 비밀번호를 입력해주세요',
-  newPasswordReRequire: '* 새 비밀번호 확인을 입력해주세요'
-}
+  newPasswordRequire: '* 새 비밀번호를 입력해주세요.',
+  newPasswordReRequire: '* 새 비밀번호 확인을 입력해주세요.',
+  passwordRequire: '* 비밀번호를 입력해주세요.',
+  passwordReRequire: '* 비밀번호 확인을 입력해주세요.',
+  emailRequire: '* 이메일을 입력해주세요.',
+  signupBtn: '확인',
+  nameValidate: '* 한글, 영문, 숫자만 적용됩니다.',
+};
