@@ -27,7 +27,7 @@ const Code = () => {
   const dispatch = useDispatch();
   const { locale } = useSelector((state: RootState) => state.locale);
   const intl = useIntl();
-  const [entryCode, setEntryCode] = useState('moli3');
+  const [entryCode, setEntryCode] = useState(''); // ex: moli3
   const [isError, setError] = useState(false);
   const [codeResultErrorMsg, setCodeResultErrorMsg] = useState('');
 
