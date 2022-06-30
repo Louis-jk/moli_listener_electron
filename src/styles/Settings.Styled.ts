@@ -53,3 +53,12 @@ export const ModalButton = styled(FlexCenterCenter)<ModalButtonProps>`
     line-height: ${({ height }) => height && `${height}px`};
   }
 `;
+
+export const SettingArrowImg = styled.div`
+  width: 10px;
+  height: 12px;
+  background-image: url('/images/arrow.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center center;
+`;
