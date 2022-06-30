@@ -453,11 +453,13 @@ const SessionDetail = () => {
 
         {/* 세션 메인 안내 블럭 */}
         <SessionMainInfoBox imageSource={sessionImg} isFrameMin={isMin}>
-          <p className='session_date'>
-            <SpanPoint>{sessionDate}</SpanPoint>
-          </p>
-          <ConferenceTitle>{sessionTitle}</ConferenceTitle>
-          <Item text={sessionContent} />
+          <div>
+            <p className='session_date'>
+              <SpanPoint>{sessionDate}</SpanPoint>
+            </p>
+            <ConferenceTitle>{sessionTitle}</ConferenceTitle>
+            <Item text={sessionContent} />
+          </div>
         </SessionMainInfoBox>
         {/* // 세션 메인 안내 블럭 */}
 
