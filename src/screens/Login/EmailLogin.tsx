@@ -39,6 +39,12 @@ export default function EmailLogin() {
   const [isErrorMsgVisible, setErrorMsgVisible] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>('');
 
+  // 비밀번호 찾기
+  const findPwdHandler = () => {
+    navigate('/findPwd');
+  };
+
+  // 로그인
   const loginHandler = () => {
     if (!email || !password || emailErr || passwordErr) {
       if (!email) {
@@ -138,6 +144,7 @@ export default function EmailLogin() {
           <Margin type='bottom' size={20} />
 
           <FlexColumnStartStart style={{ width: '100%' }}>
+            {/* 이메일 */}
             <LoginInputField
               type='text'
               value={email}
@@ -153,7 +160,10 @@ export default function EmailLogin() {
                 {intl.formatMessage({ id: 'emailRequire' })}
               </SmallPoint>
             )}
+            {/* // 이메일 */}
             <Margin type='bottom' size={10} />
+
+            {/* 비밀번호 */}
             <LoginInputField
               type='password'
               value={password}
@@ -171,6 +181,7 @@ export default function EmailLogin() {
                 {intl.formatMessage({ id: 'passwordRequire' })}
               </SmallPoint>
             )}
+            {/* // 비밀번호 */}
           </FlexColumnStartStart>
 
           <Margin type='bottom' size={50} />
@@ -178,7 +189,9 @@ export default function EmailLogin() {
             {intl.formatMessage({ id: 'login' })}
           </Button>
           <Margin type='bottom' size={10} />
-          <Button type='line'>{intl.formatMessage({ id: 'findpw' })}</Button>
+          <Button type='line' onClick={findPwdHandler}>
+            {intl.formatMessage({ id: 'findpw' })}
+          </Button>
         </FlexColumnCenterCenter>
       </Wrapper>
 
