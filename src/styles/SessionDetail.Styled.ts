@@ -20,7 +20,6 @@ export const SessionMainInfoBox = styled.div<SessionMainInfoBoxProps>`
   width: 100%;
   height: 200px;
   overflow-y: auto;
-  padding: 1.65rem 1rem;
   background-image: ${({ imageSource }) =>
     imageSource && `url(${imageSource})`};
   background-repeat: no-repeat;
@@ -29,8 +28,13 @@ export const SessionMainInfoBox = styled.div<SessionMainInfoBoxProps>`
   transition: all 0.3s cubic-bezier(0.42, 0, 0.58, 1);
   transform: scale(1) translate(0, 0);
 
-  .session_date {
-    font-weight: bold;
+  & div {
+    padding: 1.65rem 1rem;
+    background-color: rgba(0, 0, 0, 0.68);
+
+    .session_date {
+      font-weight: bold;
+    }
   }
 
   ::-webkit-scrollbar {
@@ -52,17 +56,17 @@ export const SessionMainInfoBox = styled.div<SessionMainInfoBoxProps>`
 
   /* Track */
   ::-webkit-scrollbar-track {
-    background: transparent;
+    background: #333;
   }
 
   /* Handle */
   ::-webkit-scrollbar-thumb {
-    background: #333;
+    background: ${theme.colors.BASE_COLOR_DARK};
   }
 
   /* Handle on hover */
   ::-webkit-scrollbar-thumb:hover {
-    background: #000;
+    background: ${theme.colors.BASE_COLOR_DARK};
   }
 `;
 
