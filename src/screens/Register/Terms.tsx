@@ -137,15 +137,10 @@ const Terms = () => {
         <TermsWrap>
           <FlexRowSpaceBCenter>
             <h3>{intl.formatMessage({ id: 'tos' })}</h3>
-            <TermsCheckBox>
-              <label>
-                <input
-                  type='checkbox'
-                  checked={checkTerms}
-                  onClick={() => checkHandler('terms')}
-                />
-              </label>
-            </TermsCheckBox>
+            <TermsCheckBox
+              checked={checkTerms}
+              onClick={() => checkHandler('terms')}
+            />
           </FlexRowSpaceBCenter>
           <Margin type='bottom' size={10} />
           <TermsInnerWrap>
@@ -158,15 +153,10 @@ const Terms = () => {
         <TermsWrap>
           <FlexRowSpaceBCenter>
             <h3>{intl.formatMessage({ id: 'privacy' })}</h3>
-            <TermsCheckBox>
-              <label>
-                <input
-                  type='checkbox'
-                  checked={checkPrivacy}
-                  onClick={() => checkHandler('privacy')}
-                />
-              </label>
-            </TermsCheckBox>
+            <TermsCheckBox
+              checked={checkPrivacy}
+              onClick={() => checkHandler('privacy')}
+            />
           </FlexRowSpaceBCenter>
           <Margin type='bottom' size={10} />
           <TermsInnerWrap>
@@ -179,15 +169,10 @@ const Terms = () => {
         <TermsWrap>
           <FlexRowSpaceBCenter>
             <h3>{intl.formatMessage({ id: 'marketing' })}</h3>
-            <TermsCheckBox>
-              <label>
-                <input
-                  type='checkbox'
-                  checked={checkMarketing}
-                  onClick={() => checkHandler('market')}
-                />
-              </label>
-            </TermsCheckBox>
+            <TermsCheckBox
+              checked={checkMarketing}
+              onClick={() => checkHandler('market')}
+            />
           </FlexRowSpaceBCenter>
           <Margin type='bottom' size={10} />
           <TermsInnerWrap>
@@ -197,7 +182,7 @@ const Terms = () => {
         {/* // 마케팅 활용동의 */}
         <Margin type='top' size={10} />
         <Button type='full' onClick={goRegister}>
-          확인
+          {intl.formatMessage({ id: 'next' })}
         </Button>
       </Wrapper>
     </Container>

@@ -30,57 +30,18 @@ export const TermsInnerWrap = styled.div`
   }
 `;
 
-export const TermsCheckBox = styled.div`
-label {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+interface TermsCheckBoxProps {
+  checked: boolean;
+}
+export const TermsCheckBox = styled.div<TermsCheckBoxProps>`
+  display: block;
+  width: 40px;
+  height: 40px;
+  background-image: ${({ checked }) =>
+    checked ? `url('images/check_on.png')` : `url('images/check_off.png')`};
+  background-size: cover;
+  background-position: center center;
   cursor: pointer;
-
-  input[type='checkbox'] {
-    display: none;
-  }
-
-  input[type='checkbox'] {
-    display: block;
-    width: 19px;
-    height: 19px;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    -o-appearance: none;
-    appearance: none;
-    background-color: #fff;
-    border-radius: 19px;
-    position: relative;
-    cursor: pointer;
-  }
-
-  input[type='checkbox']:checked::after {
-    content: '';
-    display: block;
-    color: ${theme.colors.POINT_COLOR};
-    width: 10px;
-    height: 10px;
-    position: absolute;    
-    top: 50%;
-    left: 50%;
-    transform: translate(-55%, -45%);
-    border-radius: 10px;
-    background-color: ${theme.colors.POINT_COLOR};
-  }
-
-  span {
-    color: ${theme.colors.BORDER_COLOR};
-    margin-left: 10px;
-  }
-
-  div {
-    label {
-      &::before {
-        background: #222;
-      }
-    }
-  }
 `;
 
 export const CodeInputWrap = styled(FlexRowCenterCenter)`
