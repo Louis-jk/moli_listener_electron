@@ -75,6 +75,7 @@ export const SessionTransListBox = styled(
 )<SessionTransListBoxProps>`
   padding: 1.5rem 1rem;
   border-bottom: 1px solid ${theme.colors.TEXT_DESCRIPTION_COLOR}2a;
+  cursor: pointer;
 
   & > p {
     color: ${({ active }) =>
