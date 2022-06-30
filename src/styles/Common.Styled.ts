@@ -311,6 +311,10 @@ export const MoreBtn = styled.div`
   padding: 0.25rem 1.25rem;
   background-color: ${theme.colors.POINT_COLOR};
   border-radius: 12px;
+
+  & p {
+    margin-top: -2px;
+  }
 `;
 
 export const Divider = styled.div`
@@ -386,6 +390,7 @@ export const Button = styled.div<ButtonProps>`
   width: 100%;
   font-weight: bold;
   text-align: center;
+  line-height: 1rem;
   color: ${({ type }) =>
     type === 'line'
       ? theme.colors.POINT_COLOR
