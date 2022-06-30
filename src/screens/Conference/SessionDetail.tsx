@@ -341,6 +341,22 @@ const SessionDetail = () => {
           const result = res.data.data;
           setCodeList(result.codelist);
           setFileList(result.filelist);
+
+          let newFile: any[] = [];
+          result.filelist.map((file: any) => {
+            let filter = {
+              file_link: file.file_link.replace(
+                '../',
+                `${process.env.REACT_APP_BACKEND_URL}/`
+              ),
+              file_name: file.file_name,
+            };
+            newFile.push(filter);
+          });
+
+          console.log('newFile', newFile);
+          setFileList(newFile);
+
           setSessionDate(result.date);
           setSessionTitle(result.title);
           setSessionContent(result.content);
@@ -442,9 +458,10 @@ const SessionDetail = () => {
   };
 
   console.log('codeList ??', codeList);
+  console.log('fileList ??', fileList);
 
   return isLoading ? (
-    <Loading />
+    <Loading isTransparent={false} />
   ) : (
     <Container>
       <Header title={intl.formatMessage({ id: 'session' })} type='session' />
