@@ -132,12 +132,17 @@ const List = () => {
 
         {/* 세션 목록 */}
 
-        <FlexRowStartCenter style={{ width: '100%' }}>
-          <InfoTitle style={{ marginRight: 10 }}>세션목록</InfoTitle>
-          <p>
-            <SpanPoint>4</SpanPoint>
-          </p>
-        </FlexRowStartCenter>
+        {data && data.session_list && (
+          <FlexRowStartCenter style={{ width: '100%' }}>
+            <InfoTitle style={{ marginRight: 10 }}>
+              {intl.formatMessage({ id: 'session' })}
+            </InfoTitle>
+
+            <p style={{ fontSize: '1.25rem' }}>
+              <SpanPoint>{data.session_list.length}</SpanPoint>
+            </p>
+          </FlexRowStartCenter>
+        )}
 
         <Margin type='bottom' size={20} />
 
