@@ -203,6 +203,7 @@ export const HeaderArea = styled(FlexRowSpaceBCenter)<WrapperProps>`
 
 export const InfoTitle = styled.h3`
   color: ${theme.colors.TEXT_WHITE_COLOR};
+  margin-bottom: 5px;
 `;
 
 export const InfoDesc = styled.p`
