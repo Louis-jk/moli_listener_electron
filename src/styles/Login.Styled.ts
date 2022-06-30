@@ -47,18 +47,17 @@ export const CustomNotify = styled.div<CustomNotifyProps>`
   display: flex;
   justify-content: center;
   align-items: center;
-  background: ${({ error }) => (error ? '#131313' : theme.colors.POINT_COLOR)};
   padding: 0.65rem 1rem;
-
   text-align: center;
   width: 92%;
   margin: 0 auto;
   transition: all 0.4s ease;
 
-  ${({ visible }) =>
+  ${({ visible, error }) =>
     visible
       ? `  
     opacity: 1;  
+    background: ${error ? '#131313' : theme.colors.POINT_COLOR};
 
     & p {
       visibility: visible;
