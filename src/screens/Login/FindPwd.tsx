@@ -33,6 +33,7 @@ const FindPwd = () => {
   const [notifyMsg, setNotifyMsg] = useState<string>('');
   const [isError, setError] = useState<boolean>(false);
   const [isErrorMsgVisible, setErrorMsgVisible] = useState<boolean>(false);
+  const [errorMsg, setErrorMsg] = useState<string>('');
 
   // 이메일 체킹
   const emailInsertHandler = (e: HTMLInputElement) => {
@@ -54,9 +55,46 @@ const FindPwd = () => {
 
   // 전송
   const onSubmit = () => {
-    console.log('====================================');
-    console.log('전송');
-    console.log('====================================');
+    if (!email || emailErr) {
+      if (!email) {
+        setEmailNullErr(true);
+      }
+    } else {
+      const param = {
+        set_lang: locale,
+        mt_id: email,
+      };
+
+      axios({
+        method: 'post',
+        url: `${process.env.REACT_APP_BACKEND_URL}/api/password_find.php`,
+        data: QueryString.stringify(param),
+      })
+        .then((res: AxiosResponse) => {
+          console.log('find pwd res', res);
+          if (res.data.result === 'false') {
+            setError(true);
+            setNotifyMsg(res.data.msg);
+            setNotifyMsgVisible(true);
+
+            setTimeout(() => {
+              setNotifyMsgVisible(false);
+            }, 2000);
+          } else {
+            setError(false);
+            setNotifyMsg(res.data.msg);
+            setNotifyMsgVisible(true);
+
+            setTimeout(() => {
+              setNotifyMsgVisible(false);
+              navigate('/login');
+            }, 1500);
+          }
+        })
+        .catch((err: AxiosError) => {
+          console.error('res Error', err);
+        });
+    }
   };
 
   return (
