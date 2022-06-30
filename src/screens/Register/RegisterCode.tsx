@@ -72,7 +72,7 @@ const RegisterCode = () => {
         if (res.data.data === 'success') {
           setError(false);
           // setNotifyMsg(res.data.msg);
-          setNotifyMsg('가입하신 이메일로 인증번호가 발송되었습니다.');
+          setNotifyMsg(res.data.msg);
           setNotifyMsgVisible(true);
 
           setTimeout(() => {
@@ -168,7 +168,7 @@ const RegisterCode = () => {
           dispatch(loginUpdate(params));
 
           setError(false);
-          setNotifyMsg('자동 로그인 처리됩니다.');
+          setNotifyMsg(res.data.msg);
           setNotifyMsgVisible(true);
 
           setTimeout(() => {

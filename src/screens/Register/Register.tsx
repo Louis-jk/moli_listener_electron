@@ -224,7 +224,11 @@ const Register = () => {
             {emailErr && (
               <SmallPoint>{intl.formatMessage({ id: 'emailsub' })}</SmallPoint>
             )}
-            {emailNullErr && <SmallPoint>* 이메일을 입력해주세요.</SmallPoint>}
+            {emailNullErr && (
+              <SmallPoint>
+                {intl.formatMessage({ id: 'emailRequire' })}
+              </SmallPoint>
+            )}
             <Margin type='bottom' size={10} />
             {/* // 이메일 입력 */}
 
@@ -237,7 +241,9 @@ const Register = () => {
             />
             <Margin type='bottom' size={7} />
             {nameErr && (
-              <SmallPoint>* 한글, 영문, 숫자만 적용됩니다.</SmallPoint>
+              <SmallPoint>
+                {intl.formatMessage({ id: 'nameValidate' })}
+              </SmallPoint>
             )}
             {nameNullErr && (
               <SmallPoint>{intl.formatMessage({ id: 'namesub' })}</SmallPoint>
@@ -259,7 +265,9 @@ const Register = () => {
               </SmallPoint>
             )}
             {passwordNullErr && (
-              <SmallPoint>* 비밀번호를 입력해주세요.</SmallPoint>
+              <SmallPoint>
+                {intl.formatMessage({ id: 'passwordRequire' })}
+              </SmallPoint>
             )}
             <Margin type='bottom' size={10} />
             {/* // 비밀번호 입력 */}
@@ -280,7 +288,9 @@ const Register = () => {
               </SmallPoint>
             )}
             {passwordReNullErr && (
-              <SmallPoint>* 비밀번호 확인을 입력해주세요.</SmallPoint>
+              <SmallPoint>
+                {intl.formatMessage({ id: 'passwordReRequire' })}
+              </SmallPoint>
             )}
             <Margin type='bottom' size={10} />
             {/* // 비밀번호 확인 */}
@@ -288,7 +298,7 @@ const Register = () => {
         </FlexColumnCenterCenter>
         <Margin type='top' size={50} />
         <Button type='full' onClick={signInHandler}>
-          확인
+          {intl.formatMessage({ id: 'signup' })}
         </Button>
       </Wrapper>
 
