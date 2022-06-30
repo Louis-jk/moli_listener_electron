@@ -31,43 +31,100 @@ export default function EmailLogin() {
   const { locale } = useSelector((state: RootState) => state.locale);
 
   const [email, setEmail] = useState<string>('');
+  const [emailErr, setEmailErr] = useState<boolean>(false); // 이메일 유효성 검사 에러
+  const [emailNullErr, setEmailNullErr] = useState<boolean>(false); // 이메일 null 에러
   const [password, setPassword] = useState<string>('');
+  const [passwordErr, setPasswordErr] = useState<boolean>(false); // 비밀번호 에러
+  const [passwordNullErr, setPasswordNullErr] = useState<boolean>(false); // 비밀번호 null 에러
   const [isErrorMsgVisible, setErrorMsgVisible] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>('');
 
   const loginHandler = () => {
-    const params = {
-      set_lang: locale,
-      mt_id: email,
-      mt_pwd: password,
-      app_token: 1,
-    };
+    if (!email || !password || emailErr || passwordErr) {
+      if (!email) {
+        setEmailNullErr(true);
+        setEmailErr(false);
+      }
 
-    axios({
-      method: 'post',
-      url: `${process.env.REACT_APP_BACKEND_URL}/api/member_login.php`,
-      data: QueryString.stringify(params),
-    })
-      .then((res: AxiosResponse) => {
-        console.log('login res', res);
-        if (res.data.result === 'false') {
-          setErrorMsg(res.data.msg);
-          setErrorMsgVisible(true);
-        } else {
-          const params = JSON.stringify(res.data.data.data);
-          dispatch(loginUpdate(params));
-          navigate('/code');
-          setErrorMsgVisible(false);
-        }
+      if (!password) {
+        setPasswordNullErr(true);
+        setPasswordErr(false);
+      }
+    } else {
+      const params = {
+        set_lang: locale,
+        mt_id: email,
+        mt_pwd: password,
+        app_token: 1,
+      };
+
+      axios({
+        method: 'post',
+        url: `${process.env.REACT_APP_BACKEND_URL}/api/member_login.php`,
+        data: QueryString.stringify(params),
       })
-      .catch((err: AxiosError) => {
-        console.error('res Error', err);
-      });
+        .then((res: AxiosResponse) => {
+          console.log('login res', res);
+          if (res.data.result === 'false') {
+            setErrorMsg(res.data.msg);
+            setErrorMsgVisible(true);
+
+            setTimeout(() => {
+              setErrorMsgVisible(false);
+            }, 2000);
+          } else {
+            const params = JSON.stringify(res.data.data.data);
+            dispatch(loginUpdate(params));
+            setErrorMsg(res.data.msg);
+            setErrorMsgVisible(true);
+
+            setTimeout(() => {
+              setErrorMsgVisible(false);
+              navigate('/code');
+            }, 1500);
+          }
+        })
+        .catch((err: AxiosError) => {
+          console.error('res Error', err);
+        });
+    }
   };
 
+  // 이메일 체킹
   const emailInsertHandler = (e: HTMLInputElement) => {
+    const regx = new RegExp(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/);
+
+    if (e.value) {
+      setEmailNullErr(false);
+    }
+
+    if (regx.test(e.value)) {
+      setEmailErr(false);
+    } else {
+      setEmailErr(true);
+    }
+
     setErrorMsgVisible(false);
     setEmail(e.value);
+  };
+
+  // 비밀번호 체킹
+  const passwordInsertHandler = (e: HTMLInputElement) => {
+    const regx = new RegExp(
+      /^(?=.*?[a-zA-Z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,12}$/
+    );
+
+    if (e.value) {
+      setPasswordNullErr(false);
+    }
+
+    if (regx.test(e.value)) {
+      setPasswordErr(false);
+    } else {
+      setPasswordErr(true);
+    }
+
+    setPassword(e.value);
   };
 
   return (
@@ -88,16 +145,32 @@ export default function EmailLogin() {
               onChange={(e) => emailInsertHandler(e.target)}
             />
             <Margin type='bottom' size={7} />
-            <SmallPoint>{intl.formatMessage({ id: 'emailsub' })}</SmallPoint>
+            {emailErr && (
+              <SmallPoint>{intl.formatMessage({ id: 'emailsub' })}</SmallPoint>
+            )}
+            {emailNullErr && (
+              <SmallPoint>
+                {intl.formatMessage({ id: 'emailRequire' })}
+              </SmallPoint>
+            )}
             <Margin type='bottom' size={10} />
             <LoginInputField
               type='password'
               value={password}
               placeholder={intl.formatMessage({ id: 'loginpwplaceholder' })}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => passwordInsertHandler(e.target)}
             />
             <Margin type='bottom' size={7} />
-            <SmallPoint>{intl.formatMessage({ id: 'passwordsub' })}</SmallPoint>
+            {passwordErr && (
+              <SmallPoint>
+                {intl.formatMessage({ id: 'passwordsub' })}
+              </SmallPoint>
+            )}
+            {passwordNullErr && (
+              <SmallPoint>
+                {intl.formatMessage({ id: 'passwordRequire' })}
+              </SmallPoint>
+            )}
           </FlexColumnStartStart>
 
           <Margin type='bottom' size={50} />
