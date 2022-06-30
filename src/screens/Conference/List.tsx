@@ -99,7 +99,7 @@ const List = () => {
   };
 
   return isLoading ? (
-    <Loading />
+    <Loading isTransparent={false} />
   ) : (
     <Container>
       <Header
@@ -134,7 +134,7 @@ const List = () => {
 
         {data && data.session_list && (
           <FlexRowStartCenter style={{ width: '100%' }}>
-            <InfoTitle style={{ marginRight: 10 }}>
+            <InfoTitle style={{ marginRight: 10, marginBottom: 0 }}>
               {intl.formatMessage({ id: 'session' })}
             </InfoTitle>
 

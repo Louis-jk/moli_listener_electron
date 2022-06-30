@@ -323,7 +323,7 @@ const SessionDetail = () => {
   console.log('codeList ??', codeList);
 
   return isLoading ? (
-    <Loading />
+    <Loading isTransparent={false} />
   ) : (
     <Container>
       <Header title='세션' type='session' />

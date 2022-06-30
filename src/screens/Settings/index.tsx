@@ -30,6 +30,7 @@ import { codeUpdate } from '../../store/codeReducer';
 import LeaveModal from '../../components/Modal/LeaveModal';
 import LanguageModal from '../../components/Modal/LanguageModal';
 import { CustomNotify } from '../../styles/Login.Styled';
+import Loading from '../../components/Loading';
 
 const Settings = () => {
   const intl = useIntl();
@@ -37,6 +38,8 @@ const Settings = () => {
   const { locale } = useSelector((state: RootState) => state.locale);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const [isLoading, setLoading] = useState<boolean>(true);
 
   const [langModalIsOpen, setLangModalOpen] = useState<boolean>(false); // 언어 변경 모달 상태
   const [leaveModalIsOpen, setLeaveModalOpen] = useState<boolean>(false); // 회원탈퇴 모달 상태
@@ -72,8 +75,16 @@ const Settings = () => {
     return () => notifyMsgVisibleHandler();
   }, [isLeaveMemberSuccess, isLeaveMemberError]);
 
-  console.log('isLeaveMember ?', isLeaveMemberSuccess);
-  console.log('isNotifyMsgVisible ?', isNotifyMsgVisible);
+  // console.log('isLeaveMember ?', isLeaveMemberSuccess);
+  // console.log('isNotifyMsgVisible ?', isNotifyMsgVisible);
+
+  useEffect(() => {
+    setLoading(true);
+
+    setTimeout(() => {
+      setLoading(false);
+    }, 500);
+  }, [locale]);
 
   // 언어 변경 모달 닫기
   const closeLanguageModal = () => {
@@ -112,7 +123,9 @@ const Settings = () => {
     navigate('/changePwd');
   };
 
-  return (
+  return isLoading ? (
+    <Loading isTransparent={true} />
+  ) : (
     <Container>
       {/* 언어 변경 모달 */}
       <LanguageModal isOpen={langModalIsOpen} close={closeLanguageModal} />
