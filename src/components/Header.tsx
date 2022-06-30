@@ -16,15 +16,16 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../store';
 import QueryString from 'qs';
 
-type HeaderType = 'main' | 'detail' | 'session' | 'not';
+type HeaderType = 'main' | 'detail' | 'session' | 'not' | 'code';
 interface Props {
   type: HeaderType;
-  title: string;
+  title: string | JSX.Element[] | JSX.Element;
 }
 const Header: React.FC<Props> = ({ type, title }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { mt_idx } = useSelector((state: RootState) => state.login);
+  const { locale } = useSelector((state: RootState) => state.locale);
 
   const [isFrameMin, setFrameMin] = useState<boolean>(false);
   const [isFrameWide, setFrameWide] = useState<boolean>(true);
@@ -36,7 +37,7 @@ const Header: React.FC<Props> = ({ type, title }) => {
 
     if (type === 'session') {
       const params = {
-        set_lang: 'ko',
+        set_lang: locale,
         mt_idx,
       };
 
@@ -50,6 +51,7 @@ const Header: React.FC<Props> = ({ type, title }) => {
     }
   };
 
+  // web 실행시 주석 필요
   // appRuntime.on('isFrameWide', (event: any, data: boolean) => {
   //   console.log('GET isFrameWide event ::', event);
   //   console.log('GET isFrameWide data ::', data);
@@ -87,6 +89,10 @@ const Header: React.FC<Props> = ({ type, title }) => {
     appRuntime.send('windowClose', null);
   };
 
+  const goSettings = () => {
+    navigate('/settings');
+  };
+
   console.log('====================================');
   console.log('isFrameMin', isFrameMin);
   console.log('isFrameWide', isFrameWide);
@@ -115,9 +121,17 @@ const Header: React.FC<Props> = ({ type, title }) => {
 
       {type !== 'not' && (
         <HeaderArea isFrameMin={isFrameMinClient}>
-          <GoBackBtn onClick={goBackHandler} />
+          {type !== 'code' ? (
+            <GoBackBtn onClick={goBackHandler} />
+          ) : (
+            <div style={{ width: 30 }} />
+          )}
           <h3>{title}</h3>
-          {type !== 'session' ? <SettingBtn /> : <div style={{ width: 30 }} />}
+          {type !== 'session' ? (
+            <SettingBtn onClick={goSettings} />
+          ) : (
+            <div style={{ width: 30 }} />
+          )}
         </HeaderArea>
       )}
 

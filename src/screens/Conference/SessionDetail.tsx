@@ -1,7 +1,8 @@
-import axios, { AxiosError, AxiosResponse } from 'axios';
-import QueryString from 'qs';
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { FormattedMessage, useIntl } from 'react-intl';
+import axios, { AxiosError, AxiosResponse } from 'axios';
+import QueryString from 'qs';
 import { useSelector } from 'react-redux';
 
 // import AgoraRtcEngine from 'agora-electron-sdk';
@@ -24,41 +25,32 @@ import {
   FlexCenterCenter,
   FlexColumnCenterCenter,
   FlexColumnStartCenter,
-} from '../styles/Common.Styled';
-import { ConferenceTitle } from '../styles/Lists.Styled';
+} from '../../styles/Common.Styled';
+import { ConferenceTitle } from '../../styles/Lists.Styled';
 import {
   PlayBtn,
   SessionMainInfoBox,
   SessionMinDescWrapper,
   SessionTransListBox,
-} from '../styles/SessionDetail.Styled';
-import { theme } from '../styles/Theme';
-import Header from '../components/Header';
-import Loading from '../components/Loading';
-import appRuntime from '../appRuntime';
-import { RootState } from '../store';
+} from '../../styles/SessionDetail.Styled';
+import { theme } from '../../styles/Theme';
+import Header from '../../components/Header';
+import Loading from '../../components/Loading';
+import appRuntime from '../../appRuntime';
+import { RootState } from '../../store';
 
 interface ItemProps {
   text: string;
 }
 
-const TABS = [
-  {
-    id: 0,
-    label: '통역',
-  },
-  {
-    id: 1,
-    label: '자료함',
-  },
-];
-
 const SessionDetail = () => {
   const navigate = useNavigate();
   const { state }: any = useLocation();
+  const intl = useIntl();
 
   const { isMin } = useSelector((state: RootState) => state.frame);
   const { mt_idx } = useSelector((state: RootState) => state.login);
+  const { locale } = useSelector((state: RootState) => state.locale);
 
   const [isLoading, setLoading] = useState<boolean>(true);
   const [codeList, setCodeList] = useState<any[]>([]); // 통역사 리스트
@@ -83,6 +75,17 @@ const SessionDetail = () => {
   const [users, setUsers] = useState<any>(null);
   const [active, setActive] = useState(false);
   const [vol, setVol] = useState(0);
+
+  const TABS = [
+    {
+      id: 0,
+      label: `${intl.formatMessage({ id: 'translate' })}`,
+    },
+    {
+      id: 1,
+      label: `${intl.formatMessage({ id: 'databox' })}`,
+    },
+  ];
 
   const appId = process.env.REACT_APP_AGORA_APP_ID
     ? process.env.REACT_APP_AGORA_APP_ID
@@ -271,6 +274,7 @@ const SessionDetail = () => {
     }
   }
 
+  // web 실행시 주석 필요
   // appRuntime.on('isFrameWide', (event: any, data: boolean) => {
   //   setFrameWide(data);
   // });
@@ -284,7 +288,7 @@ const SessionDetail = () => {
     console.log('state.code ??', state.code);
 
     const params = {
-      set_lang: 'ko',
+      set_lang: locale,
       code_in: state.code,
       mt_idx,
     };
@@ -301,7 +305,7 @@ const SessionDetail = () => {
   // 세션 코드 새로고침(언어 활성화체크)
   const getRefleshAPI = () => {
     const params = {
-      set_lang: 'ko',
+      set_lang: locale,
       code_in: state.code,
     };
 
@@ -322,7 +326,7 @@ const SessionDetail = () => {
 
   const requestAPI = () => {
     const params = {
-      set_lang: 'ko',
+      set_lang: locale,
       code_in: state.code,
     };
 
@@ -382,7 +386,7 @@ const SessionDetail = () => {
     console.log('play sessionCode ?', sessionCode);
 
     const params = {
-      set_lang: 'ko',
+      set_lang: locale,
       code_in: payload,
       mt_idx,
     };
@@ -403,7 +407,7 @@ const SessionDetail = () => {
     console.log('stop sessionCode ?', sessionCode);
 
     const params = {
-      set_lang: 'ko',
+      set_lang: locale,
       code_in: sessionCode,
       mt_idx,
     };
@@ -443,7 +447,7 @@ const SessionDetail = () => {
     <Loading />
   ) : (
     <Container>
-      <Header title='세션' type='session' />
+      <Header title={intl.formatMessage({ id: 'session' })} type='session' />
       <Wrapper isFrameMin={isMin}>
         <Margin type='bottom' size={20} />
 
@@ -453,7 +457,6 @@ const SessionDetail = () => {
             <SpanPoint>{sessionDate}</SpanPoint>
           </p>
           <ConferenceTitle>{sessionTitle}</ConferenceTitle>
-
           <Item text={sessionContent} />
         </SessionMainInfoBox>
         {/* // 세션 메인 안내 블럭 */}

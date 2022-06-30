@@ -7,7 +7,7 @@ interface MarginProps {
   size: number;
 }
 
-type ButtonType = 'full' | 'line';
+type ButtonType = 'full' | 'line' | 'disable' | 'grayLine';
 interface ButtonProps {
   type: ButtonType;
 }
@@ -126,10 +126,16 @@ export const Container = styled.div`
 interface WrapperProps {
   isFrameMin?: boolean;
 }
+
+interface VerticalLineProps {
+  height: number;
+}
+
 export const Wrapper = styled.section<WrapperProps>`
-  padding: 5.2rem 1rem 3rem;
+  padding: 5rem 1rem 3rem;
   transform: translateY(0);
   transition: all 0.4s ease;
+  background-color: ${theme.colors.BASE_COLOR_DARK};
 
   ${({ isFrameMin }) =>
     isFrameMin &&
@@ -181,11 +187,12 @@ export const HeaderArea = styled(FlexRowSpaceBCenter)<WrapperProps>`
   left: 0;
   right: 0;
   height: 50px;
-  background: #222;
+  background: ${theme.colors.BASE_COLOR_DARK};
   padding: 0.75rem 1rem;
   z-index: 99;
   transform: translateY(0);
   transition: all 0.4s ease;
+  border-bottom: 1px solid ${theme.colors.BORDER_COLOR};
 
   ${({ isFrameMin }) =>
     isFrameMin &&
@@ -234,6 +241,10 @@ export const SpanWhite = styled.span`
 `;
 
 export const SpanPoint = styled.span`
+  color: ${theme.colors.POINT_COLOR};
+`;
+
+export const SmallPoint = styled.small`
   color: ${theme.colors.POINT_COLOR};
 `;
 
@@ -305,7 +316,13 @@ export const MoreBtn = styled.div`
 export const Divider = styled.div`
   width: 100%;
   height: 1px;
-  background-color: ${theme.colors.TEXT_DESCRIPTION_COLOR}2a;
+  background-color: ${theme.colors.BORDER_COLOR};
+`;
+
+export const VerticalLine = styled.div<VerticalLineProps>`
+  width: 1px;
+  height: ${({ height }) => height && `${height}px`};
+  background-color: ${theme.colors.BORDER_COLOR};
 `;
 
 interface TabProps {
@@ -369,9 +386,18 @@ export const Button = styled.div<ButtonProps>`
   width: 100%;
   font-weight: bold;
   text-align: center;
-  color: ${({ type }) => (type === 'line' ? theme.colors.POINT_COLOR : '#fff')};
+  color: ${({ type }) =>
+    type === 'line'
+      ? theme.colors.POINT_COLOR
+      : type === 'grayLine'
+      ? theme.colors.TEXT_DESCRIPTION_COLOR
+      : '#fff'};
   background: ${({ type }) =>
-    type === 'full' ? theme.colors.POINT_COLOR : 'transparent'};
+    type === 'full'
+      ? theme.colors.POINT_COLOR
+      : type === 'line' || type === 'grayLine'
+      ? 'transparent'
+      : theme.colors.TEXT_INPUT_COLOR};
   border: none;
   margin: 0;
   padding: 0.85rem 1.2rem;
@@ -382,5 +408,11 @@ export const Button = styled.div<ButtonProps>`
     type === 'line' &&
     `
     border: 1px solid ${theme.colors.POINT_COLOR};
+  `}
+
+  ${({ type }) =>
+    type === 'grayLine' &&
+    `
+    border: 1px solid ${theme.colors.BORDER_COLOR};
   `}
 `;

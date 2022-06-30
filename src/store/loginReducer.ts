@@ -29,9 +29,16 @@ export const loginSlice = createSlice({
       state.mt_name = mt_name;
       state.mt_level = mt_level;
     },
+    logout: (state: any, action: any) => {
+      state.mt_idx = '';
+      state.mt_type = '';
+      state.mt_id = '';
+      state.mt_name = '';
+      state.mt_level = '';
+    },
   },
 });
 
-export const { loginUpdate } = loginSlice.actions;
+export const { loginUpdate, logout } = loginSlice.actions;
 
 export default loginSlice.reducer;

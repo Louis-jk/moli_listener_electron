@@ -1,8 +1,9 @@
 import styled from 'styled-components';
 import { theme } from './Theme';
 
-interface NotUserAlertProps {
+interface CustomNotifyProps {
   visible: boolean;
+  error: boolean;
 }
 
 export const LoginButton = styled.button`
@@ -38,7 +39,7 @@ export const LoginInputField = styled.input`
   border-radius: 7px;
 `;
 
-export const NotUserAlert = styled.div<NotUserAlertProps>`
+export const CustomNotify = styled.div<CustomNotifyProps>`
   position: absolute;
   bottom: 30px;
   left: 0;
@@ -46,7 +47,7 @@ export const NotUserAlert = styled.div<NotUserAlertProps>`
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #131313;
+  background: ${({ error }) => (error ? '#131313' : theme.colors.POINT_COLOR)};
   padding: 0.65rem 1rem;
 
   text-align: center;

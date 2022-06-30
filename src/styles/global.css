@@ -49,3 +49,11 @@ h4,
 h5 {
   color: #ffffff;
 }
+
+a {
+  color: #fff;
+}
+
+.modal_overay {
+  background-color: rgba(0, 0, 0, 0.5);
+}

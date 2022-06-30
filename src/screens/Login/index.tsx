@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { FormattedMessage, useIntl } from 'react-intl';
 import Header from '../../components/Header';
 import {
   Button,
@@ -13,11 +14,18 @@ import {
 } from '../../styles/Common.Styled';
 import { SnsLoginButton } from '../../styles/Login.Styled';
 
+type LoginButtonType = 'login' | 'register';
+
 const Login = () => {
   const navigate = useNavigate();
+  const intl = useIntl();
 
-  const goEmailLogin = () => {
-    navigate('/emailLogin');
+  const onPressHandler = (type: LoginButtonType) => {
+    if (type === 'login') {
+      navigate('/emailLogin');
+    } else {
+      navigate('/terms');
+    }
   };
 
   return (
@@ -33,18 +41,20 @@ const Login = () => {
           />
           <Margin type='bottom' size={80} />
 
-          <Button type='full' onClick={goEmailLogin}>
-            이메일 로그인
+          <Button type='full' onClick={() => onPressHandler('login')}>
+            {intl.formatMessage({ id: 'emailLogin' })}
           </Button>
           <Margin type='bottom' size={10} />
-          <Button type='line'>이메일 계정 만들기</Button>
+          <Button type='line' onClick={() => onPressHandler('register')}>
+            {intl.formatMessage({ id: 'emailSign' })}
+          </Button>
         </FlexColumnCenterCenter>
 
         <FlexColumnCenterCenter style={{ width: '100%' }}>
           <TextWhite style={{ marginBottom: 5 }}>
-            <strong>SNS 게정으로 로그인</strong>
+            <strong>{intl.formatMessage({ id: 'snsLogintxt' })}</strong>
           </TextWhite>
-          <p>SNS 게정으로 간편하게 로그인 하세요</p>
+          <p>{intl.formatMessage({ id: 'snsLoginDes' })}</p>
           <Margin type='bottom' size={30} />
           <FlexRowSpaceBCenter style={{ width: '70%' }}>
             <SnsLoginButton>

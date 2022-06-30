@@ -7,6 +7,7 @@ export const theme = {
     BORDER_COLOR: '#555555',
     TEXT_WHITE_COLOR: '#FFFFFF',
     TEXT_DESCRIPTION_COLOR: '#A1A1A1',
-    TEXT_INPUT_COLOR: '#AAAAAA'
-  }
-}
+    TEXT_INPUT_COLOR: '#AAAAAA',
+    TERMS_WRAP_COLOR: '#1c1c1c',
+  },
+};

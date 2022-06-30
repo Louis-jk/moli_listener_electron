@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { FormattedMessage, useIntl } from 'react-intl';
 import {
   Container,
   FlexRowSpaceBCenter,
@@ -10,7 +11,7 @@ import {
   MoreBtn,
   SpanPoint,
   Wrapper,
-} from '../styles/Common.Styled';
+} from '../../styles/Common.Styled';
 import {
   ConferenceDesc,
   ConferenceInfoWrap,
@@ -18,29 +19,67 @@ import {
   ConferenceSessionImg,
   ConferenceSessionImgWrap,
   ConferenceTitle,
-} from '../styles/Lists.Styled';
-import Header from '../components/Header';
-import Loading from '../components/Loading';
+} from '../../styles/Lists.Styled';
+import Header from '../../components/Header';
+import Loading from '../../components/Loading';
+import axios, { AxiosResponse } from 'axios';
+import QueryString from 'qs';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store';
 
 const List = () => {
   const navigate = useNavigate();
   const { state }: any = useLocation();
+  const intl = useIntl();
+  const { locale } = useSelector((state: RootState) => state.locale);
+  const { code } = useSelector((state: RootState) => state.code);
 
   const [isLoading, setLoading] = useState<boolean>(true);
   const [conImageUrl, setConImageUrl] = useState('');
+  const [data, setData] = useState<any>({});
 
   console.log('prop data', state);
 
+  const getAPI = () => {
+    const params = {
+      set_lang: locale,
+      code_in: code,
+    };
+
+    axios({
+      method: 'post',
+      url: `${process.env.REACT_APP_BACKEND_URL}/api/listen_conference_info.php`,
+      data: QueryString.stringify(params),
+    })
+      .then((res: AxiosResponse) => {
+        console.log('code :: conference_info res', res);
+        if (res.status === 200 && res.data.result === 'true') {
+          const chgImgUrl = res.data.data.con_img.replace('../', '');
+          setConImageUrl(chgImgUrl);
+          setData(res.data.data);
+        } else {
+          // alert(res.data.msg);
+          // setError(true);
+          // setCodeResultErrorMsg(res.data.msg);
+        }
+      })
+      .catch((error) => console.error('error: ', error));
+  };
+
   useEffect(() => {
-    console.log('typeof data', typeof state);
-    if (state && typeof state === 'object') {
-      const chgImgUrl = state.con_img.replace('../', '');
-      setConImageUrl(chgImgUrl);
-    }
+    // console.log('typeof data', typeof state);
+    // if (state && typeof state === 'object') {
+    //   const chgImgUrl = state.con_img.replace('../', '');
+    //   setConImageUrl(chgImgUrl);
+    // }
+
+    getAPI();
 
     setTimeout(() => {
       setLoading(false);
     }, 1000);
+
+    return () => getAPI();
   }, [state]);
 
   const urlChange = (path: string) => {
@@ -53,25 +92,34 @@ const List = () => {
     navigate('/sessionDetail', { state: { code } });
   };
 
+  const goConferenceDetail = () => {
+    navigate(`/conferenceDetail/${code}`, {
+      state: { type: data.con_detail_type },
+    });
+  };
+
   return isLoading ? (
     <Loading />
   ) : (
     <Container>
-      <Header title='행사' type='main' />
+      <Header
+        title={intl.formatMessage({ id: 'conferenceMain' })}
+        type='main'
+      />
       <Wrapper>
         <ConferenceMainWrap>
           <img
             src={`${process.env.REACT_APP_BACKEND_URL}/${conImageUrl}`}
-            alt={`${state.title} 이미지`}
-            title={`${state.title} 이미지`}
+            alt={`${data.title}`}
+            title={`${data.title}`}
           />
 
-          <ConferenceInfoWrap type='conference'>
+          <ConferenceInfoWrap type='conference' onClick={goConferenceDetail}>
             <FlexRowSpaceBStart>
               <div>
-                <small>{state.date}</small>
-                <ConferenceTitle>{state.title}</ConferenceTitle>
-                <ConferenceDesc type='conference'>{state.sub}</ConferenceDesc>
+                <small>{data.date}</small>
+                <ConferenceTitle>{data.title}</ConferenceTitle>
+                <ConferenceDesc type='conference'>{data.sub}</ConferenceDesc>
               </div>
               <MoreBtn>
                 <p>MORE</p>
@@ -93,10 +141,10 @@ const List = () => {
 
         <Margin type='bottom' size={20} />
 
-        {state &&
-          state.session_list &&
-          state.session_list.length > 0 &&
-          state.session_list.map((session: any, index: number) => (
+        {data &&
+          data.session_list &&
+          data.session_list.length > 0 &&
+          data.session_list.map((session: any, index: number) => (
             <ConferenceInfoWrap
               key={`session-${index}`}
               type='session'
@@ -116,8 +164,8 @@ const List = () => {
                       src={`${process.env.REACT_APP_BACKEND_URL}/${urlChange(
                         session.ses_img
                       )}`}
-                      alt={`${session.ses_title} 이미지`}
-                      title={`${session.ses_title} 이미지`}
+                      alt={`${session.ses_title}`}
+                      title={`${session.ses_title}`}
                     />
                   </ConferenceSessionImgWrap>
                 )}

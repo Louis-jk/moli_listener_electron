@@ -1,6 +1,7 @@
+import React, { useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import QueryString from 'qs';
-import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import Header from '../../components/Header';
@@ -13,16 +14,21 @@ import {
   FlexColumnStartStart,
   InfoTitle,
   Margin,
+  SmallPoint,
   TextPoint,
   TextWhite,
   Wrapper,
 } from '../../styles/Common.Styled';
-import { LoginInputField, NotUserAlert } from '../../styles/Login.Styled';
+import { LoginInputField, CustomNotify } from '../../styles/Login.Styled';
 import { loginUpdate } from '../../store/loginReducer';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store';
 
 export default function EmailLogin() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const intl = useIntl();
+  const { locale } = useSelector((state: RootState) => state.locale);
 
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -31,7 +37,7 @@ export default function EmailLogin() {
 
   const loginHandler = () => {
     const params = {
-      set_lang: 'ko',
+      set_lang: locale,
       mt_id: email,
       mt_pwd: password,
       app_token: 1,
@@ -66,15 +72,15 @@ export default function EmailLogin() {
 
   return (
     <Container>
-      <Header title='로그인' type='detail' />
+      <Header title={intl.formatMessage({ id: 'login' })} type='session' />
       <Wrapper>
         <Margin type='bottom' size={50} />
         <FlexColumnCenterCenter>
-          <InfoTitle>이메일 로그인</InfoTitle>
-          <p>가입하신 정보를 입력해 주세요</p>
+          <InfoTitle>{intl.formatMessage({ id: 'logintit' })}</InfoTitle>
+          <p>{intl.formatMessage({ id: 'loginsub' })}</p>
           <Margin type='bottom' size={20} />
 
-          <FlexColumnStartStart>
+          <FlexColumnStartStart style={{ width: '100%' }}>
             <LoginInputField
               type='text'
               value={email}
@@ -82,32 +88,30 @@ export default function EmailLogin() {
               onChange={(e) => emailInsertHandler(e.target)}
             />
             <Margin type='bottom' size={7} />
-            <TextPoint>* 이메일 형식에 맞지 않습니다.</TextPoint>
+            <SmallPoint>{intl.formatMessage({ id: 'emailsub' })}</SmallPoint>
             <Margin type='bottom' size={10} />
             <LoginInputField
               type='password'
               value={password}
-              placeholder='비밀번호를 입력해주세요'
+              placeholder={intl.formatMessage({ id: 'loginpwplaceholder' })}
               onChange={(e) => setPassword(e.target.value)}
             />
             <Margin type='bottom' size={7} />
-            <TextPoint>
-              * 비밀번호는 특수문자가 포함 된 8~12자리만 가능합니다.
-            </TextPoint>
+            <SmallPoint>{intl.formatMessage({ id: 'passwordsub' })}</SmallPoint>
           </FlexColumnStartStart>
 
           <Margin type='bottom' size={50} />
           <Button type='full' onClick={loginHandler}>
-            로그인
+            {intl.formatMessage({ id: 'login' })}
           </Button>
           <Margin type='bottom' size={10} />
-          <Button type='line'>비밀번호 찾기</Button>
+          <Button type='line'>{intl.formatMessage({ id: 'findpw' })}</Button>
         </FlexColumnCenterCenter>
       </Wrapper>
 
-      <NotUserAlert visible={isErrorMsgVisible}>
+      <CustomNotify visible={isErrorMsgVisible} error={isErrorMsgVisible}>
         <TextWhite>{errorMsg}</TextWhite>
-      </NotUserAlert>
+      </CustomNotify>
     </Container>
   );
 }

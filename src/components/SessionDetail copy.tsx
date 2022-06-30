@@ -58,6 +58,7 @@ const SessionDetail = () => {
   const { state }: any = useLocation();
 
   const { isMin } = useSelector((state: RootState) => state.frame);
+  const { locale } = useSelector((state: RootState) => state.locale);
 
   const [isLoading, setLoading] = useState<boolean>(true);
   const [codeList, setCodeList] = useState<any[]>([]); // 통역사 리스트
@@ -174,7 +175,7 @@ const SessionDetail = () => {
 
   const getSessinInfoAPI = () => {
     const params = {
-      set_lang: 'ko',
+      set_lang: locale,
       code_in: state.code,
       mt_idx: 20,
     };
@@ -191,7 +192,7 @@ const SessionDetail = () => {
   // 세션 코드 새로고침(언어 활성화체크)
   const getRefleshAPI = () => {
     const params = {
-      set_lang: 'ko',
+      set_lang: locale,
       code_in: state.code,
     };
 
@@ -212,7 +213,7 @@ const SessionDetail = () => {
 
   const requestAPI = () => {
     const params = {
-      set_lang: 'ko',
+      set_lang: locale,
       code_in: state.code,
     };
 
