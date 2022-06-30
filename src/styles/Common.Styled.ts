@@ -165,8 +165,8 @@ export const WindowControl = styled(FlexRowEndCenter)`
   & > div {
     -webkit-app-region: no-drag;
     display: block;
-    width: 20px;
-    height: 20px;
+    width: 15px;
+    height: 15px;
     margin-left: 8px;
     cursor: pointer;
 
