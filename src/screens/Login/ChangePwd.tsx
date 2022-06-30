@@ -155,7 +155,7 @@ const ChangePwd = () => {
           <FlexColumnStartStart style={{ width: '100%' }}>
             {/* 현재 비밀번호 */}
             <LoginInputField
-              type='text'
+              type='password'
               value={currPwd}
               placeholder={intl.formatMessage({ id: 'nowpw' })}
               onChange={(e) => currPasswordInsertHandler(e.target)}
@@ -171,7 +171,7 @@ const ChangePwd = () => {
 
             {/* 새 비밀번호 */}
             <LoginInputField
-              type='text'
+              type='password'
               value={newPwd}
               placeholder={intl.formatMessage({ id: 'newpw' })}
               onChange={(e) => passwordInsertHandler(e.target)}
@@ -194,7 +194,7 @@ const ChangePwd = () => {
 
             {/* 새 비밀번호 확인 */}
             <LoginInputField
-              type='text'
+              type='password'
               value={newPwdCheck}
               placeholder={intl.formatMessage({ id: 'newpwcheck' })}
               onChange={(e) => passwordReInsertHandler(e.target)}
