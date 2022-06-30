@@ -56,12 +56,12 @@ export const SessionMainInfoBox = styled.div<SessionMainInfoBoxProps>`
 
   /* Track */
   ::-webkit-scrollbar-track {
-    background: #333;
+    background: ${theme.colors.BASE_COLOR_DARK};
   }
 
   /* Handle */
   ::-webkit-scrollbar-thumb {
-    background: ${theme.colors.BASE_COLOR_DARK};
+    background: #333;
   }
 
   /* Handle on hover */
