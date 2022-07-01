@@ -569,12 +569,23 @@ const SessionDetail = () => {
             fileList.map((list: any, index: number) => (
               <SessionTransListBox key={index} active={list.status !== 'close'}>
                 <p>{list.file_name}</p>
-                <img
-                  src='images/ic_download.png'
+                <div
                   style={{ width: 27, height: 27 }}
-                  alt='플레이중 스톱 아이콘'
-                  title='플레이중 스톱 아이콘'
-                />
+                  onClick={() =>
+                    appRuntime.send('download', { url: list.file_link })
+                  }
+                >
+                  <img
+                    src='images/ic_download.png'
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                    }}
+                    alt='다운로드'
+                    title='다운로드'
+                  />
+                </div>
               </SessionTransListBox>
             ))
           ) : (
