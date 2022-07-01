@@ -1,9 +1,10 @@
-import { app, BrowserWindow, Menu, ipcMain } from 'electron';
+import { app, BrowserWindow, Menu, ipcMain, shell, dialog } from 'electron';
 import * as isDev from 'electron-is-dev';
 import * as path from 'path';
 const fs = require('fs');
 const os = require('os');
 const url = require('url');
+import { download } from 'electron-dl';
 // const { setup: setupPushReceiver } = require('electron-push-receiver');
 
 let mainWindow: Electron.BrowserWindow | null;
@@ -36,7 +37,7 @@ function createWindow() {
 
   if (isDev) {
     mainWindow.loadURL('http://localhost:3000');
-    mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools(); // 개발자 툴 오픈
   } else {
     mainWindow.loadURL(indexPath);
   }
@@ -45,7 +46,16 @@ function createWindow() {
   // 기본 메뉴 숨기기
   mainWindow.setMenuBarVisibility(false);
 
-  // 개발자 툴 오픈
+  // 렌더러 내부 href링크 외부 브라우저로 열리게 처리
+  const handleRedirect = (e: any, url: string) => {
+    if (url != mainWindow.webContents.getURL()) {
+      e.preventDefault();
+      shell.openExternal(url);
+    }
+  };
+
+  mainWindow.webContents.on('will-navigate', handleRedirect);
+  mainWindow.webContents.on('new-window', handleRedirect);
 
   mainWindow.on('closed', () => {
     mainWindow = null;
@@ -109,6 +119,10 @@ ipcMain.on('closeWindow', (event, data) => {
   }
 });
 
+ipcMain.on('lang', (event, data) => {
+  event.sender.send('lang', app.getLocale());
+});
+
 if (process.platform === 'win32') {
   app.setAppUserModelId('MOLI');
 }
@@ -118,6 +132,11 @@ ipcMain.handle('quit-app', () => {
 });
 
 app.on('ready', createWindow);
+
+app.on('open-url', (event, url) => {
+  // dialog.showErrorBox('Welcome Back', `You arrived from: ${url}`);
+  shell.openExternal(url);
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
@@ -129,4 +148,14 @@ app.on('activate', () => {
   if (mainWindow === null) {
     createWindow();
   }
+});
+
+// 파일 다운로드(url 이미지)
+ipcMain.on('download', async (event, { url }) => {
+  const win = BrowserWindow.getFocusedWindow();
+  // console.log(await download(win, url));
+  await download(win, url, {
+    saveAs: true,
+    openFolderWhenDone: true,
+  });
 });
