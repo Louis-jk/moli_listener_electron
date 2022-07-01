@@ -19,7 +19,7 @@ interface SessionTransListBoxProps {
 export const SessionMainInfoBox = styled.div<SessionMainInfoBoxProps>`
   width: 100%;
   height: 200px;
-  overflow-y: auto;
+
   background-image: ${({ imageSource }) =>
     imageSource && `url(${imageSource})`};
   background-repeat: no-repeat;
@@ -29,16 +29,34 @@ export const SessionMainInfoBox = styled.div<SessionMainInfoBoxProps>`
   transform: scale(1) translate(0, 0);
 
   & div {
+    width: 100%;
+    height: 200px;
     padding: 1.65rem 1rem;
     background-color: rgba(0, 0, 0, 0.68);
+    overflow-y: auto;
+
+    ::-webkit-scrollbar {
+      width: 2px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+      background: ${theme.colors.BASE_COLOR_DARK};
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+      background: #333;
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+      background: ${theme.colors.BASE_COLOR_DARK};
+    }
 
     .session_date {
       font-weight: bold;
     }
-  }
-
-  ::-webkit-scrollbar {
-    width: 2px;
   }
 
   ${({ isFrameMin }) =>
@@ -53,21 +71,6 @@ export const SessionMainInfoBox = styled.div<SessionMainInfoBoxProps>`
       display: none;
     }
   `}
-
-  /* Track */
-  ::-webkit-scrollbar-track {
-    background: ${theme.colors.BASE_COLOR_DARK};
-  }
-
-  /* Handle */
-  ::-webkit-scrollbar-thumb {
-    background: #333;
-  }
-
-  /* Handle on hover */
-  ::-webkit-scrollbar-thumb:hover {
-    background: ${theme.colors.BASE_COLOR_DARK};
-  }
 `;
 
 export const SessionTransListBox = styled(
