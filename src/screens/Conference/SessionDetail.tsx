@@ -5,11 +5,14 @@ import axios, { AxiosError, AxiosResponse } from 'axios';
 import QueryString from 'qs';
 import { useSelector } from 'react-redux';
 
-// import AgoraRtcEngine from 'agora-electron-sdk';
-import AgoraRTC, {
-  IAgoraRTCRemoteUser,
-  IAgoraRTCClient,
-} from 'agora-rtc-sdk-ng';
+// import AgoraRTC, {
+//   ConnectionDisconnectedReason,
+//   ConnectionState,
+//   IAgoraRTCClient,
+//   IRemoteAudioTrack,
+// } from 'agora-rtc-sdk-ng';
+
+import AgoraRTC from 'agora-rtc-sdk';
 
 import {
   Container,
@@ -48,6 +51,22 @@ const SessionDetail = () => {
   const { state }: any = useLocation();
   const intl = useIntl();
 
+  /*
+    agora test
+  */
+
+  const channelRef = useRef('');
+  const remoteRef = useRef('');
+  const leaveRef = useRef('');
+
+  const [joined, setJoined] = useState(false);
+  const [currStream, setCurrStream] = useState<any>();
+  const [currStreamId, setCurrStreamId] = useState<string>('');
+  const [currTrans, setCurrTrans] = useState<number>(-1);
+  /*
+    agora test
+  */
+
   const { isMin } = useSelector((state: RootState) => state.frame);
   const { mt_idx } = useSelector((state: RootState) => state.login);
   const { locale } = useSelector((state: RootState) => state.locale);
@@ -64,7 +83,6 @@ const SessionDetail = () => {
 
   const [isFrameMin, setFrameMin] = useState<boolean>(false);
   const [isFrameWide, setFrameWide] = useState<boolean>(false);
-  const [currTrans, setCurrTrans] = useState<number>(-1);
 
   // 아고라
   const [inCall, setInCall] = useState<boolean>(false);
@@ -72,7 +90,8 @@ const SessionDetail = () => {
   const [agoraToken, setAgoraToken] = useState<string>('');
   const [agoraUId, setAgoraUId] = useState<any>(null);
   const [isConnect, setConnect] = useState<boolean>(false);
-  const [users, setUsers] = useState<any>(null);
+  const [remoteUsers, setRemoteUsers] = useState<any>(null);
+  const [agoraMediaType, setAgoraMediaType] = useState<any>(null);
   const [active, setActive] = useState(false);
   const [vol, setVol] = useState(0);
 
@@ -87,190 +106,140 @@ const SessionDetail = () => {
     },
   ];
 
-  const appId = process.env.REACT_APP_AGORA_APP_ID
+  const APPID = process.env.REACT_APP_AGORA_APP_ID
     ? process.env.REACT_APP_AGORA_APP_ID
     : '';
 
-  // client.on('volume-indicator', (volumes) => {
-  //   console.log('volumes ??', volumes);
-  //   volumes.forEach((volume, index) => {
-  //     //console.log(`${index} UID ${volume.uid} Level ${volume.level}`);
-  //     getVolumes = volume;
-  //     setVol(volume.level);
-  //   });
-  // });
-
   // const client: IAgoraRTCClient = AgoraRTC.createClient({
-  //   codec: 'vp8',
   //   mode: 'live',
+  //   codec: 'vp8',
+  //   role: 'audience',
+  //   clientRoleOptions: {
+  //     level: 2,
+  //   },
   // });
 
-  const client = AgoraRTC.createClient({ mode: 'live', codec: 'vp8' });
+  const client = AgoraRTC.createClient({
+    mode: 'live',
+    codec: 'vp8',
+  });
 
-  let localTracks: any = {
-    //videoTrack: null,
-    audioTrack: null,
+  let localStream = AgoraRTC.createStream({
+    audio: true,
+    video: false,
+  });
+
+  client.init(APPID);
+
+  client.setClientRole('audience', (error: any) => {
+    console.log('clientRole Error ::', error);
+  });
+
+  const leaveChannel = () => {
+    console.count('Press Leave ??');
+
+    client.leave(() => {
+      console.log('client leaves channel');
+      currStream.close();
+      removeVideoStream(currStreamId);
+      setJoined(false);
+    }, handleError);
   };
 
-  let remoteUsers: any = {};
-
-  let options: any = {
-    appid: null,
-    channel: null,
-    uid: null,
-    token: null,
-    role: 'audience', //"audience", // host or audience
-    audienceLatency: 2,
-  };
-
-  const joinChannel = async (
-    channel: string,
-    agoraToken: string,
-    sCode: string
-  ) => {
-    playSessionHandler(sCode);
-
-    options.appid = appId;
-    options.channel = channel;
-    options.token = agoraToken;
-
-    const uid = await client.join(
-      options.appid,
-      options.channel,
-      options.token,
-      null
-    );
-
-    if (options.role === 'audience') {
-      client.setClientRole(options.role, { level: options.audienceLatency });
-      // add event listener to play remote tracks when remote user publishs.
-      client.on('user-published', handleUserPublished);
-      client.on('user-unpublished', handleUserUnpublished);
-    } else {
-      client.setClientRole(options.role);
-    }
-
-    //받는쪽 볼륨 체크해서 이퀼라져에 표시
-    client.enableAudioVolumeIndicator();
-    client.on('volume-indicator', (volumes) => {
-      volumes.forEach((volume, index) => {
-        console.log(`${index} UID ${volume.uid} Level ${volume.level}`);
-        // colorPids(volume.level);
-      });
-    });
-
-    // join the channel
-    options.uid = await client.join(
-      appId,
-      channel,
-      agoraToken || null,
-      options.uid || null
-    );
-
-    if (options.role === 'host') {
-      // create local audio and video tracks
-      localTracks.audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
-      //localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
-      // play local video track
-      //localTracks.videoTrack.play("local-player");
-      // $("#local-player-name").text(`localTrack(${options.uid})`);
-      // publish local tracks to channel
-      await client.publish(Object.values(localTracks));
-      console.log('publish success');
-    }
-  };
-
-  console.log('client?', client);
-  console.log('localTracks?', localTracks);
-
-  const leaveChannel = async () => {
-    stopSessionHandler();
-    console.log('Leave ??');
-    // console.log('localTracks ??', localTracks);
-    // options.channel = '';
-    // options.token = '';
-    // localTracks = {};
-    // localTracks.map((trackName: any) => {
-    //   var track = localTracks[trackName];
-    //   if (track) {
-    //     track.stop();
-    //     track.close();
-    //     localTracks[trackName] = undefined;
-    //   }
-    // });
-
-    // Remove remote users and player views.
-    // remoteUsers = {};
-    //$("#remote-playerlist").html("");
-
-    // leave the channel
-
-    //$("#local-player-name").text("");
-    //$("#join").attr("disabled", false);
-    //$("#leave").attr("disabled", true);
-
+  const joinChannel = (channel: string, token: string) => {
     try {
-      await client.leave();
-      console.log('client leaves channel success');
-    } catch (err) {
-      console.error('leave error', err);
+      // const uid = await client.join(APPID, channel, token, null);
+      let uId: string | null = '';
+      client.join(
+        token,
+        channel,
+        null,
+        'audience',
+        () => {
+          localStream.init(() => {
+            localStream.play('me');
+            client.publish(localStream, handleError);
+          }, handleError);
+
+          setJoined(true);
+
+          client.on('stream-added', (evt: any) => {
+            // add
+            let stream = evt.stream;
+            console.log('new stream added ', stream.getId());
+            // add
+            client.subscribe(
+              evt.stream,
+              { video: false, audio: true },
+              handleError
+            );
+          });
+
+          client.on('stream-subscribed', (evt: any) => {
+            console.log('stream-subscribed evt :::::', evt);
+            console.log('stream-subscribed evt stream :::::', evt.stream);
+
+            let stream = evt.stream;
+            let streamId = String(stream.getId());
+            setCurrStream(stream);
+            setCurrStreamId(streamId);
+
+            console.log(
+              'stream-subscribed evt stream getID :::::',
+              String(stream.getId())
+            );
+            addVideoStream(streamId);
+            stream.play(streamId);
+            setJoined(true);
+          });
+
+          client.on('stream-removed', function (evt) {
+            console.log('stream-removed evt :::::', evt);
+            let stream = evt.stream;
+            let streamId = String(stream.getId());
+            stream.close();
+            removeVideoStream(streamId);
+            setJoined(false);
+          });
+
+          client.on('peer-leave', function (evt) {
+            console.log('peer-leave evt :::::', evt);
+            let uid = evt.uid;
+            let reason = evt.reason;
+            // let stream = evt.stream;
+            // let streamId = String(stream.getId());
+            // stream.close();
+            removeVideoStream(uid);
+            setJoined(false);
+          });
+        },
+        handleError
+      );
+
+      console.log('joined');
+    } catch (e) {
+      console.log('join failed', e);
     }
   };
 
-  /*
-   * Stop all local and remote tracks then leave the channel.
-   */
+  const handleError = function (err: any) {
+    console.log('Error: ', err);
+  };
 
-  /*
-   * Add the local use to a remote channel.
-   *
-   * @param  {IAgoraRTCRemoteUser} user - The {@link  https://docs.agora.io/en/Voice/API%20Reference/web_ng/interfaces/iagorartcremoteuser.html| remote user} to add.
-   * @param {trackMediaType - The {@link https://docs.agora.io/en/Voice/API%20Reference/web_ng/interfaces/itrack.html#trackmediatype | media type} to add.
-   */
-  async function subscribe(user: any, mediaType: any) {
-    const uid = user.uid;
-    // subscribe to a remote user
-    await client.subscribe(user, mediaType);
-    console.log('subscribe success');
-    /*
-  if (mediaType === 'video') {
-    const player = $(`
-      <div id="player-wrapper-${uid}">
-        <p class="player-name">remoteUser(${uid})</p>
-        <div id="player-${uid}" class="player"></div>
-      </div>
-    `);
-    $("#remote-playerlist").append(player);
-    user.videoTrack.play(`player-${uid}`);
-  }
-  */
-    if (mediaType === 'audio') {
-      user.audioTrack.play();
-    }
+  function addVideoStream(elementId: any) {
+    let streamDiv = document.createElement('div');
+    streamDiv.id = elementId;
+    streamDiv.style.transform = 'rotateY(180deg)';
+    streamDiv.style.width = '400px';
+    streamDiv.style.height = '400px';
+
+    document.getElementById('container')?.appendChild(streamDiv);
   }
 
-  /*
-   * Add a user who has subscribed to the live channel to the local interface.
-   *
-   * @param  {IAgoraRTCRemoteUser} user - The {@link  https://docs.agora.io/en/Voice/API%20Reference/web_ng/interfaces/iagorartcremoteuser.html| remote user} to add.
-   * @param {trackMediaType - The {@link https://docs.agora.io/en/Voice/API%20Reference/web_ng/interfaces/itrack.html#trackmediatype | media type} to add.
-   */
-  function handleUserPublished(user: any, mediaType: any) {
-    const id = user.uid;
-    remoteUsers[id] = user;
-    subscribe(user, mediaType);
-  }
-
-  /*
-   * Remove the user specified from the channel in the local interface.
-   *
-   * @param  {string} user - The {@link  https://docs.agora.io/en/Voice/API%20Reference/web_ng/interfaces/iagorartcremoteuser.html| remote user} to remove.
-   */
-  function handleUserUnpublished(user: any, mediaType: any) {
-    if (mediaType === 'video') {
-      const id = user.uid;
-      delete remoteUsers[id];
-      //$(`#player-wrapper-${id}`).remove();
+  function removeVideoStream(elementId: any) {
+    let remoteDiv = document.getElementById(elementId);
+    if (remoteDiv) {
+      remoteDiv.parentNode?.removeChild(remoteDiv);
     }
   }
 
@@ -463,7 +432,7 @@ const SessionDetail = () => {
   return isLoading ? (
     <Loading isTransparent={false} />
   ) : (
-    <Container>
+    <Container id='container'>
       <Header title={intl.formatMessage({ id: 'session' })} type='session' />
       <Wrapper isFrameMin={isMin}>
         <Margin type='bottom' size={20} />
@@ -522,32 +491,41 @@ const SessionDetail = () => {
               >
                 <p>{list.lang_title}</p>
                 <FlexRowCenterStart>
-                  <PlayBtn
-                    onClick={() => {
-                      setSessionCode(list.session_code);
-                      joinChannel(
-                        list.channel_name,
-                        list.listen_token,
-                        list.session_code
-                      );
-                      setCurrTrans(index);
-                    }}
-                  >
+                  {joined && currTrans === index && (
                     <img
-                      src='images/ic_play.png'
-                      style={{ width: 27, height: 27 }}
+                      src='images/ic_eq.png'
+                      style={{
+                        width: 22,
+                        height: 22,
+                        marginRight: 10,
+                      }}
                       alt='플레이중 스톱 아이콘'
                       title='플레이중 스톱 아이콘'
                     />
-                  </PlayBtn>
+                  )}
                   <PlayBtn
                     onClick={() => {
-                      leaveChannel();
+                      if (!joined) {
+                        setSessionCode(list.session_code);
+                        joinChannel(list.channel_name, list.listen_token);
+                        // list.session_code
+                        setCurrTrans(index);
+                      } else {
+                        leaveChannel();
+                      }
                     }}
                   >
                     <img
-                      src='images/ic_stop.png'
-                      style={{ width: 27, height: 27 }}
+                      src={
+                        joined && currTrans === index
+                          ? 'images/ic_stop.png'
+                          : 'images/ic_play.png'
+                      }
+                      style={{
+                        width: 27,
+                        height: 27,
+                        opacity: list.status === 'open' ? 1 : 0.3,
+                      }}
                       alt='플레이중 스톱 아이콘'
                       title='플레이중 스톱 아이콘'
                     />
@@ -615,13 +593,13 @@ const SessionDetail = () => {
             )}
             {codeList[currTrans].status === 'open' && !isConnect && (
               <PlayBtn
-                onClick={() => {
-                  joinChannel(
-                    codeList[currTrans].channel_name,
-                    codeList[currTrans].listen_token,
-                    codeList[currTrans].session_code
-                  );
-                }}
+              // onClick={() => {
+              //   joinChannel(
+              //     codeList[currTrans].channel_name,
+              //     codeList[currTrans].listen_token,
+              //     codeList[currTrans].session_code
+              //   );
+              // }}
               >
                 <img
                   src='images/ic_play.png'
@@ -633,9 +611,9 @@ const SessionDetail = () => {
             )}
             {codeList[currTrans].status === 'open' && isConnect && (
               <PlayBtn
-                onClick={() => {
-                  leaveChannel();
-                }}
+              // onClick={() => {
+              //   leaveChannel();
+              // }}
               >
                 <img
                   src='images/ic_stop.png'
@@ -654,9 +632,9 @@ const SessionDetail = () => {
               />
             )}
             <PlayBtn
-              onClick={() => {
-                leaveChannel();
-              }}
+            // onClick={() => {
+            //   leaveChannel();
+            // }}
             >
               <img
                 src='images/ic_stop.png'

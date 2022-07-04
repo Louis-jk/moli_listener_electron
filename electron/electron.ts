@@ -23,6 +23,7 @@ function createWindow() {
       nodeIntegration: true,
       contextIsolation: true,
       enableRemoteModule: true,
+      webSecurity: false,
       preload: path.join(app.getAppPath(), 'preload.js'), // 빌드시 /build/preload.js 로 변경 필요
     },
   });
@@ -34,6 +35,8 @@ function createWindow() {
     pathname: path.join(app.getAppPath(), 'index.html'), // 빌드시 /build/index.html 로 변경 필요
     slashes: true,
   });
+
+  app.allowRendererProcessReuse = false;
 
   if (isDev) {
     mainWindow.loadURL('http://localhost:3000');
