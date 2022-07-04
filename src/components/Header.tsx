@@ -16,7 +16,14 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../store';
 import QueryString from 'qs';
 
-type HeaderType = 'main' | 'detail' | 'session' | 'not' | 'code' | 'general';
+type HeaderType =
+  | 'main'
+  | 'detail'
+  | 'session'
+  | 'session_active'
+  | 'not'
+  | 'code'
+  | 'general';
 interface Props {
   type: HeaderType;
   title: string | JSX.Element[] | JSX.Element;
@@ -104,12 +111,12 @@ const Header: React.FC<Props> = ({ type, title }) => {
         <div onClick={winMin}>
           <img src='images/win_min.png' alt='최소화' title='최소화' />
         </div>
-        {type === 'session' && isFrameMin && (
+        {type === 'session_active' && isFrameMin && (
           <div onClick={frameWide}>
             <img src='images/wide.png' alt='풀화면' title='풀화면' />
           </div>
         )}
-        {type === 'session' && isFrameWide && (
+        {type === 'session_active' && isFrameWide && (
           <div onClick={frameMin}>
             <img src='images/minimize.png' alt='작은화면' title='작은화면' />
           </div>
@@ -127,7 +134,9 @@ const Header: React.FC<Props> = ({ type, title }) => {
             <div style={{ width: 30 }} />
           )}
           <h3>{title}</h3>
-          {type !== 'session' && type !== 'general' ? (
+          {type !== 'session' &&
+          type !== 'session_active' &&
+          type !== 'general' ? (
             <SettingBtn onClick={goSettings} />
           ) : (
             <div style={{ width: 30 }} />
