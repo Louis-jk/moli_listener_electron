@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { FormattedMessage, useIntl } from 'react-intl';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import QueryString from 'qs';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 // import AgoraRTC, {
 //   ConnectionDisconnectedReason,
@@ -41,6 +41,7 @@ import Header from '../../components/Header';
 import Loading from '../../components/Loading';
 import appRuntime from '../../appRuntime';
 import { RootState } from '../../store';
+import { toggle } from '../../store/frameControlReducer';
 
 interface ItemProps {
   text: string;
@@ -54,7 +55,7 @@ const SessionDetail = () => {
   /*
     agora test
   */
-
+  const audioBarArr = new Array(10);
   const channelRef = useRef('');
   const remoteRef = useRef('');
   const leaveRef = useRef('');
@@ -63,6 +64,7 @@ const SessionDetail = () => {
   const [currStream, setCurrStream] = useState<any>();
   const [currStreamId, setCurrStreamId] = useState<string>('');
   const [currTrans, setCurrTrans] = useState<number>(-1);
+  const [remoteVol, setRemoteVol] = useState<number>(0);
   /*
     agora test
   */
@@ -135,6 +137,10 @@ const SessionDetail = () => {
     console.log('clientRole Error ::', error);
   });
 
+  console.log('====================================');
+  console.log('currTrans ??', currTrans);
+  console.log('====================================');
+
   const leaveChannel = () => {
     console.count('Press Leave ??');
 
@@ -193,6 +199,14 @@ const SessionDetail = () => {
             setJoined(true);
           });
 
+          client.enableAudioVolumeIndicator(); // Triggers the "volume-indicator" callback event every two seconds.
+          client.on('volume-indicator', function (evt) {
+            evt.attr.forEach(function (volume: any, index: number) {
+              // console.log(`${index} UID ${volume.uid} Level ${volume.level}`);
+              setRemoteVol(volume.level);
+            });
+          });
+
           client.on('stream-removed', function (evt) {
             console.log('stream-removed evt :::::', evt);
             let stream = evt.stream;
@@ -200,6 +214,9 @@ const SessionDetail = () => {
             stream.close();
             removeVideoStream(streamId);
             setJoined(false);
+            if (isMin) {
+              frameWide();
+            }
           });
 
           client.on('peer-leave', function (evt) {
@@ -211,6 +228,9 @@ const SessionDetail = () => {
             // stream.close();
             removeVideoStream(uid);
             setJoined(false);
+            if (isMin) {
+              frameWide();
+            }
           });
         },
         handleError
@@ -229,9 +249,10 @@ const SessionDetail = () => {
   function addVideoStream(elementId: any) {
     let streamDiv = document.createElement('div');
     streamDiv.id = elementId;
-    streamDiv.style.transform = 'rotateY(180deg)';
+    // streamDiv.style.transform = 'rotateY(180deg)';
     streamDiv.style.width = '400px';
     streamDiv.style.height = '400px';
+    streamDiv.style.display = 'none';
 
     document.getElementById('container')?.appendChild(streamDiv);
   }
@@ -429,11 +450,53 @@ const SessionDetail = () => {
   console.log('codeList ??', codeList);
   console.log('fileList ??', fileList);
 
+  const dispatch = useDispatch();
+
+  const frameWide = () => {
+    console.log('프레임 와이드');
+    appRuntime.send('frameWide', null);
+    // setFrameWideClient(true);
+    // setFrameMinClient(false);
+
+    dispatch(toggle(false));
+  };
+
+  interface AudioBarProp {
+    vol: number;
+  }
+  const AudioBar: React.FC<AudioBarProp> = ({ vol }) => {
+    console.log('vol ??', vol);
+    useEffect(() => {
+      var bars = document.getElementsByClassName('bar');
+      console.log('bars?', bars);
+      for (var i = 0; i < bars.length; i++) {
+        if (vol / (100 / bars.length) > i) {
+          bars[i].classList.add('on');
+        } else {
+          bars[i].classList.remove('on');
+        }
+      }
+    }, [vol]);
+
+    return (
+      <div className='audio-progress'>
+        {Array(64)
+          .fill(0)
+          .map((bar: any, index: number) => (
+            <div key={index} className='bar'></div>
+          ))}
+      </div>
+    );
+  };
+
   return isLoading ? (
     <Loading isTransparent={false} />
   ) : (
     <Container id='container'>
-      <Header title={intl.formatMessage({ id: 'session' })} type='session' />
+      <Header
+        title={intl.formatMessage({ id: 'session' })}
+        type={joined ? 'session_active' : 'session'}
+      />
       <Wrapper isFrameMin={isMin}>
         <Margin type='bottom' size={20} />
 
@@ -484,55 +547,76 @@ const SessionDetail = () => {
         {!isMin &&
           selectTabNum === 0 &&
           (codeList?.length > 0 ? (
-            codeList.map((list: any, index: number) => (
-              <SessionTransListBox
-                key={`${list.lang_title}_${index}`}
-                active={list.status !== 'close'}
-              >
-                <p>{list.lang_title}</p>
-                <FlexRowCenterStart>
-                  {joined && currTrans === index && (
+            <>
+              {codeList.map((list: any, index: number) => (
+                <SessionTransListBox
+                  key={`${list.lang_title}_${index}`}
+                  active={list.status !== 'close'}
+                >
+                  <p>{list.lang_title}</p>
+                  <FlexRowCenterStart>
+                    {joined && currTrans === index && (
+                      <img
+                        src='images/ic_eq.png'
+                        style={{
+                          width: 22,
+                          height: 22,
+                          marginRight: 10,
+                        }}
+                        alt='플레이중 스톱 아이콘'
+                        title='플레이중 스톱 아이콘'
+                      />
+                    )}
+                    <PlayBtn
+                      onClick={() => {
+                        if (!joined) {
+                          setSessionCode(list.session_code);
+                          joinChannel(list.channel_name, list.listen_token);
+                          // list.session_code
+                          setCurrTrans(index);
+                        } else {
+                          leaveChannel();
+                        }
+                      }}
+                    >
+                      <img
+                        src={
+                          joined && currTrans === index
+                            ? 'images/ic_stop.png'
+                            : 'images/ic_play.png'
+                        }
+                        style={{
+                          width: 27,
+                          height: 27,
+                          opacity: list.status === 'open' ? 1 : 0.3,
+                        }}
+                        alt='플레이중 스톱 아이콘'
+                        title='플레이중 스톱 아이콘'
+                      />
+                    </PlayBtn>
+                  </FlexRowCenterStart>
+                </SessionTransListBox>
+              ))}
+              {joined && (
+                <div style={{ padding: '1rem 0' }}>
+                  <p style={{ textAlign: 'right' }}>0:55</p>
+                  <FlexRowSpaceBCenter>
                     <img
-                      src='images/ic_eq.png'
+                      src='images/ic_vol_w.png'
                       style={{
-                        width: 22,
-                        height: 22,
+                        width: 20,
+                        height: 27,
+                        objectFit: 'cover',
                         marginRight: 10,
                       }}
                       alt='플레이중 스톱 아이콘'
                       title='플레이중 스톱 아이콘'
                     />
-                  )}
-                  <PlayBtn
-                    onClick={() => {
-                      if (!joined) {
-                        setSessionCode(list.session_code);
-                        joinChannel(list.channel_name, list.listen_token);
-                        // list.session_code
-                        setCurrTrans(index);
-                      } else {
-                        leaveChannel();
-                      }
-                    }}
-                  >
-                    <img
-                      src={
-                        joined && currTrans === index
-                          ? 'images/ic_stop.png'
-                          : 'images/ic_play.png'
-                      }
-                      style={{
-                        width: 27,
-                        height: 27,
-                        opacity: list.status === 'open' ? 1 : 0.3,
-                      }}
-                      alt='플레이중 스톱 아이콘'
-                      title='플레이중 스톱 아이콘'
-                    />
-                  </PlayBtn>
-                </FlexRowCenterStart>
-              </SessionTransListBox>
-            ))
+                    <AudioBar vol={remoteVol} />
+                  </FlexRowSpaceBCenter>
+                </div>
+              )}
+            </>
           ) : (
             <FlexCenterCenter style={{ minHeight: '30vh' }}>
               <p>현재 등록된 통역사가 없습니다.</p>
@@ -579,77 +663,36 @@ const SessionDetail = () => {
         <SessionTransListBox active={codeList[currTrans].status !== 'close'}>
           <p>{codeList[currTrans].lang_title}</p>
           <FlexRowCenterStart>
-            {codeList[currTrans].status !== 'close' && (
-              <img
-                src='images/ic_eq.png'
-                style={{
-                  width: 20,
-                  objectFit: 'contain',
-                  marginRight: 10,
-                }}
-                alt='플레이중 아이콘'
-                title='플레이중 아이콘'
-              />
-            )}
-            {codeList[currTrans].status === 'open' && !isConnect && (
-              <PlayBtn
-              // onClick={() => {
-              //   joinChannel(
-              //     codeList[currTrans].channel_name,
-              //     codeList[currTrans].listen_token,
-              //     codeList[currTrans].session_code
-              //   );
-              // }}
-              >
+            {codeList[currTrans].status === 'open' && (
+              <>
                 <img
-                  src='images/ic_play.png'
-                  style={{ width: 27, height: 27 }}
+                  src='images/ic_eq.png'
+                  style={{
+                    width: 22,
+                    height: 22,
+                    marginRight: 10,
+                  }}
                   alt='플레이중 스톱 아이콘'
                   title='플레이중 스톱 아이콘'
                 />
-              </PlayBtn>
+
+                <PlayBtn
+                  onClick={() => {
+                    leaveChannel();
+                    // frameWide();
+                  }}
+                >
+                  <img
+                    src={'images/ic_stop.png'}
+                    style={{ width: 27, height: 27 }}
+                    alt='플레이중 스톱 아이콘'
+                    title='플레이중 스톱 아이콘'
+                  />
+                </PlayBtn>
+              </>
             )}
-            {codeList[currTrans].status === 'open' && isConnect && (
-              <PlayBtn
-              // onClick={() => {
-              //   leaveChannel();
-              // }}
-              >
-                <img
-                  src='images/ic_stop.png'
-                  style={{ width: 27, height: 27 }}
-                  alt='플레이중 스톱 아이콘'
-                  title='플레이중 스톱 아이콘'
-                />
-              </PlayBtn>
-            )}
-            {codeList[currTrans].status === 'close' && (
-              <img
-                src='images/ic_play.png'
-                style={{ width: 27, height: 27, opacity: 0.25 }}
-                alt='플레이중 스톱 아이콘'
-                title='플레이중 스톱 아이콘'
-              />
-            )}
-            <PlayBtn
-            // onClick={() => {
-            //   leaveChannel();
-            // }}
-            >
-              <img
-                src='images/ic_stop.png'
-                style={{ width: 27, height: 27 }}
-                alt='플레이중 스톱 아이콘'
-                title='플레이중 스톱 아이콘'
-              />
-            </PlayBtn>
           </FlexRowCenterStart>
         </SessionTransListBox>
-      )}
-      {isMin && codeList?.length === 0 && (
-        <FlexCenterCenter style={{ minHeight: '30vh' }}>
-          <p>현재 등록된 통역사가 없습니다.</p>
-        </FlexCenterCenter>
       )}
     </Container>
   );

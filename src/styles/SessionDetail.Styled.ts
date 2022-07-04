@@ -64,8 +64,13 @@ export const SessionMainInfoBox = styled.div<SessionMainInfoBoxProps>`
     `
     min-width: 100px;
     max-height: 100px;
+    
     padding: 0;
     transform: translate(-10%, -10%);
+
+    & > div {
+      height: 100%;
+    }
 
     & > p, h4, span {
       display: none;

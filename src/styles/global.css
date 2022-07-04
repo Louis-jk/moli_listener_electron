@@ -57,3 +57,18 @@ a {
 .modal_overay {
   background-color: rgba(0, 0, 0, 0.5);
 }
+
+.bar {
+  height: 13px;
+  width: 2px;
+  background-color: #555555;
+  margin-right: 3px;
+}
+
+.on {
+  background-color: #f35174;
+}
+
+.audio-progress {
+  display: flex;
+}
