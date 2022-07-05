@@ -134,6 +134,7 @@ interface VerticalLineProps {
 }
 
 export const Wrapper = styled.section<WrapperProps>`
+  display: block;
   padding: 4.9rem 1rem 3rem;
   transform: translateY(0);
   transition: all 0.4s ease;
