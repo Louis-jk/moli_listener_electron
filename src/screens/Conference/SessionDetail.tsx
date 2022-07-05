@@ -54,22 +54,12 @@ const SessionDetail = () => {
   const { state }: any = useLocation();
   const intl = useIntl();
 
-  /*
-    agora test
-  */
-  const audioBarArr = new Array(10);
-  const channelRef = useRef('');
-  const remoteRef = useRef('');
-  const leaveRef = useRef('');
-
-  const [joined, setJoined] = useState(false);
+  // 아고라
+  const [joined, setJoined] = useState<boolean>(false);
   const [currStream, setCurrStream] = useState<any>();
   const [currStreamId, setCurrStreamId] = useState<string>('');
   const [currTrans, setCurrTrans] = useState<number>(-1);
   const [remoteVol, setRemoteVol] = useState<number>(0);
-  /*
-    agora test
-  */
 
   const { isMin } = useSelector((state: RootState) => state.frame);
   const { mt_idx } = useSelector((state: RootState) => state.login);
@@ -84,20 +74,6 @@ const SessionDetail = () => {
   const [sessionImg, setSessionImg] = useState<string>(''); // 세션 이미지
   const [selectTabNum, setSelectTabNum] = useState<number>(0); // 선택 탭 번호
   const [sessionCode, setSessionCode] = useState<string>(''); // 현재 세션 코드
-
-  const [isFrameMin, setFrameMin] = useState<boolean>(false);
-  const [isFrameWide, setFrameWide] = useState<boolean>(false);
-
-  // 아고라
-  const [inCall, setInCall] = useState<boolean>(false);
-  const [channelName, setChannelName] = useState<string>('');
-  const [agoraToken, setAgoraToken] = useState<string>('');
-  const [agoraUId, setAgoraUId] = useState<any>(null);
-  const [isConnect, setConnect] = useState<boolean>(false);
-  const [remoteUsers, setRemoteUsers] = useState<any>(null);
-  const [agoraMediaType, setAgoraMediaType] = useState<any>(null);
-  const [active, setActive] = useState(false);
-  const [vol, setVol] = useState(0);
 
   const TABS = [
     {
@@ -114,15 +90,6 @@ const SessionDetail = () => {
     ? process.env.REACT_APP_AGORA_APP_ID
     : '';
 
-  // const client: IAgoraRTCClient = AgoraRTC.createClient({
-  //   mode: 'live',
-  //   codec: 'vp8',
-  //   role: 'audience',
-  //   clientRoleOptions: {
-  //     level: 2,
-  //   },
-  // });
-
   const client = AgoraRTC.createClient({
     mode: 'live',
     codec: 'vp8',
@@ -138,10 +105,6 @@ const SessionDetail = () => {
   client.setClientRole('audience', (error: any) => {
     console.log('clientRole Error ::', error);
   });
-
-  console.log('====================================');
-  console.log('currTrans ??', currTrans);
-  console.log('====================================');
 
   const leaveChannel = () => {
     console.count('Press Leave ??');
@@ -185,58 +148,14 @@ const SessionDetail = () => {
               { video: false, audio: true },
               handleError
             );
-          });
 
-          client.on('stream-subscribed', (evt: any) => {
-            console.log('stream-subscribed evt :::::', evt);
-            console.log('stream-subscribed evt stream :::::', evt.stream);
-
-            let stream = evt.stream;
-            let streamId = String(stream.getId());
-            setCurrStream(stream);
-            setCurrStreamId(streamId);
-
-            console.log(
-              'stream-subscribed evt stream getID :::::',
-              String(stream.getId())
-            );
-            addVideoStream(streamId);
-            stream.play(streamId);
-            setJoined(true);
-          });
-
-          client.enableAudioVolumeIndicator(); // Triggers the "volume-indicator" callback event every two seconds.
-          client.on('volume-indicator', function (evt) {
-            evt.attr.forEach(function (volume: any, index: number) {
-              // console.log(`${index} UID ${volume.uid} Level ${volume.level}`);
-              setRemoteVol(volume.level);
+            client.enableAudioVolumeIndicator(); // Triggers the "volume-indicator" callback event every two seconds.
+            client.on('volume-indicator', (evt: any) => {
+              evt.attr.forEach((volume: any, index: number) => {
+                // console.log(`${index} UID ${volume.uid} Level ${volume.level}`);
+                setRemoteVol(volume.level);
+              });
             });
-          });
-
-          client.on('stream-removed', function (evt) {
-            console.log('stream-removed evt :::::', evt);
-            let stream = evt.stream;
-            let streamId = String(stream.getId());
-            stream.close();
-            removeVideoStream(streamId);
-            setJoined(false);
-            if (isMin) {
-              frameWide();
-            }
-          });
-
-          client.on('peer-leave', function (evt) {
-            console.log('peer-leave evt :::::', evt);
-            let uid = evt.uid;
-            let reason = evt.reason;
-            // let stream = evt.stream;
-            // let streamId = String(stream.getId());
-            // stream.close();
-            removeVideoStream(uid);
-            setJoined(false);
-            if (isMin) {
-              frameWide();
-            }
           });
         },
         handleError
@@ -248,11 +167,63 @@ const SessionDetail = () => {
     }
   };
 
-  const handleError = function (err: any) {
+  client.on('stream-subscribed', (evt: any) => {
+    console.log('stream-subscribed evt :::::', evt);
+    console.log('stream-subscribed evt stream :::::', evt.stream);
+
+    let stream = evt.stream;
+    let streamId = String(stream.getId());
+    setCurrStream(stream);
+    setCurrStreamId(streamId);
+
+    console.log(
+      'stream-subscribed evt stream getID :::::',
+      String(stream.getId())
+    );
+    addVideoStream(streamId);
+    stream.play(streamId);
+    setJoined(true);
+  });
+
+  client.on('stream-removed', (evt: any) => {
+    console.log('stream-removed evt :::::', evt);
+
+    setCurrTrans(-1);
+
+    let stream = evt.stream;
+    let streamId = String(stream.getId());
+    stream.close();
+    removeVideoStream(streamId);
+
+    getRefleshAPI();
+    setJoined(false);
+
+    if (isMin) {
+      frameWide();
+    }
+  });
+
+  client.on('peer-leave', (evt: any) => {
+    console.log('peer-leave evt :::::', evt);
+    console.log('!!!!!!!!!!!!!!! 피어 투 리브 !!!!!!!!!!!!!!!!!!!!!!!', evt);
+    let uid = evt.uid;
+    let reason = evt.reason;
+    // let stream = evt.stream;
+    // let streamId = String(stream.getId());
+    // stream.close();
+    requestAPI();
+    removeVideoStream(uid);
+    setCurrTrans(-1);
+    setJoined(false);
+
+    frameWide();
+  });
+
+  const handleError = (err: any) => {
     console.log('Error: ', err);
   };
 
-  function addVideoStream(elementId: any) {
+  const addVideoStream = (elementId: any) => {
     let streamDiv = document.createElement('div');
     streamDiv.id = elementId;
     // streamDiv.style.transform = 'rotateY(180deg)';
@@ -261,22 +232,30 @@ const SessionDetail = () => {
     streamDiv.style.display = 'none';
 
     document.getElementById('container')?.appendChild(streamDiv);
-  }
+  };
 
-  function removeVideoStream(elementId: any) {
+  const removeVideoStream = (elementId: any) => {
     let remoteDiv = document.getElementById(elementId);
     if (remoteDiv) {
       remoteDiv.parentNode?.removeChild(remoteDiv);
     }
-  }
+  };
 
   // web 실행시 주석 필요
   appRuntime.on('isFrameWide', (event: any, data: boolean) => {
-    setFrameWide(data);
+    if (isMin) {
+      dispatch(toggle(false));
+    } else {
+      return false;
+    }
   });
 
   appRuntime.on('isFrameMin', (event: any, data: boolean) => {
-    setFrameMin(data);
+    if (!isMin) {
+      dispatch(toggle(true));
+    } else {
+      return false;
+    }
   });
 
   // 세션 페이지 들어왔을 때
@@ -463,8 +442,6 @@ const SessionDetail = () => {
   const frameWide = () => {
     console.log('프레임 와이드');
     appRuntime.send('frameWide', null);
-    // setFrameWideClient(true);
-    // setFrameMinClient(false);
 
     dispatch(toggle(false));
   };
@@ -506,7 +483,7 @@ const SessionDetail = () => {
         {/* 탭 */}
         {!isMin && (
           <>
-            <FlexRowSpaceBCenter>
+            <FlexRowSpaceBCenter style={{ width: '100%' }}>
               {TABS.map((tab: any, index: number) => (
                 <Tab
                   key={`session_tab_${tab.id}_idx${index}`}
@@ -628,14 +605,13 @@ const SessionDetail = () => {
                 key={index}
                 active={list.status !== 'close'}
                 isMin={false}
+                style={{ width: '100%' }}
+                onClick={() =>
+                  appRuntime.send('download', { url: list.file_link })
+                }
               >
                 <p>{list.file_name}</p>
-                <div
-                  style={{ width: 27, height: 27 }}
-                  onClick={() =>
-                    appRuntime.send('download', { url: list.file_link })
-                  }
-                >
+                <div style={{ width: 27, height: 27 }}>
                   <img
                     src='images/ic_download.png'
                     style={{
