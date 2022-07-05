@@ -5,6 +5,7 @@ import Login from '../screens/Login'
 import EmailLogin from '../screens/Login/EmailLogin'
 import ChangePwd from '../screens/Login/ChangePwd'
 import FindPwd from '../screens/Login/FindPwd'
+import Kakao from '../screens/Login/SNS/Kakao'
 import Code from '../screens/Code'
 import List from '../screens/Conference/List'
 import SessionDetail from '../screens/Conference/SessionDetail'
@@ -23,6 +24,7 @@ export default function Pages () {
         <Route path='/' element={<Splash />} />
         <Route path='/login' element={<Login />} />
         <Route path='/emailLogin' element={<EmailLogin />} />
+        <Route path='/auth/kakao/callback' element={<Kakao />} />
         <Route path='/changePwd' element={<ChangePwd />} />
         <Route path='/findPwd' element={<FindPwd />} />
         <Route path='/code' element={<Code />} />
