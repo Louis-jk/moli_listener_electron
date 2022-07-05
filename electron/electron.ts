@@ -24,7 +24,7 @@ function createWindow() {
       contextIsolation: true,
       enableRemoteModule: true,
       webSecurity: false,
-      preload: path.join(app.getAppPath(), 'preload.js'), // 빌드시 /build/preload.js 로 변경 필요
+      preload: path.join(app.getAppPath(), '/build/preload.js'), // 빌드시 /build/preload.js 로 변경 필요
     },
   });
 
@@ -32,7 +32,7 @@ function createWindow() {
 
   indexPath = url.format({
     protocol: 'file:',
-    pathname: path.join(app.getAppPath(), 'index.html'), // 빌드시 /build/index.html 로 변경 필요
+    pathname: path.join(app.getAppPath(), '/build/index.html'), // 빌드시 /build/index.html 로 변경 필요
     slashes: true,
   });
 
@@ -40,7 +40,7 @@ function createWindow() {
 
   if (isDev) {
     mainWindow.loadURL('http://localhost:3000');
-    mainWindow.webContents.openDevTools(); // 개발자 툴 오픈
+    // mainWindow.webContents.openDevTools(); // 개발자 툴 오픈
   } else {
     mainWindow.loadURL(indexPath);
   }

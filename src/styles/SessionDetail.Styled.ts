@@ -14,6 +14,7 @@ interface SessionMainInfoBoxProps {
 
 interface SessionTransListBoxProps {
   active: boolean;
+  isMin: boolean;
 }
 
 export const SessionMainInfoBox = styled.div<SessionMainInfoBoxProps>`
@@ -84,6 +85,13 @@ export const SessionTransListBox = styled(
   padding: 1.5rem 1rem;
   border-bottom: 1px solid ${theme.colors.TEXT_DESCRIPTION_COLOR}2a;
   cursor: pointer;
+
+  ${({ isMin }) =>
+    isMin &&
+    `
+  border-bottom: none;
+  padding: 1rem 1rem 0.5rem;
+  `}
 
   & > p {
     color: ${({ active }) =>

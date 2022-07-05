@@ -71,8 +71,8 @@ const LanguageModal: React.FC<LanguageModalProps> = ({ isOpen, close }) => {
           <img
             src={
               locale === 'ko'
-                ? '/images/ic_check_on.png'
-                : '/images/ic_check_off.png'
+                ? 'images/ic_check_on.png'
+                : 'images/ic_check_off.png'
             }
             alt={intl.formatMessage({ id: 'ko' })}
             title={intl.formatMessage({ id: 'ko' })}
@@ -84,8 +84,8 @@ const LanguageModal: React.FC<LanguageModalProps> = ({ isOpen, close }) => {
           <img
             src={
               locale === 'en'
-                ? '/images/ic_check_on.png'
-                : '/images/ic_check_off.png'
+                ? 'images/ic_check_on.png'
+                : 'images/ic_check_off.png'
             }
             alt={intl.formatMessage({ id: 'en' })}
             title={intl.formatMessage({ id: 'en' })}

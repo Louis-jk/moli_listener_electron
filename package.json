@@ -13,10 +13,14 @@
     "start:desktop": "npm run build:desktop && electron ./build/electron.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy": "electron-builder --windows nsis:ia32",
+    "deploy:nsis": "electron-builder --windows nsis:ia32",
+    "deploy:xos": "electron-builder --mac",
+    "deploy:win32": "electron-builder --win --ia32",
+    "deploy:win64": "electron-builder --win --x64",
+    "deploy:win": "yarn deploy:win32 && yarn deploy:win64",
     "build": "electron-builder build",
     "electron:start": "tsc -p electron/tsconfig.json && concurrently \"cross-env BROWSER=none npm run start:web\" \"wait-on http://localhost:3000 && electron ./build/electron.js\"",
-    "electron:build": "tsc src/Electron && npm run build && electron-builder"
+    "electron:build": "tsc -p electron/tsconfig.json && npm run build"
   },
   "agora_electron": {
     "prebuilt": true

@@ -33,6 +33,7 @@ const Header: React.FC<Props> = ({ type, title }) => {
   const dispatch = useDispatch();
   const { mt_idx } = useSelector((state: RootState) => state.login);
   const { locale } = useSelector((state: RootState) => state.locale);
+  const { isMin } = useSelector((state: RootState) => state.frame);
 
   const [isFrameMin, setFrameMin] = useState<boolean>(false);
   const [isFrameWide, setFrameWide] = useState<boolean>(true);
@@ -57,6 +58,14 @@ const Header: React.FC<Props> = ({ type, title }) => {
         .catch((err: any) => console.error('session page out error ::', err));
     }
   };
+
+  // useEffect(() => {
+  //   if (isMin) {
+  //     frameMin();
+  //   } else {
+  //     frameWide();
+  //   }
+  // }, [isMin]);
 
   // web 실행시 주석 필요
   appRuntime.on('isFrameWide', (event: any, data: boolean) => {
@@ -108,20 +117,20 @@ const Header: React.FC<Props> = ({ type, title }) => {
   return (
     <header>
       <WindowControl>
-        <div onClick={winMin}>
+        <div onClick={winMin} className='control'>
           <img src='images/win_min.png' alt='최소화' title='최소화' />
         </div>
-        {type === 'session_active' && isFrameMin && (
-          <div onClick={frameWide}>
+        {type === 'session_active' && isMin && (
+          <div onClick={frameWide} className='control'>
             <img src='images/wide.png' alt='풀화면' title='풀화면' />
           </div>
         )}
-        {type === 'session_active' && isFrameWide && (
-          <div onClick={frameMin}>
+        {type === 'session_active' && !isMin && (
+          <div onClick={frameMin} className='control'>
             <img src='images/minimize.png' alt='작은화면' title='작은화면' />
           </div>
         )}
-        <div onClick={winClose}>
+        <div onClick={winClose} className='control'>
           <img src='images/close.png' alt='창닫기' title='창닫기' />
         </div>
       </WindowControl>

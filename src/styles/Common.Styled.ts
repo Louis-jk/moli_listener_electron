@@ -121,6 +121,8 @@ export const FlexColumnSpaceECenter = styled(FlexSpaceECenter)`
 export const Container = styled.div`
   height: 100vh;
   background-color: ${theme.colors.BASE_COLOR_DARK};
+  -webkit-app-region: drag;
+  cursor: grab;
 `;
 
 interface WrapperProps {
@@ -157,12 +159,12 @@ export const WindowControl = styled(FlexRowEndCenter)`
   right: 0;
   width: 100%;
   padding: 0.45rem 0.65rem;
-  -webkit-app-region: drag;
-  cursor: pointer;
   background: #111;
   z-index: 100;
+  -webkit-app-region: drag;
+  cursor: grab;
 
-  & > div {
+  & > .control {
     -webkit-app-region: no-drag;
     display: block;
     width: 15px;
