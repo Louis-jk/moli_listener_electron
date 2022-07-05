@@ -35,11 +35,6 @@ const Header: React.FC<Props> = ({ type, title }) => {
   const { locale } = useSelector((state: RootState) => state.locale);
   const { isMin } = useSelector((state: RootState) => state.frame);
 
-  const [isFrameMin, setFrameMin] = useState<boolean>(false);
-  const [isFrameWide, setFrameWide] = useState<boolean>(true);
-  const [isFrameMinClient, setFrameMinClient] = useState<boolean>(false);
-  const [isFrameWideClient, setFrameWideClient] = useState<boolean>(true);
-
   const goBackHandler = () => {
     navigate(-1);
 
@@ -59,44 +54,19 @@ const Header: React.FC<Props> = ({ type, title }) => {
     }
   };
 
-  // useEffect(() => {
-  //   if (isMin) {
-  //     frameMin();
-  //   } else {
-  //     frameWide();
-  //   }
-  // }, [isMin]);
-
-  // web 실행시 주석 필요
-  appRuntime.on('isFrameWide', (event: any, data: boolean) => {
-    console.log('GET isFrameWide event ::', event);
-    console.log('GET isFrameWide data ::', data);
-    setFrameWide(data);
-  });
-
-  appRuntime.on('isFrameMin', (event: any, data: boolean) => {
-    console.log('GET isFrameMin event ::', event);
-    console.log('GET isFrameMin data ::', data);
-    setFrameMin(data);
-  });
-
   const winMin = () => {
-    console.log('윈도우 최소화');
+    // console.log('윈도우 최소화');
     appRuntime.send('windowMinimize', null);
   };
   const frameWide = () => {
-    console.log('프레임 와이드');
+    // console.log('프레임 와이드');
     appRuntime.send('frameWide', null);
-    setFrameWideClient(true);
-    setFrameMinClient(false);
 
     dispatch(toggle(false));
   };
   const frameMin = () => {
-    console.log('프레임 최소화');
+    // console.log('프레임 최소화');
     appRuntime.send('frameMin', null);
-    setFrameMinClient(true);
-    setFrameWideClient(false);
 
     dispatch(toggle(true));
   };
@@ -109,10 +79,28 @@ const Header: React.FC<Props> = ({ type, title }) => {
     navigate('/settings');
   };
 
+  // web 실행시 주석 필요
+  appRuntime.on('isFrameWide', (event: any, data: boolean) => {
+    if (isMin) {
+      dispatch(toggle(false));
+    } else {
+      return false;
+    }
+  });
+
+  appRuntime.on('isFrameMin', (event: any, data: boolean) => {
+    if (!isMin) {
+      dispatch(toggle(true));
+    } else {
+      return false;
+    }
+  });
+
   // console.log('====================================');
   // console.log('isFrameMin', isFrameMin);
   // console.log('isFrameWide', isFrameWide);
-  // console.log('====================================');
+  console.log('====================================');
+  console.log('HEADE isMin', isMin);
 
   return (
     <header>
@@ -136,7 +124,7 @@ const Header: React.FC<Props> = ({ type, title }) => {
       </WindowControl>
 
       {type !== 'not' && (
-        <HeaderArea isFrameMin={isFrameMinClient}>
+        <HeaderArea isFrameMin={isMin}>
           {type !== 'code' ? (
             <GoBackBtn onClick={goBackHandler} />
           ) : (
