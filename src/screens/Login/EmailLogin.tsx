@@ -87,7 +87,7 @@ export default function EmailLogin() {
             setTimeout(() => {
               setErrorMsgVisible(false);
               navigate('/code');
-            }, 1500);
+            }, 1000);
           }
         })
         .catch((err: AxiosError) => {
