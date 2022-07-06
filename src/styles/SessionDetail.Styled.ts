@@ -90,7 +90,7 @@ export const SessionTransListBox = styled(
     isMin &&
     `
   border-bottom: none;
-  padding: 1rem 1rem 0.5rem;
+  padding: 0.1rem 1rem 0.1rem;
   `}
 
   & > p {
@@ -114,4 +114,47 @@ export const PlayBtn = styled.div`
 export const SessionMinDescWrapper = styled(FlexColumnStartStart)`
   min-width: 250px;
   margin: 0;
+`;
+
+export const VolumeInfomationArea = styled.div`
+  // padding: 1rem 0 0;
+  -webkit-app-region: no-drag;
+`;
+
+interface VolumeControlProp {
+  value: number;
+}
+export const VolumeControl = styled.input<VolumeControlProp>`
+  -webkit-app-region: no-drag;
+
+  &[type='range'] {
+    -webkit-appearance: none;
+    -webkit-app-region: no-drag;
+    margin-right: 15px;
+    width: 73vw;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 5px;
+    background-image: linear-gradient(#f35174, #f67397);
+    background-size: ${({ value }) => `${value}% 100%`};
+    background-repeat: no-repeat;
+    margin: 0.5rem 0;
+
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 12px;
+      width: 5px;
+      // border-radius: 50%;
+      background: #f35174;
+      cursor: ew-resize;
+      box-shadow: 0 0 2px 0 #555;
+      transition: background 0.3s ease-in-out;
+    }
+  }
+`;
+
+export const VolumeSettingBtn = styled.div`
+  -webkit-app-region: no-drag;
+  -webkit-appearance: none;
+  cursor: pointer;
 `;
