@@ -58,15 +58,17 @@ a {
   background-color: rgba(0, 0, 0, 0.5);
 }
 
-.bar {
-  height: 13px;
-  width: 2px;
+.pid {
+  height: 15px;
+  width: 3px;
   background-color: #555555;
   margin-right: 3px;
+  transition: all 0.3s ease-in-out;
 }
 
 .on {
   background-color: #f35174;
+  transition: all 0.3s ease-in-out;
 }
 
 .audio-progress {
