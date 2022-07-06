@@ -5,6 +5,7 @@ const fs = require('fs');
 const os = require('os');
 const url = require('url');
 import { download } from 'electron-dl';
+// const Env = JSON.parse(fs.readFileSync(`${__dirname}/env.json`));
 // const { setup: setupPushReceiver } = require('electron-push-receiver');
 
 let mainWindow: Electron.BrowserWindow | null;
@@ -16,7 +17,7 @@ function createWindow() {
     transparent: true,
     width: 380,
     height: 850,
-    title: 'MOLI',
+    title: 'MOLI-Listener',
     resizable: false,
     autoHideMenuBar: true,
     webPreferences: {
@@ -24,7 +25,7 @@ function createWindow() {
       contextIsolation: true,
       enableRemoteModule: true,
       webSecurity: false,
-      preload: path.join(app.getAppPath(), '/preload.js'), // 빌드시 /build/preload.js 로 변경 필요
+      preload: path.join(app.getAppPath(), '/build/preload.js'), // 빌드시 /build/preload.js 로 변경 필요
     },
   });
 
@@ -32,7 +33,7 @@ function createWindow() {
 
   indexPath = url.format({
     protocol: 'file:',
-    pathname: path.join(app.getAppPath(), '/index.html'), // 빌드시 /build/index.html 로 변경 필요
+    pathname: path.join(app.getAppPath(), '/build/index.html'), // 빌드시 /build/index.html 로 변경 필요
     slashes: true,
   });
 
@@ -124,6 +125,41 @@ ipcMain.on('closeWindow', (event, data) => {
 
 ipcMain.on('lang', (event, data) => {
   event.sender.send('lang', app.getLocale());
+});
+
+ipcMain.on('kakao_login', (event, args) => {
+  let authWindow = new BrowserWindow({
+    width: 380,
+    height: 600,
+    show: false,
+    parent: mainWindow,
+    modal: true,
+    webPreferences: {
+      nodeIntegration: false,
+    },
+  });
+
+  // console.log(
+  //   'electron ENV REACT_APP_KAKAO_CLIENT_ID :::::',
+  //   Env.REACT_APP_KAKAO_CLIENT_ID
+  // );
+
+  // const REDIRECT_URI = 'http://localhost:3000/auth/kakao/callback';
+  // const REDIRECT_URI = `file://${path.join(
+  //   __dirname,
+  //   '/build/index.html#/auth/kakao/callback'
+  // )}`;
+  // const kakaoAuthURL = `https://kauth.kakao.com/oauth/authorize?client_id=${Env.REACT_APP_KAKAO_CLIENT_ID_REST}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+
+  // authWindow.loadURL(kakaoAuthURL);
+  // authWindow.webContents.on('did-finish-load', () => {
+  //   authWindow.show();
+  // });
+
+  // authWindow.webContents.on('will-navigate', (event, url) => {
+  //   console.log('will-navigate event', event);
+  //   console.log('will-navigate url', url);
+  // });
 });
 
 if (process.platform === 'win32') {

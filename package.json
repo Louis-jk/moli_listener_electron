@@ -84,7 +84,7 @@
     ]
   },
   "build": {
-    "productName": "모리(MOLI)",
+    "productName": "모리(MOLI) 청취자",
     "appId": "com.moli",
     "files": [
       "build/**/*",
@@ -99,7 +99,7 @@
       "icon": "build/icons/mac/icon.icns"
     },
     "dmg": {
-      "title": "모리(MOLI)",
+      "title": "모리(MOLI) 청취자",
       "icon": "build/icons/mac/icon.icns"
     },
     "win": {
@@ -121,9 +121,9 @@
       "perMachine": true,
       "language": 1042,
       "installerIcon": "build/icons/win/icon.ico",
-      "shortcutName": "모리(MOLI)",
-      "artifactName": "모리(MOLI)-${version}.${ext}",
-      "uninstallDisplayName": "모리(MOLI)"
+      "shortcutName": "모리(MOLI) 청취자",
+      "artifactName": "모리(MOLI)_청취자-${version}.${ext}",
+      "uninstallDisplayName": "모리(MOLI) 청취자"
     },
     "directories": {
       "buildResources": "./build/",
