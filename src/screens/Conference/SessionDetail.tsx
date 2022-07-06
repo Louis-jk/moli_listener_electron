@@ -3,17 +3,9 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { FormattedMessage, useIntl } from 'react-intl';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import QueryString from 'qs';
+import AgoraRTC from 'agora-rtc-sdk';
 import { useDispatch, useSelector } from 'react-redux';
 import AudioBar from '../../components/AudioBar';
-
-// import AgoraRTC, {
-//   ConnectionDisconnectedReason,
-//   ConnectionState,
-//   IAgoraRTCClient,
-//   IRemoteAudioTrack,
-// } from 'agora-rtc-sdk-ng';
-
-import AgoraRTC from 'agora-rtc-sdk';
 
 import {
   Container,
@@ -30,6 +22,7 @@ import {
   FlexColumnCenterCenter,
   FlexColumnStartCenter,
   FlexRowStartCenter,
+  FlexRowEndCenter,
 } from '../../styles/Common.Styled';
 import { ConferenceTitle } from '../../styles/Lists.Styled';
 import {
@@ -37,6 +30,9 @@ import {
   SessionMainInfoBox,
   SessionMinDescWrapper,
   SessionTransListBox,
+  VolumeControl,
+  VolumeInfomationArea,
+  VolumeSettingBtn,
 } from '../../styles/SessionDetail.Styled';
 import { theme } from '../../styles/Theme';
 import Header from '../../components/Header';
@@ -44,6 +40,7 @@ import Loading from '../../components/Loading';
 import appRuntime from '../../appRuntime';
 import { RootState } from '../../store';
 import { toggle } from '../../store/frameControlReducer';
+import TimeCount from '../../components/TimeCount';
 
 interface ItemProps {
   text: string;
@@ -74,6 +71,9 @@ const SessionDetail = () => {
   const [sessionImg, setSessionImg] = useState<string>(''); // 세션 이미지
   const [selectTabNum, setSelectTabNum] = useState<number>(0); // 선택 탭 번호
   const [sessionCode, setSessionCode] = useState<string>(''); // 현재 세션 코드
+  const [isVolSetArea, setVolSetArea] = useState<boolean>(false);
+
+  const [vol, setVol] = useState<number>(100);
 
   const TABS = [
     {
@@ -85,6 +85,18 @@ const SessionDetail = () => {
       label: `${intl.formatMessage({ id: 'databox' })}`,
     },
   ];
+
+  // 볼륨 설정 or 볼륨 출력 설정
+  const volumeSettingHandler = () => {
+    setVolSetArea((prev) => !prev);
+  };
+
+  // 볼륨 설정
+  const volumeSetting = (val: any) => {
+    console.log('volumeSetting val :: ', val);
+    let changeVal = Number(val);
+    setVol(changeVal);
+  };
 
   const APPID = process.env.REACT_APP_AGORA_APP_ID
     ? process.env.REACT_APP_AGORA_APP_ID
@@ -106,14 +118,23 @@ const SessionDetail = () => {
     console.log('clientRole Error ::', error);
   });
 
-  const leaveChannel = () => {
-    console.count('Press Leave ??');
+  console.log('currStream ??', currStream);
 
+  useEffect(() => {
+    if (currStream && vol) {
+      // currStream.adjustAudioMixingVolume(vol)
+      currStream.setAudioVolume(vol);
+    }
+  }, [vol]);
+
+  // 채널 나가기
+  const leaveChannel = () => {
     client.leave(() => {
-      console.log('client leaves channel');
+      // console.log('client leaves channel success!');
       currStream.close();
       removeVideoStream(currStreamId);
       setJoined(false);
+      setRemoteVol(0);
 
       if (isMin) {
         frameWide();
@@ -168,13 +189,15 @@ const SessionDetail = () => {
   };
 
   client.on('stream-subscribed', (evt: any) => {
-    console.log('stream-subscribed evt :::::', evt);
-    console.log('stream-subscribed evt stream :::::', evt.stream);
+    // console.log('stream-subscribed evt :::::', evt);
+    // console.log('stream-subscribed evt stream :::::', evt.stream);
 
     let stream = evt.stream;
     let streamId = String(stream.getId());
     setCurrStream(stream);
     setCurrStreamId(streamId);
+
+    // stream.setAudioVolume(vol);
 
     console.log(
       'stream-subscribed evt stream getID :::::',
@@ -186,7 +209,7 @@ const SessionDetail = () => {
   });
 
   client.on('stream-removed', (evt: any) => {
-    console.log('stream-removed evt :::::', evt);
+    // console.log('stream-removed evt :::::', evt);
 
     setCurrTrans(-1);
 
@@ -205,7 +228,7 @@ const SessionDetail = () => {
 
   client.on('peer-leave', (evt: any) => {
     console.log('peer-leave evt :::::', evt);
-    console.log('!!!!!!!!!!!!!!! 피어 투 리브 !!!!!!!!!!!!!!!!!!!!!!!', evt);
+
     let uid = evt.uid;
     let reason = evt.reason;
     // let stream = evt.stream;
@@ -510,10 +533,11 @@ const SessionDetail = () => {
                 flexDirection: 'column',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                minHeight: 450,
+                minHeight: 420,
                 height: '100%',
               }}
             >
+              {/* 펼친화면 세션 선택 통역 Area */}
               <div style={{ width: '100%' }}>
                 {codeList.map((list: any, index: number) => (
                   <SessionTransListBox
@@ -569,25 +593,58 @@ const SessionDetail = () => {
                   </SessionTransListBox>
                 ))}
               </div>
-              {joined && (
-                <div style={{ padding: '1rem 0 0' }}>
-                  <p style={{ textAlign: 'right' }}>0:55</p>
-                  <FlexRowSpaceBCenter>
+              {/* // 펼친화면 세션 선택 통역 Area */}
+
+              {/* 펼친화면 재생 시간 및 사운드 바 */}
+              <VolumeInfomationArea>
+                <FlexRowEndCenter>
+                  <TimeCount start={joined} />
+                </FlexRowEndCenter>
+                <FlexRowSpaceBCenter>
+                  <VolumeSettingBtn onClick={volumeSettingHandler}>
                     <img
-                      src='images/ic_vol_w.png'
+                      src={
+                        isVolSetArea
+                          ? 'images/ic_vol_s.png'
+                          : 'images/ic_vol_w.png'
+                      }
                       style={{
-                        width: 20,
+                        width: 25,
                         height: 27,
-                        objectFit: 'cover',
-                        marginRight: 10,
+                        objectFit: 'contain',
+                        marginRight: 5,
                       }}
                       alt='플레이중 스톱 아이콘'
                       title='플레이중 스톱 아이콘'
                     />
-                    <AudioBar vol={remoteVol * 10} />
-                  </FlexRowSpaceBCenter>
-                </div>
-              )}
+                  </VolumeSettingBtn>
+                  {isVolSetArea ? (
+                    <FlexRowStartCenter>
+                      <VolumeControl
+                        type='range'
+                        value={vol}
+                        min={0}
+                        max={100}
+                        onChange={(e) => volumeSetting(e.target.value)}
+                      />
+                      <p
+                        style={{
+                          color: '#fff',
+                          fontWeight: 'bold',
+                          marginLeft: 15,
+                          textAlign: 'right',
+                          width: 25,
+                        }}
+                      >
+                        {vol}
+                      </p>
+                    </FlexRowStartCenter>
+                  ) : (
+                    <AudioBar vol={joined ? remoteVol * 10 : 0} />
+                  )}
+                </FlexRowSpaceBCenter>
+              </VolumeInfomationArea>
+              {/* // 펼친화면 재생 시간 및 사운드 바 */}
             </div>
           ) : (
             <FlexCenterCenter style={{ minHeight: '30vh' }}>
@@ -632,10 +689,25 @@ const SessionDetail = () => {
           ))}
         {/* //자료함 탭 선택일 경우  */}
 
-        {/* <Margin type='bottom' size={50} /> */}
+        {/* 볼륨 조절 바 */}
+        {/* {!isMin && selectTabNum === 0 && (
+          <FlexRowStartCenter>
+            <VolumeControl
+              type='range'
+              value={vol}
+              min={0}
+              max={100}
+              onChange={(e) => volumeSetting(e.target.value)}
+            />
+            <p style={{ marginLeft: 15 }}>{vol}</p>
+          </FlexRowStartCenter>
+        )} */}
+        {/* // 볼륨 조절 바 */}
       </Wrapper>
+
       {isMin && codeList?.length > 0 && currTrans !== -1 && (
         <FlexColumnStartCenter>
+          {/* 접은화면 세션 선택 통역 Area */}
           <SessionTransListBox
             active={codeList[currTrans].status !== 'close'}
             isMin={true}
@@ -683,20 +755,56 @@ const SessionDetail = () => {
               )}
             </FlexRowCenterStart>
           </SessionTransListBox>
-          <FlexRowSpaceBCenter>
-            <img
-              src='images/ic_vol_w.png'
-              style={{
-                width: 20,
-                height: 27,
-                objectFit: 'cover',
-                marginRight: 10,
-              }}
-              alt='플레이중 스톱 아이콘'
-              title='플레이중 스톱 아이콘'
-            />
-            <AudioBar vol={remoteVol * 10} />
-          </FlexRowSpaceBCenter>
+          {/* // 접은화면 세션 선택 통역 Area */}
+
+          {/* 접은화면 재생 시간 및 사운드 바 */}
+          <VolumeInfomationArea>
+            <FlexRowEndCenter>
+              <TimeCount start={joined} />
+            </FlexRowEndCenter>
+            <FlexRowSpaceBCenter>
+              <VolumeSettingBtn onClick={volumeSettingHandler}>
+                <img
+                  src={
+                    isVolSetArea ? 'images/ic_vol_s.png' : 'images/ic_vol_w.png'
+                  }
+                  style={{
+                    width: 25,
+                    height: 27,
+                    objectFit: 'contain',
+                    marginRight: 5,
+                  }}
+                  alt='플레이중 스톱 아이콘'
+                  title='플레이중 스톱 아이콘'
+                />
+              </VolumeSettingBtn>
+              {isVolSetArea ? (
+                <FlexRowStartCenter>
+                  <VolumeControl
+                    type='range'
+                    value={vol}
+                    min={0}
+                    max={100}
+                    onChange={(e) => volumeSetting(e.target.value)}
+                  />
+                  <p
+                    style={{
+                      color: '#fff',
+                      fontWeight: 'bold',
+                      marginLeft: 15,
+                      textAlign: 'right',
+                      width: 25,
+                    }}
+                  >
+                    {vol}
+                  </p>
+                </FlexRowStartCenter>
+              ) : (
+                <AudioBar vol={joined ? remoteVol * 10 : 0} />
+              )}
+            </FlexRowSpaceBCenter>
+          </VolumeInfomationArea>
+          {/* // 접은화면 재생 시간 및 사운드 바 */}
         </FlexColumnStartCenter>
       )}
     </Container>
