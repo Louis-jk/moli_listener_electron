@@ -15,13 +15,14 @@ import {
 } from '../../styles/Common.Styled';
 import { SnsLoginButton } from '../../styles/Login.Styled';
 import { useEffect } from 'react';
+import appRuntime from '../../appRuntime';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 
 type LoginButtonType = 'login' | 'register';
 type SNSLoginType = 'kakao' | 'naver' | 'google' | 'facebook';
 
 const REDIRECT_URI = 'http://localhost:3000/auth/kakao/callback';
-
-const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_CLIENT_ID_REST}&redirect_uri=${REDIRECT_URI}&response_type=code`;
 
 const Login = () => {
   const navigate = useNavigate();
@@ -35,10 +36,21 @@ const Login = () => {
 
     // Kakao sdk 스크립트 완료시
     kakaoScript.onload = () => {
-      window.Kakao.init('b91eac93806934e19290b3233661a849');
+      window.Kakao.init(process.env.REACT_APP_KAKAO_CLIENT_ID_JS);
       // console.log('kakao init', window.Kakao.isInitialized());
     };
   };
+
+  console.log('====================================');
+  console.log(
+    'process.env.REACT_APP_KAKAO_CLIENT_ID_JS ',
+    process.env.REACT_APP_KAKAO_CLIENT_ID_JS
+  );
+  console.log(
+    'process.env.REACT_APP_KAKAO_CLIENT_ID_REST ',
+    process.env.REACT_APP_KAKAO_CLIENT_ID_REST
+  );
+  console.log('====================================');
 
   useEffect(() => {
     kakaoInit();
@@ -55,8 +67,13 @@ const Login = () => {
   };
 
   function loginFormWithKakao() {
-    window.open(`${KAKAO_AUTH_URL}`, '_blank');
-    // window.Kakao.Auth.loginForm({
+    // window.open(`${KAKAO_AUTH_URL}`, '_blank');
+    // console.log('KAKAO_AUTH_URL ??', KAKAO_AUTH_URL);
+    window.Kakao.Auth.authorize({
+      redirectUri: `${REDIRECT_URI}`,
+    });
+
+    // window.Kakao.Auth.login({
     //   success(authObj: any) {
     //     console.log('authObj', authObj);
     //     console.log('authObj.access_token', authObj.access_token);
@@ -72,7 +89,8 @@ const Login = () => {
     console.log('SNS type ?', type);
     switch (type) {
       case 'kakao':
-        loginFormWithKakao();
+        appRuntime.send('kakao_login', null);
+        // loginFormWithKakao();
         break;
       default:
         return;
