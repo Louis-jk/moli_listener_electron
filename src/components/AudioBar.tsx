@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface AudioBarProp {
   vol: number;
@@ -7,27 +7,56 @@ const AudioBar: React.FC<AudioBarProp> = ({ vol }) => {
   console.log('vol ??', vol);
 
   useEffect(() => {
-    var bars = document.getElementsByClassName('bar');
+    const pids = document.getElementsByClassName('pid');
 
-    const volCtrl = setInterval(() => {
-      for (var i = 0; i < bars.length; i++) {
-        if (vol / (100 / bars.length) > i) {
-          bars[i].classList.add('on');
+    let amountOfPids = Math.round(vol / (100 / pids.length));
+    // let elemRange = pids.slice(0, amountOfPids);
+
+    if (vol > 0) {
+      // const pidAnime = setInterval(() => {
+      for (var i = 0; i < pids.length; i++) {
+        if (amountOfPids > i) {
+          pids[i].classList.add('on');
         } else {
-          bars[i].classList.remove('on');
+          pids[i].classList.remove('on');
         }
       }
-    }, 800);
+      // }, 100);
 
-    // return () => clearInterval(volCtrl);
-  }, [vol]);
+      // return () => clearInterval(pidAnime);
+    } else {
+      for (var i = 0; i < pids.length; i++) {
+        pids[i].classList.remove('on');
+      }
+    }
+  });
 
   return (
     <div className='audio-progress'>
-      {Array(64)
+      {/* <div className='pid'></div>
+      <div className='pid'></div>
+      <div className='pid'></div>
+      <div className='pid'></div>
+      <div className='pid'></div>
+      <div className='pid'></div>
+      <div className='pid'></div>
+      <div className='pid'></div>
+      <div className='pid'></div>
+      <div className='pid'></div>
+      <div className='pid'></div>
+      <div className='pid'></div>
+      <div className='pid'></div>
+      <div className='pid'></div>
+      <div className='pid'></div>
+      <div className='pid'></div>
+      <div className='pid'></div>
+      <div className='pid'></div>
+      <div className='pid'></div>
+      <div className='pid'></div> */}
+      {Array(53)
         .fill(0)
-        .map((bar: any, index: number) => (
-          <div key={index} className='bar'></div>
+        .map((pid: any, index: number) => (
+          <div key={index} className='pid'></div>
         ))}
     </div>
   );
