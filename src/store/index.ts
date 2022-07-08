@@ -4,6 +4,7 @@ import loginReducer from './loginReducer';
 import registerReducer from './registerReducer';
 import localeReducer from './localeReducer';
 import codeReducer from './codeReducer';
+import joinStateReducer from './joinStateReducer';
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     register: registerReducer,
     locale: localeReducer,
     code: codeReducer,
+    joinState: joinStateReducer,
   },
 });
 

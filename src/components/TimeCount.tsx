@@ -1,36 +1,50 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../store';
+import {
+  joinHoursUpdate,
+  joinMinutesUpdate,
+  joinSecondsUpdate,
+  joinStateUpdate,
+} from '../store/joinStateReducer';
 import { FlexRowCenterCenter } from '../styles/Common.Styled';
 
 interface TimeCountProp {
   start: boolean;
 }
 const TimeCount: React.FC<TimeCountProp> = ({ start }) => {
-  const [hours, setHours] = useState<number>(0);
-  const [minutes, setMinutes] = useState<number>(0);
-  const [seconds, setSeconds] = useState<number>(0);
+  const { isJoin, seconds, minutes, hours } = useSelector(
+    (state: RootState) => state.joinState
+  );
+
+  const dispatch = useDispatch();
+
+  // const [hours, setHours] = useState<number>(0);
+  // const [minutes, setMinutes] = useState<number>(0);
+  // const [seconds, setSeconds] = useState<number>(0);
 
   console.log('====================================');
   console.log('start ??', start);
   console.log('====================================');
 
   useEffect(() => {
-    if (!start || undefined) {
-      setHours(0);
-      setMinutes(0);
-      setSeconds(0);
+    if (!isJoin || undefined) {
+      dispatch(joinSecondsUpdate(0));
+      dispatch(joinMinutesUpdate(0));
+      dispatch(joinHoursUpdate(0));
     } else {
       let myInterval = setInterval(() => {
-        setSeconds(seconds + 1);
+        dispatch(joinSecondsUpdate(seconds + 1));
 
         if (seconds === 59) {
-          setMinutes(minutes + 1);
-          setSeconds(0);
+          dispatch(joinMinutesUpdate(minutes + 1));
+          dispatch(joinSecondsUpdate(0));
         }
 
         if (minutes === 59) {
-          setHours(hours + 1);
-          setMinutes(0);
-          setSeconds(0);
+          dispatch(joinHoursUpdate(hours + 1));
+          dispatch(joinMinutesUpdate(0));
+          dispatch(joinSecondsUpdate(0));
         }
       }, 1000);
 

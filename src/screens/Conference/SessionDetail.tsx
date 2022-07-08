@@ -5,7 +5,6 @@ import axios, { AxiosError, AxiosResponse } from 'axios';
 import QueryString from 'qs';
 import AgoraRTC from 'agora-rtc-sdk';
 import { useDispatch, useSelector } from 'react-redux';
-import AudioBar from '../../components/AudioBar';
 
 import {
   Container,
@@ -40,7 +39,9 @@ import Loading from '../../components/Loading';
 import appRuntime from '../../appRuntime';
 import { RootState } from '../../store';
 import { toggle } from '../../store/frameControlReducer';
+import AudioBar from '../../components/AudioBar';
 import TimeCount from '../../components/TimeCount';
+import { joinStateUpdate } from '../../store/joinStateReducer';
 
 interface ItemProps {
   text: string;
@@ -50,9 +51,10 @@ const SessionDetail = () => {
   const navigate = useNavigate();
   const { state }: any = useLocation();
   const intl = useIntl();
+  const { isJoin } = useSelector((state: RootState) => state.joinState);
 
   // 아고라
-  const [joined, setJoined] = useState<boolean>(false);
+  // const [joined, setJoined] = useState<boolean>(false);
   const [currStream, setCurrStream] = useState<any>();
   const [currStreamId, setCurrStreamId] = useState<string>('');
   const [currTrans, setCurrTrans] = useState<number>(-1);
@@ -133,7 +135,8 @@ const SessionDetail = () => {
       // console.log('client leaves channel success!');
       currStream.close();
       removeVideoStream(currStreamId);
-      setJoined(false);
+      // setJoined(false);
+      dispatch(joinStateUpdate(false));
       setRemoteVol(0);
 
       if (isMin) {
@@ -157,7 +160,8 @@ const SessionDetail = () => {
             client.publish(localStream, handleError);
           }, handleError);
 
-          setJoined(true);
+          // setJoined(true);
+          dispatch(joinStateUpdate(true));
 
           client.on('stream-added', (evt: any) => {
             // add
@@ -205,7 +209,8 @@ const SessionDetail = () => {
     );
     addVideoStream(streamId);
     stream.play(streamId);
-    setJoined(true);
+    // setJoined(true);
+    dispatch(joinStateUpdate(true));
   });
 
   client.on('stream-removed', (evt: any) => {
@@ -219,7 +224,8 @@ const SessionDetail = () => {
     removeVideoStream(streamId);
 
     getRefleshAPI();
-    setJoined(false);
+    // setJoined(false);
+    dispatch(joinStateUpdate(false));
 
     if (isMin) {
       frameWide();
@@ -237,7 +243,8 @@ const SessionDetail = () => {
     requestAPI();
     removeVideoStream(uid);
     setCurrTrans(-1);
-    setJoined(false);
+    // setJoined(false);
+    dispatch(joinStateUpdate(false));
 
     frameWide();
   });
@@ -475,7 +482,7 @@ const SessionDetail = () => {
     <Container id='container'>
       <Header
         title={intl.formatMessage({ id: 'session' })}
-        type={joined ? 'session_active' : 'session'}
+        type={isJoin ? 'session_active' : 'session'}
       />
       <Wrapper isFrameMin={isMin}>
         <Margin type='bottom' size={20} />
@@ -548,7 +555,7 @@ const SessionDetail = () => {
                   >
                     <p>{list.lang_title}</p>
                     <FlexRowCenterStart>
-                      {joined && currTrans === index && (
+                      {isJoin && currTrans === index && (
                         <img
                           src='images/ic_eq.png'
                           style={{
@@ -562,7 +569,7 @@ const SessionDetail = () => {
                       )}
                       <PlayBtn
                         onClick={() => {
-                          if (!joined) {
+                          if (!isJoin) {
                             setSessionCode(list.session_code);
                             joinChannel(list.channel_name, list.listen_token);
                             // list.session_code
@@ -576,7 +583,7 @@ const SessionDetail = () => {
                       >
                         <img
                           src={
-                            joined && currTrans === index
+                            isJoin && currTrans === index
                               ? 'images/ic_stop.png'
                               : 'images/ic_play.png'
                           }
@@ -598,7 +605,7 @@ const SessionDetail = () => {
               {/* 펼친화면 재생 시간 및 사운드 바 */}
               <VolumeInfomationArea>
                 <FlexRowEndCenter>
-                  <TimeCount start={joined} />
+                  <TimeCount start={isJoin} />
                 </FlexRowEndCenter>
                 <FlexRowSpaceBCenter>
                   <VolumeSettingBtn onClick={volumeSettingHandler}>
@@ -640,7 +647,7 @@ const SessionDetail = () => {
                       </p>
                     </FlexRowStartCenter>
                   ) : (
-                    <AudioBar vol={joined ? remoteVol * 10 : 0} />
+                    <AudioBar vol={isJoin ? remoteVol * 10 : 0} />
                   )}
                 </FlexRowSpaceBCenter>
               </VolumeInfomationArea>
@@ -730,7 +737,7 @@ const SessionDetail = () => {
 
                   <PlayBtn
                     onClick={() => {
-                      if (!joined) {
+                      if (!isJoin) {
                         setSessionCode(codeList[currTrans].session_code);
                         joinChannel(
                           codeList[currTrans].channel_name,
@@ -745,7 +752,7 @@ const SessionDetail = () => {
                     }}
                   >
                     <img
-                      src={joined ? 'images/ic_stop.png' : 'images/ic_play.png'}
+                      src={isJoin ? 'images/ic_stop.png' : 'images/ic_play.png'}
                       style={{ width: 27, height: 27 }}
                       alt='플레이중 스톱 아이콘'
                       title='플레이중 스톱 아이콘'
@@ -760,7 +767,7 @@ const SessionDetail = () => {
           {/* 접은화면 재생 시간 및 사운드 바 */}
           <VolumeInfomationArea>
             <FlexRowEndCenter>
-              <TimeCount start={joined} />
+              <TimeCount start={isJoin} />
             </FlexRowEndCenter>
             <FlexRowSpaceBCenter>
               <VolumeSettingBtn onClick={volumeSettingHandler}>
@@ -800,7 +807,7 @@ const SessionDetail = () => {
                   </p>
                 </FlexRowStartCenter>
               ) : (
-                <AudioBar vol={joined ? remoteVol * 10 : 0} />
+                <AudioBar vol={isJoin ? remoteVol * 10 : 0} />
               )}
             </FlexRowSpaceBCenter>
           </VolumeInfomationArea>
