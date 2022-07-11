@@ -1,4 +1,12 @@
-import { app, BrowserWindow, Menu, ipcMain, shell, dialog } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  Menu,
+  ipcMain,
+  shell,
+  dialog,
+  screen,
+} from 'electron';
 import * as isDev from 'electron-is-dev';
 import * as path from 'path';
 const fs = require('fs');
@@ -7,6 +15,9 @@ const url = require('url');
 import { download } from 'electron-dl';
 // const Env = JSON.parse(fs.readFileSync(`${__dirname}/env.json`));
 // const { setup: setupPushReceiver } = require('electron-push-receiver');
+
+// const display = screen.getPrimaryDisplay();
+// const dimensions = display.workAreaSize;
 
 let mainWindow: Electron.BrowserWindow | null;
 
@@ -68,6 +79,148 @@ function createWindow() {
 
 // 브라우저 메뉴창 없애기
 Menu.setApplicationMenu(null);
+
+// SNS Kakao
+ipcMain.on('kakaoLogin', (event, args) => {
+  let loginWindow = new BrowserWindow({
+    width: 380,
+    height: 500,
+    show: false,
+    parent: mainWindow,
+    // webPreferences: {
+    //   nodeIntegration: false,
+    // },
+  });
+
+  const restAPIKey = '6fde81df196e383578c4a91e894b0741';
+  const callBackURI = 'http://localhost:3000/auth/kakao/callback';
+
+  loginWindow.webContents.loadURL(
+    `https://kauth.kakao.com/oauth/authorize?client_id=${restAPIKey}&redirect_uri=${callBackURI}&response_type=code`
+  );
+
+  loginWindow.on('ready-to-show', () => {
+    loginWindow.show();
+  });
+
+  let kakaoCode = '';
+
+  loginWindow.webContents.on(
+    'will-redirect',
+    (event: any, oldUrl: any, newUrl: any) => {
+      console.log('kakao event ??', event);
+      console.log('kakao oldUrl ??', oldUrl);
+      console.log('kakao newUrl ??', newUrl);
+
+      const url = new URL(oldUrl);
+      const urlParams = url.searchParams;
+      kakaoCode = urlParams.get('code');
+    }
+  );
+
+  loginWindow.webContents.on('did-finish-load', () => {
+    console.log('did-finish-load kakaoCode ??', kakaoCode);
+    if (kakaoCode) {
+      event.sender.send('kakaoLoginCode', kakaoCode);
+      loginWindow.close();
+    }
+  });
+});
+
+// SNS Naver
+ipcMain.on('naverLogin', (event, args) => {
+  let loginWindow = new BrowserWindow({
+    width: 380,
+    height: 500,
+    show: true,
+    parent: mainWindow,
+  });
+
+  const clientId = 'ZIi4Wpw4nc4fgcRrWh7k';
+  const callBackURI = 'http://localhost:3000/auth/kakao/callback';
+
+  loginWindow.webContents.loadURL(
+    `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${clientId}&redirect_uri=${callBackURI}&state=naver`
+  );
+
+  loginWindow.show();
+});
+
+// SNS Google
+ipcMain.on('googleLogin', (event, args) => {
+  let loginWindow = new BrowserWindow({
+    width: 380,
+    height: 500,
+    show: true,
+    parent: mainWindow,
+  });
+
+  const clientId =
+    '759277572836-jj5c320hk1io87gvj1o4n5ggemh21jpk.apps.googleusercontent.com';
+  const callBackURI = 'http://localhost:3000/auth/kakao/callback';
+  // const callBackURI = 'https://change-all.com/listen/google_callback.php';
+  const scope =
+    'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email';
+  loginWindow.webContents.loadURL(
+    `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${callBackURI}&scope=${scope}&response_type=code`
+  );
+
+  loginWindow.show();
+});
+
+// SNS facebook
+ipcMain.on('fbLogin', (event, args) => {
+  let loginWindow = new BrowserWindow({
+    width: 380,
+    height: 500,
+    show: false,
+    // modal: true,
+    parent: mainWindow,
+    webPreferences: {
+      webSecurity: false,
+      plugins: true,
+    },
+  });
+
+  const clientId = '438180334454176';
+  // const callBackURI = 'http://localhost:3000/auth/kakao/callback';
+  const scopes = 'public_profile';
+  const callBackURI = 'https://www.facebook.com/connect/login_success.html';
+
+  // loginWindow.webContents.loadURL(
+  //   `https://www.facebook.com/v3.3/dialog/oauth?client_id=${clientId}&redirect_uri=${callBackURI}&state=f11&resource_type=token`
+  // );
+  loginWindow.webContents.loadURL(
+    `https://www.facebook.com/v2.8/dialog/oauth?client_id=${clientId}&redirect_uri=${callBackURI}&response_type=token,granted_scopes&scope=${scopes}&display=popup`
+  );
+
+  loginWindow.on('ready-to-show', () => {
+    loginWindow.show();
+  });
+
+  loginWindow.webContents.on(
+    'will-redirect',
+    (event: any, oldUrl: any, newUrl: any) => {
+      let raw_code = /access_token=([^&]*)/.exec(newUrl) || null;
+      let access_token = raw_code && raw_code.length > 1 ? raw_code[1] : null;
+      let error = /\?error=(.+)$/.exec(newUrl);
+
+      console.log('FB access_token ??', access_token);
+
+      // if (access_token) {
+      //   FB.setAccessToken(access_token);
+      //   FB.api(
+      //     '/me',
+      //     { fields: ['id', 'name', 'picture.width(800).height(800)'] },
+      //     function (res) {
+      //       console.log('response is:', res);
+      //     }
+      //   );
+      //   loginWindow.close();
+      // }
+    }
+  );
+});
 
 // 리사이징 기능
 ipcMain.on('frameMin', (event, data) => {
