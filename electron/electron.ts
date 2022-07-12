@@ -99,6 +99,9 @@ ipcMain.on('kakaoLogin', (event, args) => {
     `https://kauth.kakao.com/oauth/authorize?client_id=${restAPIKey}&redirect_uri=${callBackURI}&response_type=code`
   );
 
+  // loginWindow.webContents.userAgent =
+  //   'Mozilla/5.0 (Android; Mobile; rv:13.0) Gecko/13.0 Firefox/13.0 KAKAOTALK';
+
   loginWindow.on('ready-to-show', () => {
     loginWindow.show();
   });
@@ -132,18 +135,60 @@ ipcMain.on('naverLogin', (event, args) => {
   let loginWindow = new BrowserWindow({
     width: 380,
     height: 500,
-    show: true,
+    show: false,
     parent: mainWindow,
   });
 
-  const clientId = 'ZIi4Wpw4nc4fgcRrWh7k';
-  const callBackURI = 'http://localhost:3000/auth/kakao/callback';
+  let clientId = 'ZIi4Wpw4nc4fgcRrWh7k';
+  let clientSecret = 'NXykZyW6Ib';
+  let callBackURI = 'http://localhost:3000/auth/sns/callback';
+  let state = 'naver';
+  // let apiUrl =
+  //   'https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=ZIi4Wpw4nc4fgcRrWh7k&redirect_uri=http://localhost:3000/auth/sns/callback&state=naver';
+  // let apiUrl = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${clientId}&redirect_uri=${callBackURI}&state=${state}`;
+  let apiUrl = `https://nid.naver.com/oauth2.0/authorize?client_id=${clientId}&redirect_uri=${callBackURI}&state=${state}&response_type=code`;
 
-  loginWindow.webContents.loadURL(
-    `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${clientId}&redirect_uri=${callBackURI}&state=naver`
+  loginWindow.webContents.loadURL(apiUrl);
+  // loginWindow.webContents.userAgent =
+  //   'Mozilla/5.0 (iPhone; CPU iPhone OS like Mac OS X) AppleWebKit/605.1.15 NAVER(inapp; search; 620; 10.10.2; XR)';
+
+  loginWindow.on('ready-to-show', () => {
+    loginWindow.show();
+  });
+
+  let naverOauthToken = '';
+  let firstUrl = '';
+
+  loginWindow.webContents.on(
+    'will-redirect',
+    (event: any, oldUrl: any, newUrl: any) => {
+      console.log('naver event ??', event);
+      console.log('naver oldUrl ??', oldUrl);
+      console.log('naver newUrl ??', newUrl);
+
+      firstUrl = oldUrl;
+
+      const url = new URL(oldUrl);
+      const urlParams = url.searchParams;
+      naverOauthToken = urlParams.get('oauth_token');
+    }
   );
 
-  loginWindow.show();
+  if (firstUrl !== '') {
+    loginWindow.webContents.loadURL(firstUrl);
+  }
+
+  loginWindow.webContents.on('did-navigate-in-page', (event, url) => {
+    console.log('did-navigate-in-page url', url);
+  });
+
+  loginWindow.webContents.on('did-finish-load', () => {
+    // console.log('did-finish-load naverOauthToken ??', naverOauthToken);
+    // if (naverOauthToken) {
+    //   event.sender.send('naverLoginToken', naverOauthToken);
+    //   loginWindow.close();
+    // }
+  });
 });
 
 // SNS Google
@@ -155,17 +200,45 @@ ipcMain.on('googleLogin', (event, args) => {
     parent: mainWindow,
   });
 
-  const clientId =
+  let clientId =
     '759277572836-jj5c320hk1io87gvj1o4n5ggemh21jpk.apps.googleusercontent.com';
-  const callBackURI = 'http://localhost:3000/auth/kakao/callback';
+  let callBackURI = 'http://localhost:3000/auth/sns/callback';
   // const callBackURI = 'https://change-all.com/listen/google_callback.php';
-  const scope =
+  let scope =
     'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email';
+
   loginWindow.webContents.loadURL(
     `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${callBackURI}&scope=${scope}&response_type=code`
   );
 
-  loginWindow.show();
+  loginWindow.webContents.userAgent =
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:70.0) Gecko/20100101 Firefox/70.0';
+
+  loginWindow.on('ready-to-show', () => {
+    loginWindow.show();
+  });
+
+  let googleCode: string = '';
+  loginWindow.webContents.on(
+    'will-redirect',
+    (event: any, oldUrl: any, newUrl: any) => {
+      console.log('naver event ??', event);
+      console.log('naver oldUrl ??', oldUrl);
+      console.log('naver newUrl ??', newUrl);
+
+      const url = new URL(oldUrl);
+      const urlParams = url.searchParams;
+      googleCode = urlParams.get('code');
+    }
+  );
+
+  loginWindow.webContents.on('did-finish-load', () => {
+    // console.log('did-finish-load naverOauthToken ??', naverOauthToken);
+    if (googleCode) {
+      event.sender.send('googleLoginCode', googleCode);
+      loginWindow.close();
+    }
+  });
 });
 
 // SNS facebook
@@ -182,16 +255,13 @@ ipcMain.on('fbLogin', (event, args) => {
     },
   });
 
-  const clientId = '438180334454176';
-  // const callBackURI = 'http://localhost:3000/auth/kakao/callback';
-  const scopes = 'public_profile';
-  const callBackURI = 'https://www.facebook.com/connect/login_success.html';
+  let clientId = '438180334454176';
+  // let callBackURI = 'http://localhost:3000/auth/sns/callback';
+  let callBackURI = 'https://www.facebook.com/connect/login_success.html';
+  // let callBackURI = 'https://change-all.com/listen/facebook_callback.php';
 
-  // loginWindow.webContents.loadURL(
-  //   `https://www.facebook.com/v3.3/dialog/oauth?client_id=${clientId}&redirect_uri=${callBackURI}&state=f11&resource_type=token`
-  // );
   loginWindow.webContents.loadURL(
-    `https://www.facebook.com/v2.8/dialog/oauth?client_id=${clientId}&redirect_uri=${callBackURI}&response_type=token,granted_scopes&scope=${scopes}&display=popup`
+    `https://www.facebook.com/v3.3/dialog/oauth?client_id=${clientId}&redirect_uri=${callBackURI}&state=f11&resource_type=token`
   );
 
   loginWindow.on('ready-to-show', () => {
@@ -201,23 +271,12 @@ ipcMain.on('fbLogin', (event, args) => {
   loginWindow.webContents.on(
     'will-redirect',
     (event: any, oldUrl: any, newUrl: any) => {
-      let raw_code = /access_token=([^&]*)/.exec(newUrl) || null;
-      let access_token = raw_code && raw_code.length > 1 ? raw_code[1] : null;
-      let error = /\?error=(.+)$/.exec(newUrl);
+      console.log('fbLogin event ??', event);
+      console.log('fbLogin oldUrl ??', oldUrl);
 
-      console.log('FB access_token ??', access_token);
-
-      // if (access_token) {
-      //   FB.setAccessToken(access_token);
-      //   FB.api(
-      //     '/me',
-      //     { fields: ['id', 'name', 'picture.width(800).height(800)'] },
-      //     function (res) {
-      //       console.log('response is:', res);
-      //     }
-      //   );
-      //   loginWindow.close();
-      // }
+      // const url = new URL(oldUrl);
+      // const urlParams = url.searchParams;
+      // googleCode = urlParams.get('code');
     }
   );
 });
