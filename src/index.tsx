@@ -9,6 +9,7 @@ import { Provider } from 'react-redux';
 declare global {
   interface Window {
     Kakao: any;
+    Naver: any;
   }
 }
 
