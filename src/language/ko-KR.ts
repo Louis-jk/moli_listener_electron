@@ -84,4 +84,5 @@ export default {
   emailRequire: '* 이메일을 입력해주세요.',
   signupBtn: '확인',
   nameValidate: '* 한글, 영문, 숫자만 적용됩니다.',
+  loginSuccess: '로그인 되었습니다.',
 };

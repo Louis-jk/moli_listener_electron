@@ -85,4 +85,5 @@ export default {
   emailRequire: '* Please enter your email.',
   signupBtn: 'SignUp',
   nameValidate: '* Please enter only in Hangul, Alphabets, and Numbers.',
+  loginSuccess: 'Login Success.',
 };
