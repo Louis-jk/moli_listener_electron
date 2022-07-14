@@ -16,7 +16,6 @@ function App() {
 
   // web 테스트시 아래 함수 실행
   // const localeUpdateHandler = () => {
-  //   appRuntime.send('lang', null);
 
   //   const naviLocale = navigator.language;
 
