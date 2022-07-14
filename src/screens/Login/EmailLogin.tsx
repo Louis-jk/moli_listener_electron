@@ -79,8 +79,10 @@ export default function EmailLogin() {
               setErrorMsgVisible(false);
             }, 2000);
           } else {
-            const params = JSON.stringify(res.data.data.data);
-            dispatch(loginUpdate(params));
+            const params = res.data.data.data;
+            params['login_type'] = 'email';
+
+            dispatch(loginUpdate(JSON.stringify(params)));
             setErrorMsg(res.data.msg);
             setErrorMsgVisible(true);
 
