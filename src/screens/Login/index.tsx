@@ -90,7 +90,6 @@ const Login = () => {
             navigate('/code');
           }, 1000);
         }
-        console.log('kakao moli login data ::', data);
       })
       .catch((err: AxiosError) =>
         console.error('kakao Moli login Error:', err)
@@ -115,12 +114,8 @@ const Login = () => {
     }
   };
 
-  // console.log('kakaoProfile ?', kakaoProfile);
-
   // 카카오 로그인 액세스 토큰 가져오기
   const getKakaoToken = () => {
-    console.log('renderer kakaoCode :', kakaoCode);
-
     fetch(`https://kauth.kakao.com/oauth/token`, {
       method: 'post',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -129,7 +124,6 @@ const Login = () => {
       .then((res: Response) => res.json())
       .then((data) => {
         if (data.access_token) {
-          console.log('kakao accessToken ::', data.access_token);
           getKakaoProfile(data.access_token);
         } else {
           return;
@@ -171,7 +165,6 @@ const Login = () => {
             navigate('/code');
           }, 1000);
         }
-        console.log('google moli login data ::', data);
       })
       .catch((err: AxiosError) =>
         console.error('google Moli login Error:', err)
@@ -198,10 +191,6 @@ const Login = () => {
 
   // 구글 로그인 액세스 토큰 가져오기
   const getGoogleToken = () => {
-    console.log('====================================');
-    console.log('get googleToken code :', googleCode);
-    console.log('====================================');
-
     fetch(`https://accounts.google.com/o/oauth2/token`, {
       method: 'post',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -209,9 +198,7 @@ const Login = () => {
     })
       .then((res: Response) => res.json())
       .then((data) => {
-        console.log('google get token api res :: ', data);
         if (data.access_token) {
-          console.log('google accessToken ::', data.access_token);
           getGoogleProfile(data.access_token);
         } else {
           return;
@@ -254,7 +241,6 @@ const Login = () => {
             navigate('/code');
           }, 1000);
         }
-        console.log('google moli login data ::', data);
       })
       .catch((err: AxiosError) =>
         console.error('google Moli login Error:', err)
@@ -276,12 +262,9 @@ const Login = () => {
       )
         .then((res: Response) => res.json())
         .then((data) => {
-          console.log('fb profile data', data);
           fbLoginAPIHandler(data, token);
         })
         .catch((err) => console.error('google profile error : ', err));
-
-      // .then((res: Response) => console.log('fb Profile res', res))
     } catch (err: any) {
       console.error('google get Profile error :', err);
     }
@@ -289,8 +272,6 @@ const Login = () => {
 
   // 페이스북 로그인 액세스 토큰 가져오기
   const getFacebookToken = (code: string) => {
-    console.log('코드값 제대로 넘어오나', code);
-
     fetch(
       `https://graph.facebook.com/v2.11/oauth/access_token?client_id=${process.env.REACT_APP_FACEBOOK_CLIENT_ID}&client_secret=${process.env.REACT_APP_FACEBOOK_CLIENT_SECRET}&redirect_uri=${REDIRECT_URI01}&code=${code}`,
       {
@@ -299,9 +280,7 @@ const Login = () => {
     )
       .then((res) => res.json())
       .then((data) => {
-        console.log('facebook get token api res :: ', data);
         if (data.access_token) {
-          console.log('fb accessToken ::', data.access_token);
           getFbProfile(data.access_token);
         } else {
           return;
@@ -311,8 +290,6 @@ const Login = () => {
 
   // 네이버 로그인 API (모리)
   const naverLoginAPIHandler = (payload: any, token: string) => {
-    console.log('naverLogin payload', payload);
-
     const param = {
       set_lang: locale,
       sns_id: payload.id,
@@ -345,7 +322,6 @@ const Login = () => {
             navigate('/code');
           }, 1000);
         }
-        console.log('naver moli login data ::', data);
       })
       .catch((err: AxiosError) =>
         console.error('naver Moli login Error:', err)
@@ -354,8 +330,6 @@ const Login = () => {
 
   // 네이버 로그인 프로필 API 호출하기
   const getNaverProfile = (token: string) => {
-    console.log('Naver Get Profile before Current Token ::', token);
-
     fetch('https://openapi.naver.com/v1/nid/me', {
       method: 'post',
       headers: {
@@ -365,10 +339,6 @@ const Login = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log('====================================');
-        console.log('naver profile', data);
-        console.log('====================================');
-
         if (data.message === 'success') {
           naverLoginAPIHandler(data.response, token);
         }
@@ -386,7 +356,6 @@ const Login = () => {
       .then((res: Response) => res.json())
       .then((data) => {
         if (data.access_token) {
-          console.log('naver accessToken ::', data.access_token);
           getNaverProfile(data.access_token);
         } else {
           return;
@@ -397,7 +366,6 @@ const Login = () => {
   // 카카오 로그인 시도 시 인증코드 받아오면 실행
   useEffect(() => {
     if (kakaoCode) {
-      console.log('kakaoCode 들어오는가', kakaoCode);
       getKakaoToken();
       return () => getKakaoToken();
     }
@@ -430,30 +398,25 @@ const Login = () => {
   // web 실행시 주석 필요
   // 카카오 로그인 시도시 인증 코드 main(electron)에서 수신
   appRuntime.on('kakaoLoginCode', (evnet: any, data: string) => {
-    // console.log('kakaoLoginCode data get ::', data);
     setKakaoCode(data);
   });
 
   // 네이버 로그인 시도시 인증 토큰 main(electron)에서 수신
   appRuntime.on('naverLoginCode', (evnet: any, data: string) => {
-    // console.log('naverLoginCode data get ::', data);
     setNaverCode(data);
   });
 
   // 구글 로그인 시도시 인증 코드 main(electron)에서 수신
   appRuntime.on('googleLoginCode', (evnet: any, data: string) => {
-    console.log('googleLoginCode data get ::', data);
     setGoogleCode(data);
   });
 
   // 페이스북 로그인 시도시 인증 코드 main(electron)에서 수신
   appRuntime.on('fbLoginCode', (evnet: any, data: string) => {
-    // console.log('googleLoginCode data get ::', data);
     setFacebookCode(data);
   });
 
   const onSNSLogin = (type: SnsType) => {
-    console.log('SNS type ?', type);
     switch (type) {
       case 'kakao':
         appRuntime.send('kakaoLogin', null);
