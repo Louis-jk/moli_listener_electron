@@ -26,6 +26,7 @@ const Code = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { locale } = useSelector((state: RootState) => state.locale);
+
   const intl = useIntl();
   const [entryCode, setEntryCode] = useState(''); // ex: moli3
   const [isError, setError] = useState(false);

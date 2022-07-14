@@ -1,8 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { FrameConditional } from '../interfaces/store.interfaces';
 
-interface FrameConditional {
-  isMin: boolean;
-}
 const initialState: FrameConditional = {
   isMin: false,
 };

@@ -1,7 +1,9 @@
-import React, { Dispatch, SetStateAction } from 'react';
-import Modal from 'react-modal';
+import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
+import axios, { AxiosError, AxiosResponse } from 'axios';
+import QueryString from 'qs';
+import Modal from 'react-modal';
 import { theme } from '../../styles/Theme';
 import {
   Divider,
@@ -13,16 +15,8 @@ import {
 import { ModalButton } from '../../styles/Settings.Styled';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
-import axios, { AxiosError, AxiosResponse } from 'axios';
-import QueryString from 'qs';
+import { LeaveModalProps } from '../../interfaces/components.interface';
 
-interface LeaveModalProps {
-  isOpen: boolean;
-  close: () => void;
-  setLeaveMemberSuccess: Dispatch<SetStateAction<boolean>>;
-  setLeaveMemberError: Dispatch<SetStateAction<boolean>>;
-  setLeaveResMsg: Dispatch<SetStateAction<string>>;
-}
 const LeaveModal: React.FC<LeaveModalProps> = ({
   isOpen,
   close,

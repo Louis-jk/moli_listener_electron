@@ -31,10 +31,13 @@ import LeaveModal from '../../components/Modal/LeaveModal';
 import LanguageModal from '../../components/Modal/LanguageModal';
 import { CustomNotify } from '../../styles/Login.Styled';
 import Loading from '../../components/Loading';
+import { SnsType } from '../../types';
 
 const Settings = () => {
   const intl = useIntl();
-  const { mt_id } = useSelector((state: RootState) => state.login);
+  const { mt_id, login_type, sns_type, access_token } = useSelector(
+    (state: RootState) => state.login
+  );
   const { locale } = useSelector((state: RootState) => state.locale);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -49,6 +52,12 @@ const Settings = () => {
   const [isLeaveMemberError, setLeaveMemberError] = useState<boolean>(false);
   const [isLeaveResMsg, setLeaveResMsg] = useState<string>('');
   const [isNotifyMsgVisible, setNotifyMsgVisible] = useState<boolean>(false);
+
+  console.log('현재 유저의 로그인 타입 및 제반사항', [
+    login_type,
+    sns_type,
+    access_token,
+  ]);
 
   const notifyMsgVisibleHandler = () => {
     if (isLeaveMemberSuccess) {
@@ -110,12 +119,50 @@ const Settings = () => {
     }
   };
 
+  // SNS 계정 로그아웃 처리
+  const snsLogoutHandler = (type: SnsType) => {
+    console.log('current sns login type ??', type);
+    if (type === 'kakao') {
+      fetch(`https://kapi.kakao.com/v1/user/logout`, {
+        method: 'post',
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          dispatch(logout(true));
+          dispatch(codeUpdate(''));
+          navigate('/login');
+        })
+        .catch((err) => console.error('kakao error', err));
+    }
+
+    if (type === 'naver') {
+      console.log('naver logout');
+    }
+
+    if (type === 'google') {
+      console.log('google logout');
+    }
+
+    if (type === 'facebook') {
+      console.log('facebook logout');
+    }
+  };
+
   // 로그아웃
   const logoutHandler = () => {
-    dispatch(logout(true));
-    dispatch(codeUpdate(''));
-    // dispatch(localeUpdate(''));
-    navigate('/login');
+    // dispatch(logout(true));
+    // dispatch(codeUpdate(''));
+    // navigate('/login');
+    if (login_type === 'email') {
+      dispatch(logout(true));
+      dispatch(codeUpdate(''));
+      navigate('/login');
+    } else {
+      snsLogoutHandler(sns_type);
+    }
   };
 
   // 비밀번호 변경

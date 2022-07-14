@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
+import QueryString from 'qs';
 import {
   Divider,
   GoBackBtn,
@@ -11,24 +13,10 @@ import {
 } from '../styles/Common.Styled';
 import appRuntime from '../appRuntime';
 import { toggle } from '../store/frameControlReducer';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
 import { RootState } from '../store';
-import QueryString from 'qs';
+import { HeaderProps } from '../interfaces/components.interface';
 
-type HeaderType =
-  | 'main'
-  | 'detail'
-  | 'session'
-  | 'session_active'
-  | 'not'
-  | 'code'
-  | 'general';
-interface Props {
-  type: HeaderType;
-  title: string | JSX.Element[] | JSX.Element;
-}
-const Header: React.FC<Props> = ({ type, title }) => {
+const Header: React.FC<HeaderProps> = ({ type, title }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { mt_idx } = useSelector((state: RootState) => state.login);

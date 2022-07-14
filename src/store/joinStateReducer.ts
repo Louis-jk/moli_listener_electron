@@ -1,11 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-
-interface JoinStateProps {
-  isJoin: boolean;
-  hours: number;
-  minutes: number;
-  seconds: number;
-}
+import { JoinStateProps } from '../interfaces/store.interfaces';
 
 const initialState: JoinStateProps = {
   isJoin: false,

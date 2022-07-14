@@ -1,4 +1,8 @@
 import styled from 'styled-components';
+import {
+  CodeInputProps,
+  TermsCheckBoxProps,
+} from '../interfaces/styles.interface';
 import { FlexRowCenterCenter } from './Common.Styled';
 import { theme } from './Theme';
 
@@ -30,15 +34,12 @@ export const TermsInnerWrap = styled.div`
   }
 `;
 
-interface TermsCheckBoxProps {
-  checked: boolean;
-}
 export const TermsCheckBox = styled.div<TermsCheckBoxProps>`
   display: block;
   width: 40px;
   height: 40px;
   background-image: ${({ checked }) =>
-    checked ? `url('images/check_on.png')` : `url('images/check_off.png')`};
+    checked ? "url('images/check_on.png')" : "url('images/check_off.png')"};
   background-size: cover;
   background-position: center center;
   cursor: pointer;
@@ -48,9 +49,6 @@ export const CodeInputWrap = styled(FlexRowCenterCenter)`
   margin: 0 auto;
 `;
 
-interface CodeInputProps {
-  visible: boolean;
-}
 export const CodeInput = styled.input<CodeInputProps>`
   font-size: 1.25rem;
   font-weight: bold;

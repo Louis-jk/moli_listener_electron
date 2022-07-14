@@ -1,10 +1,6 @@
 import styled from 'styled-components';
+import { CustomNotifyProps } from '../interfaces/styles.interface';
 import { theme } from './Theme';
-
-interface CustomNotifyProps {
-  visible: boolean;
-  error: boolean;
-}
 
 export const LoginButton = styled.button`
   -webkit-appearance: none;

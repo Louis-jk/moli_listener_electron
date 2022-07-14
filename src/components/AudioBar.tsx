@@ -1,8 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { AudioBarProp } from '../interfaces/components.interface';
 
-interface AudioBarProp {
-  vol: number;
-}
 const AudioBar: React.FC<AudioBarProp> = ({ vol }) => {
   console.log('vol ??', vol);
 

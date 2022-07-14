@@ -1,12 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-
-interface RegisterProps {
-  set_lang: string;
-  mt_id: string;
-  mt_name: string;
-  mt_pwd: string;
-  mt_pwd_re: string;
-}
+import { RegisterProps } from '../interfaces/store.interfaces';
 
 const initialState: RegisterProps = {
   set_lang: '',

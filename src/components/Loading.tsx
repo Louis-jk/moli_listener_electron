@@ -1,9 +1,6 @@
 import React from 'react';
+import { LoadingWrapProp } from '../interfaces/components.interface';
 import { LoadingWrap } from '../styles/Common.Styled';
-
-interface LoadingWrapProp {
-  isTransparent: boolean;
-}
 
 const Loading: React.FC<LoadingWrapProp> = ({ isTransparent }) => {
   return (

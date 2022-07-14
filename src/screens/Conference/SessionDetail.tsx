@@ -42,10 +42,7 @@ import { toggle } from '../../store/frameControlReducer';
 import AudioBar from '../../components/AudioBar';
 import TimeCount from '../../components/TimeCount';
 import { joinStateUpdate } from '../../store/joinStateReducer';
-
-interface ItemProps {
-  text: string;
-}
+import { ItemProps } from '../../interfaces/components.interface';
 
 const SessionDetail = () => {
   const navigate = useNavigate();

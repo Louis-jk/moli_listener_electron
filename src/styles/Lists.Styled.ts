@@ -1,11 +1,6 @@
 import styled from 'styled-components';
+import { ConferenceInfoWrapProp } from '../interfaces/styles.interface';
 import { theme } from './Theme';
-
-type ConferenceInfoType = 'conference' | 'session';
-
-interface ConferenceInfoWrapProp {
-  type: ConferenceInfoType;
-}
 
 export const ConferenceMainWrap = styled.div`
   position: relative;

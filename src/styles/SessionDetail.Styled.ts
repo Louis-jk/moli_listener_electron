@@ -1,21 +1,16 @@
 import { url } from 'inspector';
 import styled from 'styled-components';
 import {
+  SessionMainInfoBoxProps,
+  SessionTransListBoxProps,
+  VolumeControlProp,
+} from '../interfaces/styles.interface';
+import {
   FlexColumnStartCenter,
   FlexColumnStartStart,
   FlexRowSpaceBCenter,
 } from './Common.Styled';
 import { theme } from './Theme';
-
-interface SessionMainInfoBoxProps {
-  imageSource: string;
-  isFrameMin: boolean;
-}
-
-interface SessionTransListBoxProps {
-  active: boolean;
-  isMin: boolean;
-}
 
 export const SessionMainInfoBox = styled.div<SessionMainInfoBoxProps>`
   width: 100%;
@@ -121,9 +116,6 @@ export const VolumeInfomationArea = styled.div`
   -webkit-app-region: no-drag;
 `;
 
-interface VolumeControlProp {
-  value: number;
-}
 export const VolumeControl = styled.input<VolumeControlProp>`
   -webkit-app-region: no-drag;
 

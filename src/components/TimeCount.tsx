@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { TimeCountProp } from '../interfaces/components.interface';
 import { RootState } from '../store';
 import {
   joinHoursUpdate,
@@ -9,23 +10,11 @@ import {
 } from '../store/joinStateReducer';
 import { FlexRowCenterCenter } from '../styles/Common.Styled';
 
-interface TimeCountProp {
-  start: boolean;
-}
 const TimeCount: React.FC<TimeCountProp> = ({ start }) => {
+  const dispatch = useDispatch();
   const { isJoin, seconds, minutes, hours } = useSelector(
     (state: RootState) => state.joinState
   );
-
-  const dispatch = useDispatch();
-
-  // const [hours, setHours] = useState<number>(0);
-  // const [minutes, setMinutes] = useState<number>(0);
-  // const [seconds, setSeconds] = useState<number>(0);
-
-  console.log('====================================');
-  console.log('start ??', start);
-  console.log('====================================');
 
   useEffect(() => {
     if (!isJoin || undefined) {

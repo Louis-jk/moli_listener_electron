@@ -1,10 +1,11 @@
 import styled from 'styled-components';
+import {
+  LangWrapProps,
+  ModalButtonProps,
+} from '../interfaces/styles.interface';
 import { FlexCenterCenter, FlexRowCenterCenter } from './Common.Styled';
 import { theme } from './Theme';
 
-interface LangWrapProps {
-  selected: boolean;
-}
 export const LangWrap = styled(FlexRowCenterCenter)<LangWrapProps>`
   padding: 0.5rem 0;
   cursor: pointer;
@@ -40,9 +41,6 @@ export const GrayLogo = styled.div`
   opacity: 0.3;
 `;
 
-interface ModalButtonProps {
-  height: number;
-}
 export const ModalButton = styled(FlexCenterCenter)<ModalButtonProps>`
   flex: 1;
   height: ${({ height }) => height && `${height}px`};

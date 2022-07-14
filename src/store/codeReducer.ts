@@ -1,8 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-
-interface CodeProps {
-  code: string;
-}
+import { CodeProps } from '../interfaces/store.interfaces';
 
 const initialState: CodeProps = {
   code: '',

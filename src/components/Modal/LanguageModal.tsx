@@ -13,11 +13,8 @@ import { LangWrap, ModalButton } from '../../styles/Settings.Styled';
 import { useDispatch, useSelector } from 'react-redux';
 import { localeUpdate } from '../../store/localeReducer';
 import { RootState } from '../../store';
+import { LanguageModalProps } from '../../interfaces/components.interface';
 
-interface LanguageModalProps {
-  isOpen: boolean;
-  close: () => void;
-}
 const LanguageModal: React.FC<LanguageModalProps> = ({ isOpen, close }) => {
   const intl = useIntl();
   const dispatch = useDispatch();

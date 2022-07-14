@@ -1,8 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-
-interface LocaleProps {
-  locale: string;
-}
+import { LocaleProps } from '../interfaces/store.interfaces';
 
 const initialState: LocaleProps = {
   locale: '',
