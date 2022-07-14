@@ -23,13 +23,10 @@ import { RootState } from '../../store';
 import QueryString from 'qs';
 import { useDispatch } from 'react-redux';
 import { loginUpdate } from '../../store/loginReducer';
+import { LoginButtonType, SnsType } from '../../types';
 
-type LoginButtonType = 'login' | 'register';
-type SNSLoginType = 'kakao' | 'naver' | 'google' | 'facebook';
-
-const REDIRECT_URI = 'http://localhost:3000/auth/kakao/callback';
-const REDIRECT_URI02 = 'http://localhost:3000/auth/sns/callback';
-const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_CLIENT_ID_REST}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+// const REDIRECT_URI01 = 'http://localhost:3000/auth/sns/callback';
+const REDIRECT_URI01 = 'https://change-all.com/listen_auth_callback';
 
 const Login = () => {
   const { Kakao, Naver } = window;
@@ -41,47 +38,15 @@ const Login = () => {
   const [kakaoCode, setKakaoCode] = useState<string>(''); // 카카오 인증 코드
   const [kakaoProfile, setKakaoProfile] = useState<any>(null); // 카카오 프로필
 
-  const [naverToken, setNaverToken] = useState<string>(''); // 네이버 인증 토큰
+  const [naverCode, setNaverCode] = useState<string>(''); // 네이버 인증 코드
 
   const [googleCode, setGoogleCode] = useState<string>(''); // 구글 인증 코드
+
+  const [facebookCode, setFacebookCode] = useState<string>(''); // 페이스북 인증 코드
 
   const [isNotifyMsgVisible, setNotifyMsgVisible] = useState<boolean>(false);
   const [notifyMsg, setNotifyMsg] = useState<string>('');
   const [isError, setError] = useState<boolean>(false);
-
-  const kakaoInit = () => {
-    const kakaoScript = document.createElement('script');
-    kakaoScript.src = 'https://developers.kakao.com/sdk/js/kakao.min.js';
-    document.head.appendChild(kakaoScript);
-
-    // Kakao sdk 스크립트 완료시
-    kakaoScript.onload = () => {
-      window.Kakao.init(process.env.REACT_APP_KAKAO_CLIENT_ID_JS);
-      // console.log('kakao init', window.Kakao.isInitialized());
-    };
-  };
-
-  const naverInit = () => {
-    const naverScript = document.createElement('script');
-    naverScript.src =
-      'https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.2.js';
-    document.head.appendChild(naverScript);
-
-    const naverScript02 = document.createElement('script');
-    naverScript02.src =
-      'https://static.nid.naver.com/js/naverLogin_implicit-1.0.3.js';
-    document.head.appendChild(naverScript02);
-  };
-
-  useEffect(() => {
-    kakaoInit();
-    naverInit();
-
-    return () => {
-      kakaoInit();
-      naverInit();
-    };
-  }, []);
 
   const onPressHandler = (type: LoginButtonType) => {
     if (type === 'login') {
@@ -109,8 +74,12 @@ const Login = () => {
       .then((res: AxiosResponse) => res.data)
       .then((data: any) => {
         if (data.result === 'true') {
-          const params = JSON.stringify(data.data.data);
-          dispatch(loginUpdate(params));
+          const params = data.data.data;
+          params['login_type'] = 'sns';
+          params['sns_type'] = 'kakao';
+          params['access_token'] = token;
+
+          dispatch(loginUpdate(JSON.stringify(params)));
 
           setError(false);
           setNotifyMsg(intl.formatMessage({ id: 'loginSuccess' }));
@@ -150,10 +119,12 @@ const Login = () => {
 
   // 카카오 로그인 액세스 토큰 가져오기
   const getKakaoToken = () => {
+    console.log('renderer kakaoCode :', kakaoCode);
+
     fetch(`https://kauth.kakao.com/oauth/token`, {
       method: 'post',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: `grant_type=authorization_code&client_id=${process.env.REACT_APP_KAKAO_CLIENT_ID_REST}&redirect_url=${REDIRECT_URI}&code=${kakaoCode}`,
+      body: `grant_type=authorization_code&client_id=${process.env.REACT_APP_KAKAO_CLIENT_ID_REST}&redirect_url=${REDIRECT_URI01}&code=${kakaoCode}`,
     })
       .then((res: Response) => res.json())
       .then((data) => {
@@ -184,8 +155,12 @@ const Login = () => {
       .then((res: AxiosResponse) => res.data)
       .then((data: any) => {
         if (data.result === 'true') {
-          const params = JSON.stringify(data.data.data);
-          dispatch(loginUpdate(params));
+          const params = data.data.data;
+          params['login_type'] = 'sns';
+          params['sns_type'] = 'google';
+          params['access_token'] = token;
+
+          dispatch(loginUpdate(JSON.stringify(params)));
 
           setError(false);
           setNotifyMsg(intl.formatMessage({ id: 'loginSuccess' }));
@@ -222,11 +197,15 @@ const Login = () => {
   };
 
   // 구글 로그인 액세스 토큰 가져오기
-  const getGoogleToken = (code: string) => {
+  const getGoogleToken = () => {
+    console.log('====================================');
+    console.log('get googleToken code :', googleCode);
+    console.log('====================================');
+
     fetch(`https://accounts.google.com/o/oauth2/token`, {
       method: 'post',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: `code=${code}&client_id=${process.env.REACT_APP_GOOGLE_CLIENT_ID}&client_secret=${process.env.REACT_APP_GOOGLE_CLIENT_SECRET}&redirect_uri=${REDIRECT_URI02}&grant_type=authorization_code`,
+      body: `code=${googleCode}&client_id=${process.env.REACT_APP_GOOGLE_CLIENT_ID}&client_secret=${process.env.REACT_APP_GOOGLE_CLIENT_SECRET}&redirect_uri=${REDIRECT_URI01}&grant_type=authorization_code`,
     })
       .then((res: Response) => res.json())
       .then((data) => {
@@ -237,7 +216,140 @@ const Login = () => {
         } else {
           return;
         }
+      })
+      .catch((err) => console.error('google Token error:', err));
+  };
+
+  // 페이스북 로그인 API (모리)
+  const fbLoginAPIHandler = (payload: any, token: string) => {
+    const param = {
+      set_lang: locale,
+      sns_id: payload.id,
+      app_token: token,
+      mt_email: payload.email,
+      mt_name: payload.name,
+    };
+
+    axios({
+      method: 'post',
+      url: `${process.env.REACT_APP_BACKEND_URL}/api/SNS_login_facebook.php`,
+      data: QueryString.stringify(param),
+    })
+      .then((res: AxiosResponse) => res.data)
+      .then((data: any) => {
+        if (data.result === 'true') {
+          const params = data.data.data;
+          params['login_type'] = 'sns';
+          params['sns_type'] = 'facebook';
+          params['access_token'] = token;
+
+          dispatch(loginUpdate(JSON.stringify(params)));
+
+          setError(false);
+          setNotifyMsg(intl.formatMessage({ id: 'loginSuccess' }));
+          setNotifyMsgVisible(true);
+
+          setTimeout(() => {
+            setNotifyMsgVisible(false);
+            navigate('/code');
+          }, 1000);
+        }
+        console.log('google moli login data ::', data);
+      })
+      .catch((err: AxiosError) =>
+        console.error('google Moli login Error:', err)
+      );
+  };
+
+  // 페이스북 로그인 프로필 가져오기
+  const getFbProfile = async (token: string) => {
+    try {
+      fetch(
+        `https://graph.facebook.com/me?fields=id,name,email,gender,first_name,last_name,picture,short_name&access_token=${token}`,
+        {
+          method: 'get',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+        .then((res: Response) => res.json())
+        .then((data) => {
+          console.log('fb profile data', data);
+          fbLoginAPIHandler(data, token);
+        })
+        .catch((err) => console.error('google profile error : ', err));
+
+      // .then((res: Response) => console.log('fb Profile res', res))
+    } catch (err: any) {
+      console.error('google get Profile error :', err);
+    }
+  };
+
+  // 페이스북 로그인 액세스 토큰 가져오기
+  const getFacebookToken = (code: string) => {
+    console.log('코드값 제대로 넘어오나', code);
+
+    fetch(
+      `https://graph.facebook.com/v2.11/oauth/access_token?client_id=${process.env.REACT_APP_FACEBOOK_CLIENT_ID}&client_secret=${process.env.REACT_APP_FACEBOOK_CLIENT_SECRET}&redirect_uri=${REDIRECT_URI01}&code=${code}`,
+      {
+        method: 'get',
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        console.log('facebook get token api res :: ', data);
+        if (data.access_token) {
+          console.log('fb accessToken ::', data.access_token);
+          getFbProfile(data.access_token);
+        } else {
+          return;
+        }
       });
+  };
+
+  // 네이버 로그인 API (모리)
+  const naverLoginAPIHandler = (payload: any, token: string) => {
+    console.log('naverLogin payload', payload);
+
+    const param = {
+      set_lang: locale,
+      sns_id: payload.id,
+      app_token: token,
+      mt_email: payload.email,
+      mt_name: payload.name,
+    };
+
+    axios({
+      method: 'post',
+      url: `${process.env.REACT_APP_BACKEND_URL}/api/SNS_login_naver.php`,
+      data: QueryString.stringify(param),
+    })
+      .then((res: AxiosResponse) => res.data)
+      .then((data: any) => {
+        if (data.result === 'true') {
+          const params = data.data.data;
+          params['login_type'] = 'sns';
+          params['sns_type'] = 'naver';
+          params['access_token'] = token;
+
+          dispatch(loginUpdate(JSON.stringify(params)));
+
+          setError(false);
+          setNotifyMsg(intl.formatMessage({ id: 'loginSuccess' }));
+          setNotifyMsgVisible(true);
+
+          setTimeout(() => {
+            setNotifyMsgVisible(false);
+            navigate('/code');
+          }, 1000);
+        }
+        console.log('naver moli login data ::', data);
+      })
+      .catch((err: AxiosError) =>
+        console.error('naver Moli login Error:', err)
+      );
   };
 
   // 네이버 로그인 프로필 API 호출하기
@@ -252,13 +364,40 @@ const Login = () => {
       },
     })
       .then((res) => res.json())
-      .then((data) => console.log('naver profile data ::', data))
+      .then((data) => {
+        console.log('====================================');
+        console.log('naver profile', data);
+        console.log('====================================');
+
+        if (data.message === 'success') {
+          naverLoginAPIHandler(data.response, token);
+        }
+      })
       .catch((err: any) => console.error('naver get Profile Error', err));
+  };
+
+  // 네이버 로그인 액세스 토큰 가져오기
+  const getNaverToken = () => {
+    fetch(`https://nid.naver.com/oauth2.0/token`, {
+      method: 'post',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `grant_type=authorization_code&client_id=${process.env.REACT_APP_NAVER_CLIENT_ID}&client_secret=${process.env.REACT_APP_NAVER_CLIENT_SECRET}&redirect_url=${REDIRECT_URI01}&code=${naverCode}`,
+    })
+      .then((res: Response) => res.json())
+      .then((data) => {
+        if (data.access_token) {
+          console.log('naver accessToken ::', data.access_token);
+          getNaverProfile(data.access_token);
+        } else {
+          return;
+        }
+      });
   };
 
   // 카카오 로그인 시도 시 인증코드 받아오면 실행
   useEffect(() => {
     if (kakaoCode) {
+      console.log('kakaoCode 들어오는가', kakaoCode);
       getKakaoToken();
       return () => getKakaoToken();
     }
@@ -266,19 +405,27 @@ const Login = () => {
 
   // 네이버 로그인 시도 시 토큰 받아오면 실행
   useEffect(() => {
-    if (naverToken) {
-      getNaverProfile(naverToken);
-      return () => getNaverProfile(naverToken);
+    if (naverCode) {
+      getNaverToken();
+      return () => getNaverToken();
     }
-  }, [naverToken]);
+  }, [naverCode]);
 
   // 구글 로그인 시도 시 인증코드 받아오면 실행
   useEffect(() => {
     if (googleCode) {
-      getGoogleToken(googleCode);
-      return () => getGoogleToken(googleCode);
+      getGoogleToken();
+      return () => getGoogleToken();
     }
   }, [googleCode]);
+
+  // 페이스북 로그인 시도 시 인증코드 받아오면 실행
+  useEffect(() => {
+    if (facebookCode) {
+      getFacebookToken(facebookCode);
+      return () => getFacebookToken(facebookCode);
+    }
+  }, [facebookCode]);
 
   // web 실행시 주석 필요
   // 카카오 로그인 시도시 인증 코드 main(electron)에서 수신
@@ -288,22 +435,24 @@ const Login = () => {
   });
 
   // 네이버 로그인 시도시 인증 토큰 main(electron)에서 수신
-  appRuntime.on('naverLoginToken', (evnet: any, data: string) => {
-    // console.log('kakaoLoginCode data get ::', data);
-    setNaverToken(data);
+  appRuntime.on('naverLoginCode', (evnet: any, data: string) => {
+    // console.log('naverLoginCode data get ::', data);
+    setNaverCode(data);
   });
 
   // 구글 로그인 시도시 인증 코드 main(electron)에서 수신
   appRuntime.on('googleLoginCode', (evnet: any, data: string) => {
-    // console.log('googleLoginCode data get ::', data);
+    console.log('googleLoginCode data get ::', data);
     setGoogleCode(data);
   });
 
-  // console.log('Login Index kakaoCode', kakaoCode);
-  // console.log('Login Index naverToken :: ', naverToken);
-  console.log('Login Index googleCode :: ', googleCode);
+  // 페이스북 로그인 시도시 인증 코드 main(electron)에서 수신
+  appRuntime.on('fbLoginCode', (evnet: any, data: string) => {
+    // console.log('googleLoginCode data get ::', data);
+    setFacebookCode(data);
+  });
 
-  const onSNSLogin = (type: SNSLoginType) => {
+  const onSNSLogin = (type: SnsType) => {
     console.log('SNS type ?', type);
     switch (type) {
       case 'kakao':
