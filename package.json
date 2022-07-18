@@ -1,7 +1,7 @@
 {
   "name": "moli",
   "productName": "MOLI청취자",
-  "description": "MOLI청취자 데스크탑 어플리케이션입니다.",
+  "description": "MOLI청취자",
   "version": "0.1.0",
   "private": true,
   "author": "Joonho Kim",
@@ -17,10 +17,17 @@
     "deploy:xos": "electron-builder --mac",
     "deploy:win32": "electron-builder --win --ia32",
     "deploy:win64": "electron-builder --win --x64",
-    "deploy:win": "yarn deploy:win32 && yarn deploy:win64",
+    "deploy:win": "npm run deploy:win32 && npm run deploy:win64",
     "build": "electron-builder build",
-    "electron:start": "tsc -p electron/tsconfig.json && concurrently \"cross-env BROWSER=none npm run start:web\" \"wait-on http://localhost:3000 && electron ./build/electron.js\"",
-    "electron:build": "tsc -p electron/tsconfig.json && npm run build"
+    "build:osx": "yarn build --mac",
+    "build:win32": "yarn build --win --ia32",
+    "build:win64": "yarn build --win --x64",
+    "build:win": "yarn build:win32 && yarn build:win64",
+    "start:electron": "tsc -p electron/tsconfig.json && concurrently \"cross-env BROWSER=none npm run start:web\" \"wait-on http://localhost:3000 && electron ./build/electron.js\"",
+    "build:electron:mac": "tsc -p electron/tsconfig.json && npm run deploy:xos",
+    "build:electron:win32": "tsc -p electron/tsconfig.json && npm run deploy:win32",
+    "build:electron:win64": "tsc -p electron/tsconfig.json && npm run deploy:win64",
+    "build:electron:winAll": "tsc -p electron/tsconfig.json && npm run deploy:win"
   },
   "agora_electron": {
     "prebuilt": true
@@ -88,7 +95,7 @@
     "appId": "com.moli",
     "files": [
       "build/**/*",
-      "icon.png",
+      "build/icons/png/icon.png",
       "electron.js"
     ],
     "asar": true,
@@ -112,7 +119,7 @@
           ]
         }
       ],
-      "icon": "build/icons/win/icon.ico"
+      "icon": "./build/icons/win/icon.ico"
     },
     "nsis": {
       "oneClick": false,
@@ -120,7 +127,7 @@
       "createDesktopShortcut": true,
       "perMachine": true,
       "language": 1042,
-      "installerIcon": "build/icons/win/icon.ico",
+      "installerIcon": "./build/icons/win/icon.ico",
       "shortcutName": "모리(MOLI) 청취자",
       "artifactName": "모리(MOLI)_청취자-${version}.${ext}",
       "uninstallDisplayName": "모리(MOLI) 청취자"

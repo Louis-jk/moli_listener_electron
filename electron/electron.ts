@@ -39,6 +39,7 @@ function createWindow() {
         isDev ? '/preload.js' : '/build/preload.js'
       ),
     },
+    icon: path.join(app.getAppPath(), '/build/icons/png/64x64.png'),
   });
 
   let indexPath;
