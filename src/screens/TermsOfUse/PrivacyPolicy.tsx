@@ -43,7 +43,7 @@ const PrivacyPolicy = () => {
         title={intl.formatMessage({ id: 'privacysettitle' })}
         type='general'
       />
-      <Wrapper>
+      <Wrapper className='no_drag'>
         <div style={{ padding: '1rem' }}>
           <p dangerouslySetInnerHTML={{ __html: `${termsTxt}` }}></p>
         </div>

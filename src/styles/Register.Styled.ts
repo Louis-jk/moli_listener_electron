@@ -1,15 +1,15 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 import {
   CodeInputProps,
-  TermsCheckBoxProps,
-} from '../interfaces/styles.interface';
-import { FlexRowCenterCenter } from './Common.Styled';
-import { theme } from './Theme';
+  TermsCheckBoxProps
+} from '../interfaces/styles.interface'
+import { FlexRowCenterCenter } from './Common.Styled'
+import { theme } from './Theme'
 
 export const TermsWrap = styled.div`
   width: 100%;
   padding: 1rem 0;
-`;
+`
 
 export const TermsInnerWrap = styled.div`
   width: 100%;
@@ -32,9 +32,9 @@ export const TermsInnerWrap = styled.div`
   & p {
     font-size: 0.85rem;
   }
-`;
+`
 
-export const TermsCheckBox = styled.div<TermsCheckBoxProps>`
+export const TermsCheckBox = styled.div < TermsCheckBoxProps > `
   display: block;
   width: 40px;
   height: 40px;
@@ -43,13 +43,14 @@ export const TermsCheckBox = styled.div<TermsCheckBoxProps>`
   background-size: cover;
   background-position: center center;
   cursor: pointer;
-`;
+  -webkit-app-region: no-drag;
+`
 
 export const CodeInputWrap = styled(FlexRowCenterCenter)`
   margin: 0 auto;
-`;
+`
 
-export const CodeInput = styled.input<CodeInputProps>`
+export const CodeInput = styled.input < CodeInputProps > `
   font-size: 1.25rem;
   font-weight: bold;
   text-align: center;
@@ -71,4 +72,4 @@ export const CodeInput = styled.input<CodeInputProps>`
     `
   border-bottom: 0.2rem solid ${theme.colors.POINT_COLOR};
   `}
-`;
+`

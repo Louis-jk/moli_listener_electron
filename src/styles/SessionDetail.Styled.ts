@@ -1,18 +1,18 @@
-import { url } from 'inspector';
-import styled from 'styled-components';
+import { url } from 'inspector'
+import styled from 'styled-components'
 import {
   SessionMainInfoBoxProps,
   SessionTransListBoxProps,
-  VolumeControlProp,
-} from '../interfaces/styles.interface';
+  VolumeControlProp
+} from '../interfaces/styles.interface'
 import {
   FlexColumnStartCenter,
   FlexColumnStartStart,
-  FlexRowSpaceBCenter,
-} from './Common.Styled';
-import { theme } from './Theme';
+  FlexRowSpaceBCenter
+} from './Common.Styled'
+import { theme } from './Theme'
 
-export const SessionMainInfoBox = styled.div<SessionMainInfoBoxProps>`
+export const SessionMainInfoBox = styled.div < SessionMainInfoBoxProps > `
   width: 100%;
   height: 200px;
 
@@ -23,6 +23,7 @@ export const SessionMainInfoBox = styled.div<SessionMainInfoBoxProps>`
   background-size: cover;
   transition: all 0.3s cubic-bezier(0.42, 0, 0.58, 1);
   transform: scale(1) translate(0, 0);
+  -webkit-app-region: no-drag;
 
   & div {
     width: 100%;
@@ -72,11 +73,11 @@ export const SessionMainInfoBox = styled.div<SessionMainInfoBoxProps>`
       display: none;
     }
   `}
-`;
+`
 
 export const SessionTransListBox = styled(
   FlexRowSpaceBCenter
-)<SessionTransListBoxProps>`
+) < SessionTransListBoxProps > `
   padding: 1.5rem 1rem;
   border-bottom: 1px solid ${theme.colors.TEXT_DESCRIPTION_COLOR}2a;
   cursor: pointer;
@@ -100,23 +101,24 @@ export const SessionTransListBox = styled(
     `
       font-weight: bold;
     `}
-`;
+`
 
 export const PlayBtn = styled.div`
   cursor: pointer;
-`;
+  -webkit-app-region: no-drag;
+`
 
 export const SessionMinDescWrapper = styled(FlexColumnStartStart)`
   min-width: 250px;
   margin: 0;
-`;
+`
 
 export const VolumeInfomationArea = styled.div`
   // padding: 1rem 0 0;
   -webkit-app-region: no-drag;
-`;
+`
 
-export const VolumeControl = styled.input<VolumeControlProp>`
+export const VolumeControl = styled.input < VolumeControlProp > `
   -webkit-app-region: no-drag;
 
   &[type='range'] {
@@ -143,10 +145,10 @@ export const VolumeControl = styled.input<VolumeControlProp>`
       transition: background 0.3s ease-in-out;
     }
   }
-`;
+`
 
 export const VolumeSettingBtn = styled.div`
   -webkit-app-region: no-drag;
   -webkit-appearance: none;
   cursor: pointer;
-`;
+`

@@ -1,6 +1,6 @@
-import styled from 'styled-components';
-import { CustomNotifyProps } from '../interfaces/styles.interface';
-import { theme } from './Theme';
+import styled from 'styled-components'
+import { CustomNotifyProps } from '../interfaces/styles.interface'
+import { theme } from './Theme'
 
 export const LoginButton = styled.button`
   -webkit-appearance: none;
@@ -12,19 +12,20 @@ export const LoginButton = styled.button`
   margin: 0;
   padding: 0.5rem 1rem;
   border-radius: 4px;
-`;
+`
 
 export const SnsLoginButton = styled.div`
   width: 55px;
   height: 55px;
   cursor: pointer;
+  -webkit-app-region: no-drag;
 
   & img {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
-`;
+`
 
 export const LoginInputField = styled.input`
   background: transparent;
@@ -33,9 +34,10 @@ export const LoginInputField = styled.input`
   padding: 0.85rem 1rem;
   border: 1px solid ${theme.colors.BORDER_COLOR};
   border-radius: 7px;
-`;
+  -webkit-app-region: no-drag;
+`
 
-export const CustomNotify = styled.div<CustomNotifyProps>`
+export const CustomNotify = styled.div < CustomNotifyProps > `
   position: absolute;
   bottom: 30px;
   left: 0;
@@ -66,4 +68,4 @@ export const CustomNotify = styled.div<CustomNotifyProps>`
       visibility: hidden;
     }
   `}
-`;
+`

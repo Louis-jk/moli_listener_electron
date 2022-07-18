@@ -10,6 +10,7 @@ import {
   SettingBtn,
   WindowControl,
   Wrapper,
+  HeaderContainer,
 } from '../styles/Common.Styled';
 import appRuntime from '../appRuntime';
 import { toggle } from '../store/frameControlReducer';
@@ -91,7 +92,7 @@ const Header: React.FC<HeaderProps> = ({ type, title }) => {
   console.log('HEADE isMin', isMin);
 
   return (
-    <header>
+    <HeaderContainer>
       <WindowControl>
         <div onClick={winMin} className='control'>
           <img src='images/win_min.png' alt='최소화' title='최소화' />
@@ -130,7 +131,7 @@ const Header: React.FC<HeaderProps> = ({ type, title }) => {
       )}
 
       <Divider />
-    </header>
+    </HeaderContainer>
   );
 };
 

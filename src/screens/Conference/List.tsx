@@ -106,7 +106,7 @@ const List = () => {
         title={intl.formatMessage({ id: 'conferenceMain' })}
         type='main'
       />
-      <Wrapper>
+      <Wrapper className='no_drag'>
         <ConferenceMainWrap>
           <img
             src={`${process.env.REACT_APP_BACKEND_URL}/${conImageUrl}`}

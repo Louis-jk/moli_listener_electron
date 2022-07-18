@@ -1,6 +1,6 @@
-import styled from 'styled-components';
-import { ConferenceInfoWrapProp } from '../interfaces/styles.interface';
-import { theme } from './Theme';
+import styled from 'styled-components'
+import { ConferenceInfoWrapProp } from '../interfaces/styles.interface'
+import { theme } from './Theme'
 
 export const ConferenceMainWrap = styled.div`
   position: relative;
@@ -12,13 +12,14 @@ export const ConferenceMainWrap = styled.div`
     height: 30vh;
     object-fit: cover;
   }
-`;
+`
 
-export const ConferenceInfoWrap = styled.div<ConferenceInfoWrapProp>`
+export const ConferenceInfoWrap = styled.div < ConferenceInfoWrapProp > `
   padding: 1.65rem 1rem;
   background-color: ${theme.colors.LIST_WRAP_COLOR};
   border-radius: 7px;
   cursor: pointer;
+  -webkit-app-region: no-drag;
 
   & small {
     font-size: 0.8rem;
@@ -40,16 +41,16 @@ export const ConferenceInfoWrap = styled.div<ConferenceInfoWrapProp>`
     right: 0;
     bottom: -10px;
   `}
-`;
+`
 
 export const ConferenceTitle = styled.h4`
   font-size: 1.25rem;
   line-height: 1.3;
   color: ${theme.colors.TEXT_WHITE_COLOR};
   margin: 5px auto 10px;
-`;
+`
 
-export const ConferenceDesc = styled.p<ConferenceInfoWrapProp>`
+export const ConferenceDesc = styled.p < ConferenceInfoWrapProp > `
   line-height: 1.45em;
   color: ${theme.colors.TEXT_WHITE_COLOR};
 
@@ -68,7 +69,7 @@ export const ConferenceDesc = styled.p<ConferenceInfoWrapProp>`
       : `
   width: 80%
   `}
-`;
+`
 
 export const ConferenceSessionImgWrap = styled.div`
   position: relative;
@@ -87,11 +88,11 @@ export const ConferenceSessionImgWrap = styled.div`
     background-position: center center;
     background-size: contain;
   }
-`;
+`
 
 export const ConferenceSessionImg = styled.img`
   width: 100%;
   height: 100%;
   border-radius: 10px;
   object-fit: cover;
-`;
+`

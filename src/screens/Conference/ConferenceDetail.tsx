@@ -80,7 +80,7 @@ const ConferenceDetail = () => {
         title={intl.formatMessage({ id: 'conferenceMain' })}
         type='detail'
       />
-      <Wrapper>
+      <Wrapper className='no_drag'>
         {visualType === 'POSTER' && (
           <FlexColumnCenterCenter style={{ height: '100%' }}>
             {detailData &&

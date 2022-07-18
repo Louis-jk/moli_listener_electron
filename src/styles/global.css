@@ -74,3 +74,11 @@ a {
 .audio-progress {
   display: flex;
 }
+
+.modal_overay {
+  -webkit-app-region: no-drag;
+}
+
+.no_drag {
+  -webkit-app-region: no-drag;
+}

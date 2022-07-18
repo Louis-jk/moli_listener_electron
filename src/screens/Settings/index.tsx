@@ -33,6 +33,8 @@ import { CustomNotify } from '../../styles/Login.Styled';
 import Loading from '../../components/Loading';
 import { SnsType } from '../../types';
 
+const LOGOUT_REDIRECT_URI = 'https://change-all.com/listen_auth_callback';
+
 const Settings = () => {
   const intl = useIntl();
   const { mt_id, login_type, sns_type, access_token } = useSelector(
@@ -121,14 +123,19 @@ const Settings = () => {
 
   // SNS 계정 로그아웃 처리
   const snsLogoutHandler = (type: SnsType) => {
-    console.log('current sns login type ??', type);
     if (type === 'kakao') {
-      fetch(`https://kapi.kakao.com/v1/user/logout`, {
-        method: 'post',
-        headers: {
-          Authorization: `Bearer ${access_token}`,
-        },
-      })
+      // fetch(`https://kapi.kakao.com/v1/user/logout`, {
+      //   method: 'post',
+      //   headers: {
+      //     Authorization: `Bearer ${access_token}`,
+      //   },
+      // })
+      fetch(
+        `https://kapi.kakao.com/oauth/logout?client_id=${process.env.REACT_APP_KAKAO_CLIENT_ID_REST}&logout_redirect_uri=${LOGOUT_REDIRECT_URI}`,
+        {
+          method: 'get',
+        }
+      )
         .then((res) => res.json())
         .then((data) => {
           dispatch(logout(true));
@@ -149,13 +156,14 @@ const Settings = () => {
     if (type === 'facebook') {
       console.log('facebook logout');
     }
+
+    dispatch(logout(true));
+    dispatch(codeUpdate(''));
+    navigate('/login');
   };
 
   // 로그아웃
   const logoutHandler = () => {
-    // dispatch(logout(true));
-    // dispatch(codeUpdate(''));
-    // navigate('/login');
     if (login_type === 'email') {
       dispatch(logout(true));
       dispatch(codeUpdate(''));
@@ -202,6 +210,7 @@ const Settings = () => {
 
             {/* 이용약관 */}
             <FlexRowSpaceBCenter
+              className='no_drag'
               style={{ padding: '1.25rem 0', cursor: 'pointer' }}
               onClick={() => goLink('terms')}
             >
@@ -213,6 +222,7 @@ const Settings = () => {
 
             {/* 개인정보 처리방침 */}
             <FlexRowSpaceBCenter
+              className='no_drag'
               style={{ padding: '1.25rem 0', cursor: 'pointer' }}
               onClick={() => goLink('privacy')}
             >
@@ -226,6 +236,7 @@ const Settings = () => {
 
             {/* 언어 */}
             <FlexRowSpaceBCenter
+              className='no_drag'
               style={{ padding: '1.25rem 0', cursor: 'pointer' }}
               onClick={() => setLangModalOpen(true)}
             >
@@ -240,10 +251,13 @@ const Settings = () => {
               {intl.formatMessage({ id: 'logout' })}
             </Button>
             <Margin type='top' size={10} />
-            <Button type='line' onClick={changePwdHandler}>
-              {intl.formatMessage({ id: 'findpwchange' })}
-            </Button>
-            <Margin type='top' size={10} />
+            {login_type !== 'sns' && (
+              <Button type='line' onClick={changePwdHandler}>
+                {intl.formatMessage({ id: 'findpwchange' })}
+              </Button>
+            )}
+            {login_type !== 'sns' && <Margin type='top' size={10} />}
+
             <Button type='grayLine' onClick={() => setLeaveModalOpen(true)}>
               {intl.formatMessage({ id: 'Withdrawaltit' })}
             </Button>

@@ -481,7 +481,7 @@ const SessionDetail = () => {
         title={intl.formatMessage({ id: 'session' })}
         type={isJoin ? 'session_active' : 'session'}
       />
-      <Wrapper isFrameMin={isMin}>
+      <Wrapper isFrameMin={isMin} className='no_drag'>
         <Margin type='bottom' size={20} />
 
         {/* 세션 메인 안내 블럭 */}

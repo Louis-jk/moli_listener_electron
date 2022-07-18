@@ -40,7 +40,7 @@ const TermsOfUse = () => {
   return (
     <Container>
       <Header title={intl.formatMessage({ id: 'tos' })} type='general' />
-      <Wrapper>
+      <Wrapper className='no_drag'>
         <div style={{ padding: '1rem' }}>
           <p dangerouslySetInnerHTML={{ __html: `${termsTxt}` }}></p>
         </div>
