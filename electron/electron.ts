@@ -13,6 +13,7 @@ const fs = require('fs');
 const os = require('os');
 const url = require('url');
 import { download } from 'electron-dl';
+import { isContext } from 'vm';
 // const Env = JSON.parse(fs.readFileSync(`${__dirname}/env.json`));
 
 let mainWindow: Electron.BrowserWindow | null;
@@ -29,27 +30,21 @@ function createWindow() {
     title: 'MOLI-Listener',
     resizable: false,
     autoHideMenuBar: true,
+    icon: path.join(app.getAppPath(), '/build/icons/png/64x64.png'),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: true,
       enableRemoteModule: true,
       webSecurity: false,
-      preload: path.join(
-        app.getAppPath(),
-        isDev ? '/preload.js' : '/build/preload.js'
-      ),
+      preload: path.join(app.getAppPath(), '/build/preload.js'),
     },
-    icon: path.join(app.getAppPath(), '/build/icons/png/64x64.png'),
   });
 
   let indexPath;
 
   indexPath = url.format({
     protocol: 'file:',
-    pathname: path.join(
-      app.getAppPath(),
-      isDev ? '/index.html' : '/build/index.html'
-    ),
+    pathname: path.join(app.getAppPath(), '/build/index.html'),
     slashes: true,
   });
 
