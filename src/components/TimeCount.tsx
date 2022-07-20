@@ -43,6 +43,15 @@ const TimeCount: React.FC<TimeCountProp> = ({ start }) => {
     }
   });
 
+  useEffect(() => {
+    console.log('isJoin ?', isJoin);
+    if (!isJoin) {
+      dispatch(joinSecondsUpdate(0));
+      dispatch(joinMinutesUpdate(0));
+      dispatch(joinHoursUpdate(0));
+    }
+  }, [isJoin]);
+
   return (
     <FlexRowCenterCenter>
       {hours > 0 && (

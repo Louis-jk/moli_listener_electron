@@ -16,6 +16,7 @@ import appRuntime from '../appRuntime';
 import { toggle } from '../store/frameControlReducer';
 import { RootState } from '../store';
 import { HeaderProps } from '../interfaces/components.interface';
+import { joinStateUpdate } from '../store/joinStateReducer';
 
 const Header: React.FC<HeaderProps> = ({ type, title }) => {
   const navigate = useNavigate();
@@ -27,11 +28,13 @@ const Header: React.FC<HeaderProps> = ({ type, title }) => {
   const goBackHandler = () => {
     navigate(-1);
 
-    if (type === 'session') {
+    if (type === 'session' || type === 'session_active') {
       const params = {
         set_lang: locale,
         mt_idx,
       };
+
+      dispatch(joinStateUpdate(false));
 
       axios({
         method: 'post',
