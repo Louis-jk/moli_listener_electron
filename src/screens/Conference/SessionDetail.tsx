@@ -668,7 +668,7 @@ const SessionDetail = () => {
                 isMin={false}
                 style={{ width: '100%' }}
                 onClick={() =>
-                  appRuntime.send('download', { url: list.file_link })
+                  appRuntime.send('download', { url: list.file_link, filename: list.file_name })
                 }
                 className='no_drag'
               >

@@ -378,11 +378,12 @@ app.on('activate', () => {
 });
 
 // 파일 다운로드(url 이미지)
-ipcMain.on('download', async (event, { url }) => {
+ipcMain.on('download', async (event, { url, filename }) => {
   const win = BrowserWindow.getFocusedWindow();
   // console.log(await download(win, url));
   await download(win, url, {
     saveAs: true,
+    filename,
     openFolderWhenDone: true,
   });
 });
