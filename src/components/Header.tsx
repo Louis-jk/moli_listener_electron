@@ -59,6 +59,7 @@ const Header: React.FC<HeaderProps> = ({ type, title }) => {
 
     dispatch(toggle(true));
   };
+
   const winClose = () => {
     console.log('윈도우 닫기');
     appRuntime.send('windowClose', null);
@@ -69,21 +70,21 @@ const Header: React.FC<HeaderProps> = ({ type, title }) => {
   };
 
   // web 실행시 주석 필요
-  appRuntime.on('isFrameWide', (event: any, data: boolean) => {
-    if (isMin) {
-      dispatch(toggle(false));
-    } else {
-      return false;
-    }
-  });
+  // appRuntime.on('isFrameWide', (event: any, data: boolean) => {
+  //   if (isMin) {
+  //     dispatch(toggle(false));
+  //   } else {
+  //     return false;
+  //   }
+  // });
 
-  appRuntime.on('isFrameMin', (event: any, data: boolean) => {
-    if (!isMin) {
-      dispatch(toggle(true));
-    } else {
-      return false;
-    }
-  });
+  // appRuntime.on('isFrameMin', (event: any, data: boolean) => {
+  //   if (!isMin) {
+  //     dispatch(toggle(true));
+  //   } else {
+  //     return false;
+  //   }
+  // });
 
   // console.log('====================================');
   // console.log('isFrameMin', isFrameMin);

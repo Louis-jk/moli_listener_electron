@@ -21,7 +21,7 @@ body {
   scrollbar-width: none;
   scrollbar-color: #000;
   min-height: 100vh;
-  min-height: -webkit-fill-available;
+  min-height: -webkit-fill-available; 
 }
 
 html {
@@ -32,6 +32,8 @@ html,
 body {
   height: 100%;
   height: var(--app-height);
+  /* width: 380px;
+  height: 850px; */
 }
 
 body::-webkit-scrollbar {

@@ -27,9 +27,12 @@ function createWindow() {
     transparent: true,
     width: 380,
     height: 850,
+    maxWidth: 380,
+    maxHeight: 850,
     title: 'MOLI-Listener',
     resizable: false,
     autoHideMenuBar: true,
+    hasShadow: true,
     icon: path.join(app.getAppPath(),  isDev ? '/icons/png/64x64.png' : '/build/icons/png/64x64.png'),
     webPreferences: {
       nodeIntegration: true,
@@ -39,6 +42,8 @@ function createWindow() {
       preload: path.join(app.getAppPath(), isDev ? '/preload.js' : '/build/preload.js'),
     },
   });
+
+ 
 
   let indexPath;
 
@@ -75,10 +80,33 @@ function createWindow() {
   mainWindow.webContents.on('will-navigate', handleRedirect);
   mainWindow.webContents.on('new-window', handleRedirect);
 
+  
+  // mainWindow.maximize();
+
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
+
+
 }
+
+// 리사이징 기능
+ipcMain.on('frameMin', (event, data) => {
+  // mainWindow.unmaximize();
+  mainWindow.setMinimumSize(380, 250)
+  mainWindow.setSize(380, 250, true);
+  // event.sender.send('isFrameMin', true);
+  // event.sender.send('isFrameWide', false);
+});
+
+ipcMain.on('frameWide', (event, data) => {
+  // mainWindow.maximize();
+  mainWindow.setMaximumSize(380,850);
+  mainWindow.setSize(380, 850, true);
+  // event.sender.send('isFrameWide', true);
+  // event.sender.send('isFrameMin', false);
+});
+
 
 // 브라우저 메뉴창 없애기
 Menu.setApplicationMenu(null);
@@ -275,18 +303,7 @@ ipcMain.on('fbLogin', (event, args) => {
   });
 });
 
-// 리사이징 기능
-ipcMain.on('frameMin', (event, data) => {
-  mainWindow.setSize(380, 250, true);
-  event.sender.send('isFrameMin', true);
-  // event.sender.send('isFrameWide', false);
-});
 
-ipcMain.on('frameWide', (event, data) => {
-  mainWindow.setSize(380, 850, true);
-  event.sender.send('isFrameWide', true);
-  // event.sender.send('isFrameMin', false);
-});
 
 // 창 닫기
 ipcMain.on('windowClose', (event, data) => {
