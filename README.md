@@ -3,6 +3,8 @@
 ## Electron + React + Agora + TypeScript
 
 통역 어플 MOLI 청취자 설치형 앱(Electron)
+![통역 어플 MOLI 청취자 설치형 앱](https://user-images.githubusercontent.com/25785760/179920716-ddd3d0fa-1cf5-4ba8-912d-d45d88523bb6.png)
+
 <img width="747" alt="스크린샷 2022-07-05 오전 10 01 00" src="https://user-images.githubusercontent.com/25785760/179478237-22196f2c-6259-4fb9-94ae-8f5d8662f061.png">
 ![모리-청취자 데스크탑](https://user-images.githubusercontent.com/25785760/179875417-030b6f85-111e-4a2e-8104-331b617204b2.png)
 ![모리-청취자 데스크탑](https://user-images.githubusercontent.com/25785760/179478270-c69a5a88-ce9d-4e6c-ba94-93d585082d93.png)
