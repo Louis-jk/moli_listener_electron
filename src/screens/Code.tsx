@@ -88,6 +88,11 @@ const Code = () => {
             })}
             value={entryCode}
             onChange={(e) => setEntryCode(e.target.value)}
+            onKeyDown={(e) => {
+              if(e.key === 'Enter') {
+                nextHandler()
+              }
+            }}
           />
         </InputWrapper>
 

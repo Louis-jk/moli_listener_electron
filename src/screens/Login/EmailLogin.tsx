@@ -171,6 +171,11 @@ export default function EmailLogin() {
               value={password}
               placeholder={intl.formatMessage({ id: 'loginpwplaceholder' })}
               onChange={(e) => passwordInsertHandler(e.target)}
+              onKeyDown={(e) =>  {
+                if(e.key === 'Enter') {
+                  loginHandler()
+                }
+              }}
             />
             <Margin type='bottom' size={7} />
             {passwordErr && (
