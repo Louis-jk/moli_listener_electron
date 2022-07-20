@@ -4,7 +4,7 @@
   "description": "MOLI청취자",
   "version": "0.1.0",
   "private": true,
-  "author": "Joonho Kim",
+  "author": "Change-all",
   "homepage": "./",
   "scripts": {
     "start:web": "react-scripts start",
