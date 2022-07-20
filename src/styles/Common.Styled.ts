@@ -132,6 +132,7 @@ export const Wrapper = styled.section<WrapperProps>`
   transform: translateY(0);
   transition: all 0.4s ease;
   background-color: ${theme.colors.BASE_COLOR_DARK};
+  cursor: grab;
 
   ${({ isFrameMin }) =>
     isFrameMin &&
@@ -155,8 +156,6 @@ export const WindowControl = styled(FlexRowEndCenter)`
   padding: 0.45rem 0.65rem;
   background: #111;
   z-index: 100;
-  -webkit-app-region: drag;
-  cursor: grab;
 
   & > .control {
     -webkit-app-region: no-drag;

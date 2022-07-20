@@ -29,3 +29,6 @@ yarn-error.log*
 
 #deploy
 /dist
+
+#icons
+/icons

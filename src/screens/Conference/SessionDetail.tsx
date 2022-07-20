@@ -481,7 +481,7 @@ const SessionDetail = () => {
         title={intl.formatMessage({ id: 'session' })}
         type={isJoin ? 'session_active' : 'session'}
       />
-      <Wrapper isFrameMin={isMin} className='no_drag'>
+      <Wrapper isFrameMin={isMin}>
         <Margin type='bottom' size={20} />
 
         {/* 세션 메인 안내 블럭 */}
@@ -510,7 +510,7 @@ const SessionDetail = () => {
         {/* 탭 */}
         {!isMin && (
           <>
-            <FlexRowSpaceBCenter style={{ width: '100%' }}>
+            <FlexRowSpaceBCenter style={{ width: '100%' }} className='no_drag'>
               {TABS.map((tab: any, index: number) => (
                 <Tab
                   key={`session_tab_${tab.id}_idx${index}`}
@@ -542,7 +542,7 @@ const SessionDetail = () => {
               }}
             >
               {/* 펼친화면 세션 선택 통역 Area */}
-              <div style={{ width: '100%' }}>
+              <div style={{ width: '100%' }} className='no_drag'>
                 {codeList.map((list: any, index: number) => (
                   <SessionTransListBox
                     style={{ width: '100%' }}
@@ -670,6 +670,7 @@ const SessionDetail = () => {
                 onClick={() =>
                   appRuntime.send('download', { url: list.file_link })
                 }
+                className='no_drag'
               >
                 <p>{list.file_name}</p>
                 <div style={{ width: 27, height: 27 }}>

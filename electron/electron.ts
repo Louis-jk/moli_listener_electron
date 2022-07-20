@@ -30,13 +30,13 @@ function createWindow() {
     title: 'MOLI-Listener',
     resizable: false,
     autoHideMenuBar: true,
-    icon: path.join(app.getAppPath(), '/build/icons/png/64x64.png'),
+    icon: path.join(app.getAppPath(),  isDev ? '/icons/png/64x64.png' : '/build/icons/png/64x64.png'),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: true,
       enableRemoteModule: true,
       webSecurity: false,
-      preload: path.join(app.getAppPath(), '/build/preload.js'),
+      preload: path.join(app.getAppPath(), isDev ? '/preload.js' : '/build/preload.js'),
     },
   });
 
@@ -44,7 +44,7 @@ function createWindow() {
 
   indexPath = url.format({
     protocol: 'file:',
-    pathname: path.join(app.getAppPath(), '/build/index.html'),
+    pathname: path.join(app.getAppPath(), isDev ? '/index.html' : '/build/index.html'),
     slashes: true,
   });
 
