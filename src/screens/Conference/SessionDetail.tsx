@@ -266,6 +266,7 @@ const SessionDetail = () => {
     if (remoteDiv) {
       remoteDiv.parentNode?.removeChild(remoteDiv);
     }
+    dispatch(joinStateUpdate(false));
   };
 
   // web 실행시 주석 필요
@@ -319,6 +320,14 @@ const SessionDetail = () => {
       .then((res: any) => {
         if (res.status === 200 && res.data && res.data.result === 'true') {
           const result = res.data.data;
+          // result.codelist.filter((code: any) => code.);
+          // let newArr: any[] = [];
+          // result.codelist.map((code: any) => {
+          //   let result = code;
+          //   result.join = false;
+          //   newArr.push(result);
+          // });
+          // setCodeList(newArr);
           setCodeList(result.codelist);
           console.log('result.codelist ?', result.codelist);
         }
@@ -668,7 +677,10 @@ const SessionDetail = () => {
                 isMin={false}
                 style={{ width: '100%' }}
                 onClick={() =>
-                  appRuntime.send('download', { url: list.file_link, filename: list.file_name })
+                  appRuntime.send('download', {
+                    url: list.file_link,
+                    filename: list.file_name,
+                  })
                 }
                 className='no_drag'
               >
