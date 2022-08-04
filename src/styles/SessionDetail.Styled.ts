@@ -56,14 +56,16 @@ export const SessionMainInfoBox = styled.div < SessionMainInfoBoxProps > `
     }
   }
 
-  ${({ isFrameMin }) =>
+  ${({ isFrameMin, windowWidth }) =>
     isFrameMin &&
     `
-    min-width: 100px;
-    max-height: 100px;
-    
+    min-width: ${windowWidth < 380 ? '60px' : '100px'};
+    min-height: ${windowWidth < 380 ? '60px' : '100px'};  
+    max-height: ${windowWidth < 380 ? '60px' : '100px'};  
     padding: 0;
-    transform: translate(-10%, -10%);
+    transform: ${
+      windowWidth < 380 ? 'translate(-20%, -10%)' : 'translate(-10%, -10%)'
+    };
 
     & > div {
       height: 100%;
