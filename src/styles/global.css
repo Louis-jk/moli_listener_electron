@@ -21,7 +21,7 @@ body {
   scrollbar-width: none;
   scrollbar-color: #000;
   min-height: 100vh;
-  min-height: -webkit-fill-available; 
+  min-height: -webkit-fill-available;
 }
 
 html {
@@ -61,10 +61,11 @@ a {
 }
 
 .pid {
-  height: 15px;
-  width: 3px;
+  /* width: 3px; */
+  max-width: 100%;
+  min-height: 15px;
   background-color: #555555;
-  margin-right: 3px;
+  /* margin-right: 3px; */
   transition: all 0.3s ease-in-out;
 }
 
@@ -74,7 +75,17 @@ a {
 }
 
 .audio-progress {
-  display: flex;
+  width: 85vw;
+  display: grid;
+  gap: 3px;
+  grid-template-columns: repeat(auto-fit, minmax(1px, 1fr));
+  /* display: inline-block; */
+  /* display: flex;
+  width: calc(100% - 80px); */
+}
+
+.pid {
+  float: left;
 }
 
 .modal_overay {
