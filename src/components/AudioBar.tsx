@@ -2,12 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import { AudioBarProp } from '../interfaces/components.interface';
 
 const AudioBar: React.FC<AudioBarProp> = ({ vol }) => {
-  console.log('vol ??', vol);
+  console.log('AudioBar vol ??', vol);
 
   const [pidCount, setPidCount] = useState(53);
 
-  const winWidth = window.innerWidth;
-  console.log('winWidth ??', winWidth);
+  // const winWidth = window.innerWidth;
+  // console.log('winWidth ??', winWidth);
 
   // useEffect(() => {
   //   if (winWidth < 380) {
@@ -20,13 +20,21 @@ const AudioBar: React.FC<AudioBarProp> = ({ vol }) => {
   //   }
   // }, [winWidth]);
 
+  let amountOfPids = 0;
+
   useEffect(() => {
+    console.log('AudioBar prop vol?', vol);
+
     const pids = document.getElementsByClassName('pid');
 
-    let amountOfPids = Math.round(vol / (100 / pids.length));
+    let propVol = vol * 10;
+    amountOfPids = Math.round(propVol / (100 / pids.length));
+    // let amountOfPids = Math.round(propVol / 10);
     // let elemRange = pids.slice(0, amountOfPids);
 
-    if (vol > 0) {
+    console.log('amountOfPids?', amountOfPids);
+
+    if (propVol > 0) {
       // const pidAnime = setInterval(() => {
       for (var i = 0; i < pids.length; i++) {
         if (amountOfPids > i) {
