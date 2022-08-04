@@ -122,7 +122,7 @@ ipcMain.on('frameMin', (event, data) => {
   // mainWindow.setSize(380, 285, true);
   isMinMode = true;
   mainWindow.setMinimumSize(MIN_WIDTH, MIN_MODE_MAX_HEIGHT);
-  mainWindow.setMaximumSize(MAX_WIDTH, MAX_HEIGHT);
+  mainWindow.setMaximumSize(MAX_WIDTH, MIN_MODE_MAX_HEIGHT);
   mainWindow.setSize(resizeWidth, MIN_MODE_MAX_HEIGHT, true);
   // event.sender.send('isFrameMin', true);
   // event.sender.send('isFrameWide', false);
