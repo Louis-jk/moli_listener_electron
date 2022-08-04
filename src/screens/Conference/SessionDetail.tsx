@@ -22,6 +22,7 @@ import {
   FlexColumnStartCenter,
   FlexRowStartCenter,
   FlexRowEndCenter,
+  FlexRowCenterCenter,
 } from '../../styles/Common.Styled';
 import { ConferenceTitle } from '../../styles/Lists.Styled';
 import {
@@ -613,25 +614,43 @@ const SessionDetail = () => {
                 <FlexRowEndCenter>
                   <TimeCount start={isJoin} />
                 </FlexRowEndCenter>
-                <FlexRowSpaceBCenter>
-                  <VolumeSettingBtn onClick={volumeSettingHandler}>
-                    <img
-                      src={
-                        isVolSetArea
-                          ? 'images/ic_vol_s.png'
-                          : 'images/ic_vol_w.png'
-                      }
-                      style={{
-                        width: 25,
-                        height: 27,
-                        objectFit: 'contain',
-                        marginRight: 5,
-                      }}
-                      alt='플레이중 스톱 아이콘'
-                      title='플레이중 스톱 아이콘'
-                    />
-                  </VolumeSettingBtn>
-                  {isVolSetArea ? (
+
+                <Margin type='bottom' size={2} />
+
+                <FlexColumnCenterCenter>
+                  <FlexRowCenterCenter>
+                    <VolumeSettingBtn onClick={volumeSettingHandler}>
+                      <img
+                        src={'images/ic_vol_w.png'}
+                        style={{
+                          width: 25,
+                          height: 25,
+                          objectFit: 'contain',
+                          marginRight: 5,
+                          marginTop: 2,
+                        }}
+                        alt='스피커 아이콘'
+                        title='스피커 아이콘'
+                      />
+                    </VolumeSettingBtn>
+                    <AudioBar vol={isJoin ? remoteVol * 10 : 0} />
+                  </FlexRowCenterCenter>
+
+                  <FlexRowCenterCenter>
+                    <VolumeSettingBtn onClick={volumeSettingHandler}>
+                      <img
+                        src={'images/ic_vol_s.png'}
+                        style={{
+                          width: 25,
+                          height: 25,
+                          objectFit: 'contain',
+                          marginRight: 5,
+                        }}
+                        alt='볼륨 조절 아이콘'
+                        title='볼륨 조절 아이콘'
+                      />
+                    </VolumeSettingBtn>
+
                     <FlexRowStartCenter>
                       <VolumeControl
                         type='range'
@@ -652,10 +671,8 @@ const SessionDetail = () => {
                         {vol}
                       </p>
                     </FlexRowStartCenter>
-                  ) : (
-                    <AudioBar vol={isJoin ? remoteVol * 10 : 0} />
-                  )}
-                </FlexRowSpaceBCenter>
+                  </FlexRowCenterCenter>
+                </FlexColumnCenterCenter>
               </VolumeInfomationArea>
               {/* // 펼친화면 재생 시간 및 사운드 바 */}
             </div>
@@ -779,23 +796,41 @@ const SessionDetail = () => {
             <FlexRowEndCenter>
               <TimeCount start={isJoin} />
             </FlexRowEndCenter>
-            <FlexRowSpaceBCenter>
-              <VolumeSettingBtn onClick={volumeSettingHandler}>
-                <img
-                  src={
-                    isVolSetArea ? 'images/ic_vol_s.png' : 'images/ic_vol_w.png'
-                  }
-                  style={{
-                    width: 25,
-                    height: 27,
-                    objectFit: 'contain',
-                    marginRight: 5,
-                  }}
-                  alt='플레이중 스톱 아이콘'
-                  title='플레이중 스톱 아이콘'
-                />
-              </VolumeSettingBtn>
-              {isVolSetArea ? (
+
+            <FlexColumnCenterCenter>
+              <FlexRowCenterCenter>
+                <VolumeSettingBtn onClick={volumeSettingHandler}>
+                  <img
+                    src={'images/ic_vol_w.png'}
+                    style={{
+                      width: 25,
+                      height: 25,
+                      objectFit: 'contain',
+                      marginRight: 5,
+                      marginTop: 2,
+                    }}
+                    alt='스피커 아이콘'
+                    title='스피커 아이콘'
+                  />
+                </VolumeSettingBtn>
+                <AudioBar vol={isJoin ? remoteVol * 10 : 0} />
+              </FlexRowCenterCenter>
+
+              <FlexRowCenterCenter>
+                <VolumeSettingBtn onClick={volumeSettingHandler}>
+                  <img
+                    src={'images/ic_vol_s.png'}
+                    style={{
+                      width: 25,
+                      height: 25,
+                      objectFit: 'contain',
+                      marginRight: 5,
+                    }}
+                    alt='볼륨 조절 아이콘'
+                    title='볼륨 조절 아이콘'
+                  />
+                </VolumeSettingBtn>
+
                 <FlexRowStartCenter>
                   <VolumeControl
                     type='range'
@@ -816,10 +851,8 @@ const SessionDetail = () => {
                     {vol}
                   </p>
                 </FlexRowStartCenter>
-              ) : (
-                <AudioBar vol={isJoin ? remoteVol * 10 : 0} />
-              )}
-            </FlexRowSpaceBCenter>
+              </FlexRowCenterCenter>
+            </FlexColumnCenterCenter>
           </VolumeInfomationArea>
           {/* // 접은화면 재생 시간 및 사운드 바 */}
         </FlexColumnStartCenter>
