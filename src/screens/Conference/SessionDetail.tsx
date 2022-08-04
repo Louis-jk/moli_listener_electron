@@ -50,6 +50,7 @@ const SessionDetail = () => {
   const { state }: any = useLocation();
   const intl = useIntl();
   const { isJoin } = useSelector((state: RootState) => state.joinState);
+  const [windowWidth, setWindowWidth] = useState(0);
 
   // 아고라
   // const [joined, setJoined] = useState<boolean>(false);
@@ -72,6 +73,15 @@ const SessionDetail = () => {
   const [selectTabNum, setSelectTabNum] = useState<number>(0); // 선택 탭 번호
   const [sessionCode, setSessionCode] = useState<string>(''); // 현재 세션 코드
   const [isVolSetArea, setVolSetArea] = useState<boolean>(false);
+
+  // 윈도우 Width
+  useEffect(() => {
+    if (window && typeof window !== 'undefined') {
+      console.log('window width', window.innerWidth);
+      let winWidth = window.innerWidth;
+      setWindowWidth(winWidth);
+    }
+  });
 
   const [vol, setVol] = useState<number>(100);
 
@@ -125,6 +135,9 @@ const SessionDetail = () => {
       // currStream.adjustAudioMixingVolume(vol)
       currStream.setAudioVolume(vol);
     }
+    if (currStream && vol === 0) {
+      currStream.setAudioVolume(0);
+    }
   }, [vol]);
 
   // 채널 나가기
@@ -174,10 +187,19 @@ const SessionDetail = () => {
 
             client.enableAudioVolumeIndicator(); // Triggers the "volume-indicator" callback event every two seconds.
             client.on('volume-indicator', (evt: any) => {
-              evt.attr.forEach((volume: any, index: number) => {
-                // console.log(`${index} UID ${volume.uid} Level ${volume.level}`);
-                setRemoteVol(volume.level);
-              });
+              console.log('====================================');
+              console.log('볼륨 evt', evt);
+              console.log('====================================');
+
+              if (evt && evt.attr && evt.attr.length > 0) {
+                evt.attr.forEach((volume: any, index: number) => {
+                  // console.log(`${index} UID ${volume.uid} Level ${volume.level}`);
+                  console.log('아고라 volume', volume.level);
+                  setRemoteVol(volume.level);
+                });
+              } else {
+                setRemoteVol(0);
+              }
             });
           });
         },
@@ -330,7 +352,6 @@ const SessionDetail = () => {
           // });
           // setCodeList(newArr);
           setCodeList(result.codelist);
-          console.log('result.codelist ?', result.codelist);
         }
       })
       .catch((err: any) => console.error('res Reflesh error ::', err));
@@ -366,7 +387,6 @@ const SessionDetail = () => {
             newFile.push(filter);
           });
 
-          console.log('newFile', newFile);
           setFileList(newFile);
 
           setSessionDate(result.date);
@@ -471,17 +491,19 @@ const SessionDetail = () => {
     setSelectTabNum(id);
   };
 
-  console.log('codeList ??', codeList);
-  console.log('fileList ??', fileList);
+  // console.log('codeList ??', codeList);
+  // console.log('fileList ??', fileList);
 
   const dispatch = useDispatch();
 
   const frameWide = () => {
-    console.log('프레임 와이드');
+    // console.log('프레임 와이드');
     appRuntime.send('frameWide', null);
 
     dispatch(toggle(false));
   };
+
+  console.log('SessionDetail remoteVol', remoteVol);
 
   return isLoading ? (
     <Loading isTransparent={false} />
@@ -495,7 +517,11 @@ const SessionDetail = () => {
         <Margin type='bottom' size={20} />
 
         {/* 세션 메인 안내 블럭 */}
-        <SessionMainInfoBox imageSource={sessionImg} isFrameMin={isMin}>
+        <SessionMainInfoBox
+          imageSource={sessionImg}
+          isFrameMin={isMin}
+          windowWidth={windowWidth}
+        >
           <div>
             <p className='session_date'>
               <SpanPoint>{sessionDate}</SpanPoint>
@@ -508,7 +534,12 @@ const SessionDetail = () => {
 
         {isMin && (
           <SessionMinDescWrapper>
-            <p className='session_date' style={{ marginBottom: 5 }}>
+            <p
+              className='session_date'
+              style={{
+                marginBottom: 5,
+              }}
+            >
               <SpanPoint>{sessionDate}</SpanPoint>
             </p>
             <h4 style={{ fontSize: 16 }}>{sessionTitle}</h4>
@@ -619,7 +650,7 @@ const SessionDetail = () => {
 
                 <FlexColumnCenterCenter>
                   <FlexRowCenterCenter>
-                    <VolumeSettingBtn onClick={volumeSettingHandler}>
+                    <VolumeSettingBtn /* onClick={volumeSettingHandler} */>
                       <img
                         src={'images/ic_vol_w.png'}
                         style={{
@@ -633,11 +664,11 @@ const SessionDetail = () => {
                         title='스피커 아이콘'
                       />
                     </VolumeSettingBtn>
-                    <AudioBar vol={isJoin ? remoteVol * 10 : 0} />
+                    <AudioBar vol={isJoin ? remoteVol : 0} />
                   </FlexRowCenterCenter>
 
                   <FlexRowCenterCenter>
-                    <VolumeSettingBtn onClick={volumeSettingHandler}>
+                    <VolumeSettingBtn /* onClick={volumeSettingHandler} */>
                       <img
                         src={'images/ic_vol_s.png'}
                         style={{
@@ -763,6 +794,7 @@ const SessionDetail = () => {
                   />
 
                   <PlayBtn
+                    style={{ marginRight: -8 }}
                     onClick={() => {
                       if (!isJoin) {
                         setSessionCode(codeList[currTrans].session_code);
@@ -799,7 +831,7 @@ const SessionDetail = () => {
 
             <FlexColumnCenterCenter>
               <FlexRowCenterCenter>
-                <VolumeSettingBtn onClick={volumeSettingHandler}>
+                <VolumeSettingBtn /* onClick={volumeSettingHandler} */>
                   <img
                     src={'images/ic_vol_w.png'}
                     style={{
@@ -813,11 +845,11 @@ const SessionDetail = () => {
                     title='스피커 아이콘'
                   />
                 </VolumeSettingBtn>
-                <AudioBar vol={isJoin ? remoteVol * 10 : 0} />
+                <AudioBar vol={isJoin ? remoteVol : 0} />
               </FlexRowCenterCenter>
 
               <FlexRowCenterCenter>
-                <VolumeSettingBtn onClick={volumeSettingHandler}>
+                <VolumeSettingBtn /* onClick={volumeSettingHandler} */>
                   <img
                     src={'images/ic_vol_s.png'}
                     style={{

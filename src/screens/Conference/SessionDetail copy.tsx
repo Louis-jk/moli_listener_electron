@@ -49,6 +49,7 @@ const SessionDetail = () => {
   const { state }: any = useLocation();
   const intl = useIntl();
   const { isJoin } = useSelector((state: RootState) => state.joinState);
+  const [windowWidth, setWindowWidth] = useState(0);
 
   // 아고라
   // const [joined, setJoined] = useState<boolean>(false);
@@ -71,6 +72,15 @@ const SessionDetail = () => {
   const [selectTabNum, setSelectTabNum] = useState<number>(0); // 선택 탭 번호
   const [sessionCode, setSessionCode] = useState<string>(''); // 현재 세션 코드
   const [isVolSetArea, setVolSetArea] = useState<boolean>(false);
+
+  // 윈도우 Width
+  useEffect(() => {
+    if (window && typeof window !== 'undefined') {
+      console.log('window width', window.innerWidth);
+      let winWidth = window.innerWidth;
+      setWindowWidth(winWidth);
+    }
+  });
 
   const [vol, setVol] = useState<number>(100);
 
@@ -495,7 +505,11 @@ const SessionDetail = () => {
         <Margin type='bottom' size={20} />
 
         {/* 세션 메인 안내 블럭 */}
-        <SessionMainInfoBox imageSource={sessionImg} isFrameMin={isMin}>
+        <SessionMainInfoBox
+          imageSource={sessionImg}
+          isFrameMin={isMin}
+          windowWidth={windowWidth}
+        >
           <div>
             <p className='session_date'>
               <SpanPoint>{sessionDate}</SpanPoint>

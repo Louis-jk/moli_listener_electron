@@ -49,6 +49,7 @@ export interface CodeInputProps {
 export interface SessionMainInfoBoxProps {
   imageSource: string;
   isFrameMin: boolean;
+  windowWidth: number;
 }
 
 export interface SessionTransListBoxProps {
