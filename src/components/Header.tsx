@@ -92,8 +92,8 @@ const Header: React.FC<HeaderProps> = ({ type, title }) => {
   // console.log('====================================');
   // console.log('isFrameMin', isFrameMin);
   // console.log('isFrameWide', isFrameWide);
-  console.log('====================================');
-  console.log('HEADE isMin', isMin);
+  // console.log('====================================');
+  // console.log('HEADE isMin', isMin);
 
   return (
     <HeaderContainer>
