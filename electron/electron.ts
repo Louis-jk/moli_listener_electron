@@ -16,23 +16,32 @@ import { download } from 'electron-dl';
 import { isContext } from 'vm';
 // const Env = JSON.parse(fs.readFileSync(`${__dirname}/env.json`));
 
+const MIN_MODE_MAX_HEIGHT = 285;
+const MAX_MODE_MAX_HEIGHT = 850;
+const MIN_WIDTH = 330;
+const MIN_HEIGHT = 600;
+
 let mainWindow: Electron.BrowserWindow | null;
 const REDIRECT_URL = 'https://change-all.com/listen_auth_callback';
 const USER_AGENT = { userAgent: 'Chrome' };
+
+let isMinMode = false; // 일렉트론 접힌 화면 모드
+let resizeWidth = 380;
+let resizeHeight = 850;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
     titleBarStyle: 'customButtonsOnHover',
     frame: false,
     transparent: true,
-    width: 380,
-    height: 850,
-    minWidth: 330,
-    minHeight: 600,
-    maxWidth: 380,
-    maxHeight: 850,
+    width: resizeWidth,
+    height: MAX_MODE_MAX_HEIGHT,
+    minWidth: MIN_WIDTH,
+    minHeight: MIN_HEIGHT,
+    maxWidth: resizeWidth,
+    maxHeight: isMinMode ? MIN_MODE_MAX_HEIGHT : MAX_MODE_MAX_HEIGHT,
     title: 'MOLI-Listener',
-    resizable: true,
+    resizable: !isMinMode,
     autoHideMenuBar: true,
     hasShadow: true,
     icon: path.join(
@@ -94,21 +103,36 @@ function createWindow() {
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
+
+  mainWindow.on('resize', function () {
+    let size = mainWindow.getSize();
+    resizeWidth = size[0];
+    resizeHeight = size[1];
+  });
 }
+
+// console.log('screen.getPrimaryDisplay() ?', screen.getPrimaryDisplay());
+console.log('isMinMode ?', isMinMode);
 
 // 리사이징 기능
 ipcMain.on('frameMin', (event, data) => {
   // mainWindow.unmaximize();
-  mainWindow.setMinimumSize(380, 250);
-  mainWindow.setSize(380, 250, true);
+  // mainWindow.setMinimumSize(380, 250);
+  // mainWindow.setSize(380, 285, true);
+  isMinMode = true;
+  mainWindow.setMinimumSize(resizeWidth, MIN_MODE_MAX_HEIGHT);
+  mainWindow.setMaximumSize(resizeWidth, MIN_MODE_MAX_HEIGHT);
+  mainWindow.setSize(resizeWidth, MIN_MODE_MAX_HEIGHT, true);
   // event.sender.send('isFrameMin', true);
   // event.sender.send('isFrameWide', false);
 });
 
 ipcMain.on('frameWide', (event, data) => {
   // mainWindow.maximize();
-  mainWindow.setMaximumSize(380, 850);
-  mainWindow.setSize(380, 850, true);
+  isMinMode = false;
+  mainWindow.setMinimumSize(resizeWidth, MIN_HEIGHT);
+  mainWindow.setMaximumSize(resizeWidth, MAX_MODE_MAX_HEIGHT);
+  mainWindow.setSize(resizeWidth, MAX_MODE_MAX_HEIGHT, true);
   // event.sender.send('isFrameWide', true);
   // event.sender.send('isFrameMin', false);
 });
