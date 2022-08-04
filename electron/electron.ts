@@ -17,9 +17,10 @@ import { isContext } from 'vm';
 // const Env = JSON.parse(fs.readFileSync(`${__dirname}/env.json`));
 
 const MIN_MODE_MAX_HEIGHT = 285;
-const MAX_MODE_MAX_HEIGHT = 850;
 const MIN_WIDTH = 330;
 const MIN_HEIGHT = 600;
+const MAX_WIDTH = 380;
+const MAX_HEIGHT = 850;
 
 let mainWindow: Electron.BrowserWindow | null;
 const REDIRECT_URL = 'https://change-all.com/listen_auth_callback';
@@ -35,11 +36,11 @@ function createWindow() {
     frame: false,
     transparent: true,
     width: resizeWidth,
-    height: MAX_MODE_MAX_HEIGHT,
+    height: resizeHeight,
     minWidth: MIN_WIDTH,
     minHeight: MIN_HEIGHT,
-    maxWidth: resizeWidth,
-    maxHeight: isMinMode ? MIN_MODE_MAX_HEIGHT : MAX_MODE_MAX_HEIGHT,
+    maxWidth: MAX_WIDTH,
+    maxHeight: isMinMode ? MIN_MODE_MAX_HEIGHT : MAX_HEIGHT,
     title: 'MOLI-Listener',
     resizable: !isMinMode,
     autoHideMenuBar: true,
@@ -120,8 +121,8 @@ ipcMain.on('frameMin', (event, data) => {
   // mainWindow.setMinimumSize(380, 250);
   // mainWindow.setSize(380, 285, true);
   isMinMode = true;
-  mainWindow.setMinimumSize(resizeWidth, MIN_MODE_MAX_HEIGHT);
-  mainWindow.setMaximumSize(resizeWidth, MIN_MODE_MAX_HEIGHT);
+  mainWindow.setMinimumSize(MIN_WIDTH, MIN_MODE_MAX_HEIGHT);
+  mainWindow.setMaximumSize(MAX_WIDTH, MAX_HEIGHT);
   mainWindow.setSize(resizeWidth, MIN_MODE_MAX_HEIGHT, true);
   // event.sender.send('isFrameMin', true);
   // event.sender.send('isFrameWide', false);
@@ -130,9 +131,9 @@ ipcMain.on('frameMin', (event, data) => {
 ipcMain.on('frameWide', (event, data) => {
   // mainWindow.maximize();
   isMinMode = false;
-  mainWindow.setMinimumSize(resizeWidth, MIN_HEIGHT);
-  mainWindow.setMaximumSize(resizeWidth, MAX_MODE_MAX_HEIGHT);
-  mainWindow.setSize(resizeWidth, MAX_MODE_MAX_HEIGHT, true);
+  mainWindow.setMinimumSize(MIN_WIDTH, MIN_HEIGHT);
+  mainWindow.setMaximumSize(MAX_WIDTH, MAX_HEIGHT);
+  mainWindow.setSize(resizeWidth, MAX_HEIGHT, true);
   // event.sender.send('isFrameWide', true);
   // event.sender.send('isFrameMin', false);
 });
