@@ -4,6 +4,22 @@ import { AudioBarProp } from '../interfaces/components.interface';
 const AudioBar: React.FC<AudioBarProp> = ({ vol }) => {
   console.log('vol ??', vol);
 
+  const [pidCount, setPidCount] = useState(53);
+
+  const winWidth = window.innerWidth;
+  console.log('winWidth ??', winWidth);
+
+  // useEffect(() => {
+  //   if (winWidth < 380) {
+  //     let width = winWidth - 330;
+  //     // let addCount = width / 3 + pidCount;
+
+  //     setPidCount((prev) => prev - 1);
+  //   } else {
+  //     setPidCount(53);
+  //   }
+  // }, [winWidth]);
+
   useEffect(() => {
     const pids = document.getElementsByClassName('pid');
 
@@ -27,31 +43,11 @@ const AudioBar: React.FC<AudioBarProp> = ({ vol }) => {
         pids[i].classList.remove('on');
       }
     }
-  });
+  }, [vol]);
 
   return (
     <div className='audio-progress'>
-      {/* <div className='pid'></div>
-      <div className='pid'></div>
-      <div className='pid'></div>
-      <div className='pid'></div>
-      <div className='pid'></div>
-      <div className='pid'></div>
-      <div className='pid'></div>
-      <div className='pid'></div>
-      <div className='pid'></div>
-      <div className='pid'></div>
-      <div className='pid'></div>
-      <div className='pid'></div>
-      <div className='pid'></div>
-      <div className='pid'></div>
-      <div className='pid'></div>
-      <div className='pid'></div>
-      <div className='pid'></div>
-      <div className='pid'></div>
-      <div className='pid'></div>
-      <div className='pid'></div> */}
-      {Array(53)
+      {Array(50)
         .fill(0)
         .map((pid: any, index: number) => (
           <div key={index} className='pid'></div>
