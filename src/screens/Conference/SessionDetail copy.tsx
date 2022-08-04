@@ -117,7 +117,7 @@ const SessionDetail = () => {
     console.log('clientRole Error ::', error);
   });
 
-  console.log('currStream ??', currStream);
+  // console.log('currStream ??', currStream);
 
   useEffect(() => {
     if (currStream && vol) {
@@ -163,7 +163,8 @@ const SessionDetail = () => {
           client.on('stream-added', (evt: any) => {
             // add
             let stream = evt.stream;
-            console.log('new stream added ', stream.getId());
+            // console.log('new stream added ', stream.getId());
+
             // add
             client.subscribe(
               evt.stream,
@@ -183,7 +184,7 @@ const SessionDetail = () => {
         handleError
       );
 
-      console.log('joined');
+      // console.log('joined');
     } catch (e) {
       console.log('join failed', e);
     }
@@ -200,10 +201,10 @@ const SessionDetail = () => {
 
     // stream.setAudioVolume(vol);
 
-    console.log(
-      'stream-subscribed evt stream getID :::::',
-      String(stream.getId())
-    );
+    // console.log(
+    //   'stream-subscribed evt stream getID :::::',
+    //   String(stream.getId())
+    // );
     addVideoStream(streamId);
     stream.play(streamId);
     // setJoined(true);
