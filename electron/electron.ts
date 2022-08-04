@@ -27,29 +27,38 @@ function createWindow() {
     transparent: true,
     width: 380,
     height: 850,
+    minWidth: 330,
+    minHeight: 600,
     maxWidth: 380,
     maxHeight: 850,
     title: 'MOLI-Listener',
-    resizable: false,
+    resizable: true,
     autoHideMenuBar: true,
     hasShadow: true,
-    icon: path.join(app.getAppPath(),  isDev ? '/icons/png/64x64.png' : '/build/icons/png/64x64.png'),
+    icon: path.join(
+      app.getAppPath(),
+      isDev ? '/icons/png/64x64.png' : '/build/icons/png/64x64.png'
+    ),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: true,
       enableRemoteModule: true,
       webSecurity: false,
-      preload: path.join(app.getAppPath(), isDev ? '/preload.js' : '/build/preload.js'),
+      preload: path.join(
+        app.getAppPath(),
+        isDev ? '/preload.js' : '/build/preload.js'
+      ),
     },
   });
-
- 
 
   let indexPath;
 
   indexPath = url.format({
     protocol: 'file:',
-    pathname: path.join(app.getAppPath(), isDev ? '/index.html' : '/build/index.html'),
+    pathname: path.join(
+      app.getAppPath(),
+      isDev ? '/index.html' : '/build/index.html'
+    ),
     slashes: true,
   });
 
@@ -80,20 +89,17 @@ function createWindow() {
   mainWindow.webContents.on('will-navigate', handleRedirect);
   mainWindow.webContents.on('new-window', handleRedirect);
 
-  
   // mainWindow.maximize();
 
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
-
-
 }
 
 // 리사이징 기능
 ipcMain.on('frameMin', (event, data) => {
   // mainWindow.unmaximize();
-  mainWindow.setMinimumSize(380, 250)
+  mainWindow.setMinimumSize(380, 250);
   mainWindow.setSize(380, 250, true);
   // event.sender.send('isFrameMin', true);
   // event.sender.send('isFrameWide', false);
@@ -101,12 +107,11 @@ ipcMain.on('frameMin', (event, data) => {
 
 ipcMain.on('frameWide', (event, data) => {
   // mainWindow.maximize();
-  mainWindow.setMaximumSize(380,850);
+  mainWindow.setMaximumSize(380, 850);
   mainWindow.setSize(380, 850, true);
   // event.sender.send('isFrameWide', true);
   // event.sender.send('isFrameMin', false);
 });
-
 
 // 브라우저 메뉴창 없애기
 Menu.setApplicationMenu(null);
@@ -302,8 +307,6 @@ ipcMain.on('fbLogin', (event, args) => {
     }
   });
 });
-
-
 
 // 창 닫기
 ipcMain.on('windowClose', (event, data) => {
