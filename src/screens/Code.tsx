@@ -72,13 +72,13 @@ const Code = () => {
     <Container>
       <Header title={intl.formatMessage({ id: 'conference' })} type='code' />
       <FlexColumnCenterCenter style={{ height: '100%' }}>
-        <Margin type='bottom' size={20} />
+        <Margin type='bottom' size={70} />
 
         <InfoTitle>{intl.formatMessage({ id: 'conferencetit' })}</InfoTitle>
         <Margin type='bottom' size={10} />
         <InfoDesc>{intl.formatMessage({ id: 'conferencesub' })}</InfoDesc>
 
-        <Margin type='bottom' size={50} />
+        <Margin type='bottom' size={30} />
 
         <InputWrapper>
           <InputBox
@@ -89,8 +89,8 @@ const Code = () => {
             value={entryCode}
             onChange={(e) => setEntryCode(e.target.value)}
             onKeyDown={(e) => {
-              if(e.key === 'Enter') {
-                nextHandler()
+              if (e.key === 'Enter') {
+                nextHandler();
               }
             }}
           />
@@ -108,9 +108,9 @@ const Code = () => {
           )}
         </p>
 
-        <Margin type='bottom' size={50} />
+        <Margin type='bottom' size={30} />
         <GrayLogo />
-        <Margin type='bottom' size={50} />
+        <Margin type='bottom' size={30} />
 
         <CircleBtnNext onClick={nextHandler}>
           <img
