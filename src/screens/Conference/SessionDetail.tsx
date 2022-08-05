@@ -513,7 +513,7 @@ const SessionDetail = () => {
         title={intl.formatMessage({ id: 'session' })}
         type={isJoin ? 'session_active' : 'session'}
       />
-      <Wrapper isFrameMin={isMin} style={{paddingBottom: 0}}>
+      <Wrapper isFrameMin={isMin} style={{ paddingBottom: 10 }}>
         <Margin type='bottom' size={20} />
 
         {/* 세션 메인 안내 블럭 */}
@@ -578,12 +578,15 @@ const SessionDetail = () => {
                 flexDirection: 'column',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                minHeight: 400,
+                minHeight: 390,
                 height: '100%',
               }}
             >
               {/* 펼친화면 세션 선택 통역 Area */}
-              <div style={{ width: '100%', marginBottom: 30 }} className='no_drag'>
+              <div
+                style={{ width: '100%', marginBottom: 30 }}
+                className='no_drag'
+              >
                 {codeList.map((list: any, index: number) => (
                   <SessionTransListBox
                     style={{ width: '100%' }}
@@ -641,15 +644,15 @@ const SessionDetail = () => {
               {/* // 펼친화면 세션 선택 통역 Area */}
 
               {/* 펼친화면 재생 시간 및 사운드 바 */}
-              <VolumeInfomationArea style={{width: '100%'}}>
-                <FlexRowEndCenter style={{width: '100%'}}>
+              <VolumeInfomationArea style={{ width: '100%' }}>
+                <FlexRowEndCenter style={{ width: '100%' }}>
                   <TimeCount start={isJoin} />
                 </FlexRowEndCenter>
 
                 <Margin type='bottom' size={2} />
 
-                <FlexColumnCenterCenter style={{width: '100%'}}>
-                  <FlexRowCenterCenter style={{width: '100%'}}>
+                <FlexColumnCenterCenter style={{ width: '100%' }}>
+                  <FlexRowCenterCenter style={{ width: '100%' }}>
                     <VolumeSettingBtn /* onClick={volumeSettingHandler} */>
                       <img
                         src={'images/ic_vol_w.png'}
@@ -667,7 +670,7 @@ const SessionDetail = () => {
                     <AudioBar vol={isJoin ? remoteVol : 0} />
                   </FlexRowCenterCenter>
 
-                  <FlexRowCenterCenter style={{width: '100%'}}>
+                  <FlexRowCenterCenter style={{ width: '100%' }}>
                     <VolumeSettingBtn /* onClick={volumeSettingHandler} */>
                       <img
                         src={'images/ic_vol_s.png'}
@@ -682,7 +685,7 @@ const SessionDetail = () => {
                       />
                     </VolumeSettingBtn>
 
-                    <FlexRowStartCenter style={{width: '100%'}}>
+                    <FlexRowStartCenter style={{ width: '100%' }}>
                       <VolumeControl
                         type='range'
                         value={vol}
@@ -824,13 +827,15 @@ const SessionDetail = () => {
           {/* // 접은화면 세션 선택 통역 Area */}
 
           {/* 접은화면 재생 시간 및 사운드 바 */}
-          <VolumeInfomationArea style={{width: '100%', padding: '0.1rem 1rem 0.1rem'}}>
-            <FlexRowEndCenter style={{width: '100%'}}>
+          <VolumeInfomationArea
+            style={{ width: '100%', padding: '0.1rem 1rem 0.1rem' }}
+          >
+            <FlexRowEndCenter style={{ width: '100%' }}>
               <TimeCount start={isJoin} />
             </FlexRowEndCenter>
 
-            <FlexColumnCenterCenter style={{width: '100%'}}>
-              <FlexRowCenterCenter style={{width: '100%'}}>
+            <FlexColumnCenterCenter style={{ width: '100%' }}>
+              <FlexRowCenterCenter style={{ width: '100%' }}>
                 <VolumeSettingBtn /* onClick={volumeSettingHandler} */>
                   <img
                     src={'images/ic_vol_w.png'}
