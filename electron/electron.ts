@@ -16,7 +16,8 @@ import { download } from 'electron-dl';
 import { isContext } from 'vm';
 // const Env = JSON.parse(fs.readFileSync(`${__dirname}/env.json`));
 
-const MIN_MODE_MAX_HEIGHT = 250;
+const MIN_MODE_MAX_HEIGHT_SMALL = 250;
+const MIN_MODE_MAX_HEIGHT_BIG = 285;
 const MIN_WIDTH = 330;
 const MIN_HEIGHT = 600;
 const MAX_WIDTH = 380;
@@ -27,24 +28,22 @@ const REDIRECT_URL = 'https://change-all.com/listen_auth_callback';
 const USER_AGENT = { userAgent: 'Chrome' };
 
 let isMinMode = false; // 일렉트론 접힌 화면 모드
-let resizeWidth = 330;
+let resizeWidth = 380;
 let resizeHeight = 780;
 
 function createWindow() {
-  
   mainWindow = new BrowserWindow({
     titleBarStyle: 'customButtonsOnHover',
     frame: false,
-    thickFrame: true,
-    transparent: false,
+    transparent: true,
     width: resizeWidth,
     height: resizeHeight,
     minWidth: MIN_WIDTH,
     minHeight: MIN_HEIGHT,
-    maxWidth: MIN_WIDTH,
-    maxHeight: isMinMode ? MIN_MODE_MAX_HEIGHT : MAX_HEIGHT,
+    maxWidth: MAX_WIDTH,
+    maxHeight: isMinMode ? MIN_MODE_MAX_HEIGHT_BIG : MAX_HEIGHT,
     title: 'MOLI-Listener',
-    resizable: false,
+    resizable: !isMinMode,
     autoHideMenuBar: true,
     hasShadow: true,
     icon: path.join(
@@ -63,11 +62,11 @@ function createWindow() {
     },
   });
 
-  // mainWindow.isResizable()
-  // mainWindow.setResizable(true)
+  mainWindow.isResizable();
+  mainWindow.setResizable(true);
 
   let winSize = mainWindow.getSize();
-  console.log('winSize ::', winSize)
+  console.log('winSize ::', winSize);
 
   let indexPath;
 
@@ -117,6 +116,20 @@ function createWindow() {
     let size = mainWindow.getSize();
     resizeWidth = size[0];
     resizeHeight = size[1];
+
+    // 플레이어 축소모드이면서 width가 380 보다 작을 때
+    if (isMinMode && resizeWidth < MAX_WIDTH) {
+      mainWindow.setMinimumSize(MIN_WIDTH, MIN_MODE_MAX_HEIGHT_SMALL);
+      mainWindow.setMaximumSize(MAX_WIDTH, MIN_MODE_MAX_HEIGHT_SMALL);
+      mainWindow.setSize(resizeWidth, MIN_MODE_MAX_HEIGHT_SMALL, true);
+    }
+
+    // 플레이어 축소모드이면서 width가 380 보다 같거나 클 때
+    if (isMinMode && resizeWidth >= MAX_WIDTH) {
+      mainWindow.setMinimumSize(MIN_WIDTH, MIN_MODE_MAX_HEIGHT_BIG);
+      mainWindow.setMaximumSize(MAX_WIDTH, MIN_MODE_MAX_HEIGHT_BIG);
+      mainWindow.setSize(resizeWidth, MIN_MODE_MAX_HEIGHT_BIG, true);
+    }
   });
 }
 
@@ -129,9 +142,9 @@ ipcMain.on('frameMin', (event, data) => {
   // mainWindow.setMinimumSize(380, 250);
   // mainWindow.setSize(380, 285, true);
   isMinMode = true;
-  mainWindow.setMinimumSize(MIN_WIDTH, MIN_MODE_MAX_HEIGHT);
-  mainWindow.setMaximumSize(MAX_WIDTH, MIN_MODE_MAX_HEIGHT);
-  mainWindow.setSize(resizeWidth, MIN_MODE_MAX_HEIGHT, true);
+  mainWindow.setMinimumSize(MIN_WIDTH, MIN_MODE_MAX_HEIGHT_BIG);
+  mainWindow.setMaximumSize(MAX_WIDTH, MIN_MODE_MAX_HEIGHT_BIG);
+  mainWindow.setSize(resizeWidth, MIN_MODE_MAX_HEIGHT_BIG, true);
   // event.sender.send('isFrameMin', true);
   // event.sender.send('isFrameWide', false);
 });
