@@ -33,7 +33,7 @@ let resizeHeight = 780;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    titleBarStyle: 'customButtonsOnHover',
+    // titleBarStyle: 'customButtonsOnHover', //titleBarStyle 옵션 자체가 있으면 맥 신호등 버튼이 어떻게든 표시됨
     frame: false,
     transparent: true,
     width: resizeWidth,
@@ -81,16 +81,12 @@ function createWindow() {
 
   app.allowRendererProcessReuse = false;
 
-  // mainWindow.loadURL(renderPath);
-  // console.log('electron isDev ?', isDev);
   if (isDev) {
     mainWindow.loadURL('http://localhost:3000');
-    // mainWindow.loadURL(indexPath);
     mainWindow.webContents.openDevTools(); // 개발자 툴 오픈
   } else {
     mainWindow.loadURL('https://change-all.com/listen_desk');
   }
-  // setupPushReceiver(mainWindow.webContents);
 
   // 기본 메뉴 숨기기
   mainWindow.setMenuBarVisibility(false);
@@ -105,8 +101,6 @@ function createWindow() {
 
   mainWindow.webContents.on('will-navigate', handleRedirect);
   mainWindow.webContents.on('new-window', handleRedirect);
-
-  // mainWindow.maximize();
 
   mainWindow.on('closed', () => {
     mainWindow = null;
@@ -139,14 +133,10 @@ console.log('isMinMode ?', isMinMode);
 // 리사이징 기능
 ipcMain.on('frameMin', (event, data) => {
   // mainWindow.unmaximize();
-  // mainWindow.setMinimumSize(380, 250);
-  // mainWindow.setSize(380, 285, true);
   isMinMode = true;
   mainWindow.setMinimumSize(MIN_WIDTH, MIN_MODE_MAX_HEIGHT_BIG);
   mainWindow.setMaximumSize(MAX_WIDTH, MIN_MODE_MAX_HEIGHT_BIG);
   mainWindow.setSize(resizeWidth, MIN_MODE_MAX_HEIGHT_BIG, true);
-  // event.sender.send('isFrameMin', true);
-  // event.sender.send('isFrameWide', false);
 });
 
 ipcMain.on('frameWide', (event, data) => {
@@ -155,8 +145,6 @@ ipcMain.on('frameWide', (event, data) => {
   mainWindow.setMinimumSize(MIN_WIDTH, MIN_HEIGHT);
   mainWindow.setMaximumSize(MAX_WIDTH, MAX_HEIGHT);
   mainWindow.setSize(resizeWidth, MAX_HEIGHT, true);
-  // event.sender.send('isFrameWide', true);
-  // event.sender.send('isFrameMin', false);
 });
 
 // 브라우저 메뉴창 없애기
@@ -280,23 +268,6 @@ ipcMain.on('googleLogin', (event, args) => {
 
   let googleCode: string = '';
 
-  // loginWindow.webContents.on(
-  //   'will-redirect',
-  //   (event: any, oldUrl: any, newUrl: any) => {
-  //     console.log('googleLogin oldUrl ??', oldUrl);
-
-  //     const url = new URL(oldUrl);
-  //     const urlParams = url.searchParams;
-  //     googleCode = urlParams.get('code');
-  //   }
-  // );
-
-  // loginWindow.webContents.on('will-navigate', (event, newUrl) => {
-  //   const url = new URL(newUrl);
-  //   const urlParams = url.searchParams;
-  //   googleCode = urlParams.get('code');
-  // });
-
   loginWindow.webContents.on('did-navigate', (event, newUrl) => {
     console.log('google did navigate New Url ::', newUrl);
 
@@ -410,7 +381,6 @@ ipcMain.handle('quit-app', () => {
 app.on('ready', createWindow);
 
 app.on('open-url', (event, url) => {
-  // dialog.showErrorBox('Welcome Back', `You arrived from: ${url}`);
   shell.openExternal(url);
 });
 
@@ -429,7 +399,7 @@ app.on('activate', () => {
 // 파일 다운로드(url 이미지)
 ipcMain.on('download', async (event, { url, filename }) => {
   const win = BrowserWindow.getFocusedWindow();
-  // console.log(await download(win, url));
+
   await download(win, url, {
     saveAs: true,
     filename,
