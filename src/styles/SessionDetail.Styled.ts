@@ -127,7 +127,9 @@ export const VolumeControl = styled.input < VolumeControlProp > `
     -webkit-appearance: none;
     -webkit-app-region: no-drag;
     margin-right: 15px;
-    width: 73vw;
+    // width: 73vw;
+    // width: 84%;
+    width: 69vw;
     height: 3px;
     background: rgba(255, 255, 255, 0.6);
     border-radius: 5px;
