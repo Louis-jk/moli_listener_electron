@@ -16,21 +16,22 @@ import { download } from 'electron-dl';
 import { isContext } from 'vm';
 // const Env = JSON.parse(fs.readFileSync(`${__dirname}/env.json`));
 
-const MIN_MODE_MAX_HEIGHT = 250;
+const MIN_MODE_MAX_HEIGHT = 285;
 const MIN_WIDTH = 330;
 const MIN_HEIGHT = 600;
 const MAX_WIDTH = 380;
-const MAX_HEIGHT = 780;
+const MAX_HEIGHT = 850;
 
 let mainWindow: Electron.BrowserWindow | null;
 const REDIRECT_URL = 'https://change-all.com/listen_auth_callback';
 const USER_AGENT = { userAgent: 'Chrome' };
 
 let isMinMode = false; // 일렉트론 접힌 화면 모드
-let resizeWidth = 330;
-let resizeHeight = 780;
+let resizeWidth = 380;
+let resizeHeight = 850;
 
 function createWindow() {
+
   
   mainWindow = new BrowserWindow({
     titleBarStyle: 'customButtonsOnHover',
@@ -41,10 +42,10 @@ function createWindow() {
     height: resizeHeight,
     minWidth: MIN_WIDTH,
     minHeight: MIN_HEIGHT,
-    maxWidth: MIN_WIDTH,
+    maxWidth: MAX_WIDTH,
     maxHeight: isMinMode ? MIN_MODE_MAX_HEIGHT : MAX_HEIGHT,
     title: 'MOLI-Listener',
-    resizable: false,
+    resizable: !isMinMode,
     autoHideMenuBar: true,
     hasShadow: true,
     icon: path.join(
@@ -63,8 +64,8 @@ function createWindow() {
     },
   });
 
-  // mainWindow.isResizable()
-  // mainWindow.setResizable(true)
+  mainWindow.isResizable()
+  mainWindow.setResizable(true)
 
   let winSize = mainWindow.getSize();
   console.log('winSize ::', winSize)
